@@ -1,0 +1,39 @@
+# === Compiled objects ===
+*.o
+*.out
+*.a
+*.so
+
+# === Executables ===
+minishell
+a.out
+
+# === Libft ===
+libft/libft.a
+libft/*.o
+
+# === Debug and logs ===
+*.log
+*.gch
+*.swp
+*.tmp
+*.bak
+*.dSYM/
+core
+vgcore.*
+.valgrind.log
+
+# === OS / IDE / VSCode files ===
+.DS_Store
+.idea/
+.vscode/
+*.code-workspace
+
+# === Backup or temp files ===
+*~
+# === Readline history ===
+.history
+
+# === Test scripts output ===
+tests/output/
+tests/tmp/
