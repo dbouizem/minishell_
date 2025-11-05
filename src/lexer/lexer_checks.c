@@ -14,3 +14,9 @@ int	is_quote(char c)
 {
 	return (c == '\'' || c == '"');
 }
+
+int	is_redir(t_token_type type)
+{
+	return (type == INPUT || type == TRUNC
+		|| type == HEREDOC || type == APPEND);
+}

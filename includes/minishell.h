@@ -10,6 +10,7 @@
 # include "../libft/libft.h"
 # include "colors.h"
 # include "token.h"
+# include "parser.h"
 
 // Structure principale
 typedef struct s_shell
@@ -21,7 +22,6 @@ typedef struct s_shell
 // Prototypes
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
-void	display_prompt(void);
 char	*read_input(void);
 int		handle_input(char *input, t_shell *shell);
 

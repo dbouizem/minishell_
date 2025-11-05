@@ -19,8 +19,13 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
 		$(SRC_DIR)/lexer/lexer_extract.c \
 		$(SRC_DIR)/lexer/lexer_handlers.c \
-		$(SRC_DIR)/lexer/lexer_redir.c
-
+		$(SRC_DIR)/lexer/lexer_redir.c \
+		$(SRC_DIR)/parser/parse.c \
+		$(SRC_DIR)/parser/parse_cmd.c \
+		$(SRC_DIR)/parser/parse_args.c \
+		$(SRC_DIR)/parser/parse_redir.c \
+		$(SRC_DIR)/parser/parse_utils.c \
+		$(SRC_DIR)/parser/parse_cleanup.c
 
 
 

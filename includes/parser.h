@@ -1,0 +1,32 @@
+#ifndef PARSER_H
+# define PARSER_H
+
+# include "minishell.h"
+
+typedef struct s_redir
+{
+	int				type;		// INPUT, TRUNC, HEREDOC, APPEND
+	char			*file;		// Nom du fichier
+	struct s_redir	*next;
+}	t_redir;
+
+typedef struct s_cmd
+{
+	char			**args;		// ["echo", "hello", NULL]
+	t_redir			*redirs;	// Liste des redirections
+	struct s_cmd	*next;		// Commande suivante (après pipe)
+}	t_cmd;
+
+t_cmd	*parse(t_token *tokens);
+t_cmd	*parse_command(t_token **tokens);
+char	**parse_arguments(t_token **tokens);
+int		count_args(t_token *tokens);
+t_redir	*parse_redirection(t_token **tokens);
+void	add_redir(t_redir **head, t_redir *new_redir);
+t_cmd	*create_cmd(void);
+t_redir	*create_redir(int type, char *file);
+void	free_cmd(t_cmd *cmd);
+void	free_redirs(t_redir *redirs);
+void	print_cmd(t_cmd *cmd);
+
+#endif

@@ -1,16 +1,10 @@
 #include "../includes/minishell.h"
 
-void	display_prompt(void)
-{
-	write(1, PROMPT_COLOR "minishell$ " RESET_COLOR,
-		sizeof(PROMPT_COLOR "minishell$ " RESET_COLOR) - 1);
-}
-
 char	*read_input(void)
 {
 	char	*input;
 
-	input = readline("");
+	input = readline(PROMPT_COLOR "minishell$ " RESET_COLOR);
 	if (!input)
 	{
 		printf("%sexit%s\n", RED, RESET);
