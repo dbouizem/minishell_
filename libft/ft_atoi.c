@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 00:08:41 by dbouizem          #+#    #+#             */
-/*   Updated: 2024/12/24 22:51:15 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:36:00 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,6 @@
 */
 
 #include "libft.h"
-
-static int	ft_isspace(char c)
-{
-	return (c == ' ' || c == '\n'
-		||c == '\t' || c == '\v' || c == '\f' || c == '\r');
-}
 
 int	ft_atoi(const char *str)
 {

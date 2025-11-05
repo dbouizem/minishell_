@@ -1,25 +1,25 @@
 #include "minishell.h"
-#include "colors.h"
 
-void	init_shell(t_shell *shell, char **envp)
+static void	process_input(char *input)
 {
-	shell->exit_status = 0;
-	(void)envp;
-	printf("%s=== Minishell Started ===%s\n", GREEN, RESET);
-	printf("%sType 'exit' to quit or Ctrl+D%s\n", CYAN, RESET);
-}
+	t_token	*tokens;
 
-void	cleanup_shell(t_shell *shell)
-{
-	(void)shell;
-	rl_clear_history();
-	printf("%sGoodbye!%s\n", RED, RESET);
+	printf("\n%s[DEBUG] Input: %s%s\n", YELLOW, input, RESET);
+	tokens = tokenize(input);
+	if (!tokens)
+	{
+		printf("%s[ERROR] Tokenization failed%s\n", RED, RESET);
+		return ;
+	}
+	print_tokens(tokens);
+	free_tokens(tokens);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 	char	*input;
+	int		status;
 
 	(void)argc;
 	(void)argv;
@@ -29,12 +29,15 @@ int	main(int argc, char **argv, char **envp)
 	{
 		display_prompt();
 		input = read_input();
-		if (!input)
+		status = handle_input(input, &shell);
+
+		if (status == 0)
 			break ;
-		printf("%sYou typed%s %s\n", BLUE, RESET, input);
+		if (status == 1)
+			continue ;
+		process_input(input);
 		free(input);
 	}
 	cleanup_shell(&shell);
-	return (0);
+	return (shell.exit_status);
 }
-

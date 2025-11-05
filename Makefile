@@ -12,8 +12,17 @@ INC_DIR = includes
 LIBFT_DIR = libft
 
 SRC =	$(SRC_DIR)/main.c \
-		$(SRC_DIR)/prompt.c \
-		$(SRC_DIR)/input.c
+		$(SRC_DIR)/input/input.c \
+		$(SRC_DIR)/input/shell.c \
+		$(SRC_DIR)/lexer/tokenize.c \
+		$(SRC_DIR)/lexer/token_utils.c \
+		$(SRC_DIR)/lexer/lexer_checks.c \
+		$(SRC_DIR)/lexer/lexer_extract.c \
+		$(SRC_DIR)/lexer/lexer_handlers.c \
+		$(SRC_DIR)/lexer/lexer_redir.c
+
+
+
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -42,7 +51,8 @@ $(NAME): $(OBJ) $(LIBFT_LIB)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME) -lreadline
 	@echo "$(GREEN)✅ Minishell built successfully!$(NC)"
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR):

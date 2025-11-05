@@ -18,6 +18,7 @@ SRCS =	ft_isalpha.c \
 	ft_isalnum.c \
 	ft_isascii.c \
 	ft_isprint.c \
+	ft_isspace.c \
 	ft_tolower.c \
 	ft_toupper.c \
 	ft_strlen.c \
@@ -57,6 +58,7 @@ SRCS =	ft_isalpha.c \
 	ft_print_int.c \
 	ft_print_u_int.c \
 	ft_print_hex.c \
+	ft_strcmp.c
 
 SRCS_BONUS =	ft_lstnew.c \
 	ft_lstadd_front.c \

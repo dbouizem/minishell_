@@ -7,6 +7,10 @@
 # include <readline/history.h>
 # include <unistd.h>
 
+# include "../libft/libft.h"
+# include "colors.h"
+# include "token.h"
+
 // Structure principale
 typedef struct s_shell
 {
@@ -19,5 +23,6 @@ void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 void	display_prompt(void);
 char	*read_input(void);
+int		handle_input(char *input, t_shell *shell);
 
 #endif
