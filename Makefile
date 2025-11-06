@@ -25,7 +25,12 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parser/parse_args.c \
 		$(SRC_DIR)/parser/parse_redir.c \
 		$(SRC_DIR)/parser/parse_utils.c \
-		$(SRC_DIR)/parser/parse_cleanup.c
+		$(SRC_DIR)/parser/parse_cleanup.c \
+		$(SRC_DIR)/expander/expand.c \
+		$(SRC_DIR)/expander/expand_var.c \
+		$(SRC_DIR)/expander/expand_quotes.c \
+		$(SRC_DIR)/expander/expand_utils.c \
+		$(SRC_DIR)/expander/expand_string.c
 
 
 

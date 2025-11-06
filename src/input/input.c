@@ -15,7 +15,7 @@ char	*read_input(void)
 	return (input);
 }
 
-int	handle_input(char *input, t_shell *shell)
+/* int	handle_input(char *input, t_shell *shell)
 {
 	if (!input)
 		return (0);
@@ -31,4 +31,4 @@ int	handle_input(char *input, t_shell *shell)
 		exit(shell->exit_status);
 	}
 	return (2);
-}
+} */

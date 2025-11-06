@@ -3,6 +3,7 @@
 *.out
 *.a
 *.so
+test.md
 
 # === Executables ===
 minishell

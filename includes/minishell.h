@@ -11,6 +11,7 @@
 # include "colors.h"
 # include "token.h"
 # include "parser.h"
+# include "expander.h"
 
 // Structure principale
 typedef struct s_shell
@@ -19,7 +20,6 @@ typedef struct s_shell
 	int		exit_status;
 }	t_shell;
 
-// Prototypes
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 char	*read_input(void);
