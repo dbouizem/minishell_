@@ -6,6 +6,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
+# include <termios.h>
+# include <errno.h>
 
 # include "../libft/libft.h"
 # include "colors.h"
@@ -16,13 +18,15 @@
 // Structure principale
 typedef struct s_shell
 {
-	char	**env;
-	int		exit_status;
+	char			**env;
+	int				exit_status;
+	struct termios	original_term; // SAUVEGARDE DU TERMINAL
 }	t_shell;
 
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 char	*read_input(void);
-int		handle_input(char *input, t_shell *shell);
+void	display_welcome(void);
+int		process_input(char *input, t_shell *shell);
 
 #endif

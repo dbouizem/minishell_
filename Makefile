@@ -12,8 +12,9 @@ INC_DIR = includes
 LIBFT_DIR = libft
 
 SRC =	$(SRC_DIR)/main.c \
-		$(SRC_DIR)/input/input.c \
-		$(SRC_DIR)/input/shell.c \
+		$(SRC_DIR)/core/input.c \
+		$(SRC_DIR)/core/shell.c \
+		$(SRC_DIR)/core/processor.c \
 		$(SRC_DIR)/lexer/tokenize.c \
 		$(SRC_DIR)/lexer/token_utils.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
