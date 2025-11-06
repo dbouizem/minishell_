@@ -14,6 +14,8 @@ char	*extract_substring(char *input, int start, int end)
 	while (start < end)
 		str[i++] = input[start++];
 	str[i] = '\0';
+	if (i > 0 && str[i - 1] == '\n')
+		str[i - 1] = '\0';
 	return (str);
 }
 

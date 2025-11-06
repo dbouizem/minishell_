@@ -1,80 +1,85 @@
 #include "../includes/minishell.h"
 
-static char	*process_dollar(char *str, int *i, t_shell *shell)
+char	*process_dollar(char *str, int *i, t_shell *shell)
 {
-	int		start;
 	char	*var_name;
-	char	*value;
+	char	*var_value;
+	int		start;
 
-	start = *i;
 	(*i)++;
-	if (str[*i] == '?')
-	{
-		(*i)++;
-		return (ft_itoa(shell->exit_status));
-	}
-	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+	if (!str[*i] || str[*i] == ' ' || str[*i] == '\"' || str[*i] == '\'')
 		return (ft_strdup("$"));
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+	start = *i;
+	while (str[*i] && is_valid_var_char(str[*i]))
 		(*i)++;
-	var_name = ft_substr(str, start + 1, *i - start - 1);
+	if (*i == start)
+		return (ft_strdup(""));
+	var_name = ft_substr(str, start, *i - start);
 	if (!var_name)
 		return (NULL);
-	value = get_var_value(var_name, shell);
+	var_value = get_var_value(var_name, shell);
 	free(var_name);
-	if (!value)
-		return (ft_strdup(""));
-	return (value);
-}
-
-static char	*append_part(char *result, char *part)
-{
-	char	*temp;
-
-	if (!result)
-		return (ft_strdup(part));
-	temp = ft_strjoin(result, part);
-	free(result);
-	return (temp);
+	return (var_value);
 }
 
 char	*expand_string(char *str, t_shell *shell)
 {
 	char	*result;
-	char	*part;
+	char	*temp;
+	char	*new_result;
 	int		i;
-	int		start;
+	int		in_single;
+	int		in_double;
 
 	if (!str)
 		return (NULL);
-	result = NULL;
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	i = 0;
-	start = 0;
+	in_single = 0;
+	in_double = 0;
 	while (str[i])
 	{
-		if (str[i] == '$')
+		if (str[i] == '\'' && !in_double)
 		{
-			if (i > start)
+			in_single = !in_single;
+			i++;
+			continue ;
+		}
+		if (str[i] == '\"' && !in_single)
+		{
+			in_double = !in_double;
+			i++;
+			continue ;
+		}
+		if (str[i] == '$' && !in_single)
+		{
+			temp = process_dollar(str, &i, shell);
+			if (temp)
 			{
-				part = ft_substr(str, start, i - start);
-				result = append_part(result, part);
-				free(part);
+				new_result = ft_strjoin(result, temp);
+				free(result);
+				free(temp);
+				result = new_result;
+				if (!result)
+					return (NULL);
 			}
-			part = process_dollar(str, &i, shell);
-			result = append_part(result, part);
-			free(part);
-			start = i;
 		}
 		else
+		{
+			temp = char_to_str(str[i]);
+			if (temp)
+			{
+				new_result = ft_strjoin(result, temp);
+				free(result);
+				free(temp);
+				result = new_result;
+				if (!result)
+					return (NULL);
+			}
 			i++;
+		}
 	}
-	if (i > start)
-	{
-		part = ft_substr(str, start, i - start);
-		result = append_part(result, part);
-		free(part);
-	}
-	if (!result)
-		return (ft_strdup(""));
 	return (result);
 }
