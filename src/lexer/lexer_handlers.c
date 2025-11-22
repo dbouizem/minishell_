@@ -9,68 +9,40 @@ void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
 	start = *i;
 	while (input[*i] && is_whitespace(input[*i]))
 		(*i)++;
+	if (start == *i)
+		return ;
 	spaces = extract_substring(input, start, *i);
-	if (spaces)
-	{
-		token = create_token(SPACES, spaces);
-		if (token)
-			add_token(head, current, token);
-		else
-			free(spaces);
-	}
-}
-
-void	handle_variable(char *input, int *i, t_token **head, t_token **current)
-{
-	int		start;
-	char	*var;
-	t_token	*token;
-
-	start = *i;
-	(*i)++;
-	if (input[*i] == '?')
-		(*i)++;
+	if (!spaces)
+		return ;
+	token = create_token(SPACES, spaces);
+	if (token)
+		add_token(head, current, token);
 	else
-	{
-		while (input[*i] && (input[*i] == '_'
-				|| (input[*i] >= 'a' && input[*i] <= 'z')
-				|| (input[*i] >= 'A' && input[*i] <= 'Z')
-				|| (input[*i] >= '0' && input[*i] <= '9')))
-			(*i)++;
-	}
-	var = extract_substring(input, start, *i);
-	if (var)
-	{
-		token = create_token(VAR, var);
-		if (token)
-			add_token(head, current, token);
-		else
-			free(var);
-	}
+		free(spaces);
 }
 
 void	handle_word(char *input, int *i, t_token **head, t_token **current)
 {
-	int		start;
 	char	*word;
 	t_token	*token;
+	int		start_index;
 
-	start = *i;
-	while (input[*i] && !is_whitespace(input[*i])
-		&& !is_special_char(input[*i]))
+	start_index = *i;
+	word = extract_word_without_quotes(input, i);
+	if (!word)
 	{
-		if (is_quote(input[*i]))
-			handle_quotes(input, i);
+		if (*i > start_index)
+		{
+			word = ft_strdup("");
+			if (!word)
+				return ;
+		}
 		else
-			(*i)++;
+			return ;
 	}
-	word = extract_substring(input, start, *i);
-	if (word)
-	{
-		token = create_token(WORD, word);
-		if (token)
-			add_token(head, current, token);
-		else
-			free(word);
-	}
+	token = create_token(WORD, word);
+	if (!token)
+		free(word);
+	else
+		add_token(head, current, token);
 }

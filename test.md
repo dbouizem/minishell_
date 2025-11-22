@@ -73,6 +73,380 @@ exit
 
 Tests Phase 2:
 
+## 📋 Préparation
+```bash
+make re
+./minishell
+```
+
+---
+
+## ✅ TEST 1: Commande simple
+```bash
+minishell$ ls
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'ls'
+==============
+```
+
+---
+
+## ✅ TEST 2: Commande avec arguments
+```bash
+minishell$ ls -la
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'ls'
+SPACES     | ' '
+WORD       | '-la'
+==============
+```
+
+---
+
+## ✅ TEST 3: Espaces multiples
+```bash
+minishell$ ls    -la
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'ls'
+SPACES     | '    '
+WORD       | '-la'
+==============
+```
+
+---
+
+## ✅ TEST 4: Pipe simple
+```bash
+minishell$ ls | grep test
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'ls'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'grep'
+SPACES     | ' '
+WORD       | 'test'
+==============
+```
+
+---
+
+## ✅ TEST 5: Redirections simples
+```bash
+minishell$ cat < input.txt
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'cat'
+SPACES     | ' '
+INPUT      | '<'
+SPACES     | ' '
+WORD       | 'input.txt'
+==============
+```
+
+```bash
+minishell$ echo hello > output.txt
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | 'hello'
+SPACES     | ' '
+TRUNC      | '>'
+SPACES     | ' '
+WORD       | 'output.txt'
+==============
+```
+
+---
+
+## ✅ TEST 6: Redirections doubles
+```bash
+minishell$ cat << EOF
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'cat'
+SPACES     | ' '
+HEREDOC    | '<<'
+SPACES     | ' '
+WORD       | 'EOF'
+==============
+```
+
+```bash
+minishell$ echo hello >> output.txt
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | 'hello'
+SPACES     | ' '
+APPEND     | '>>'
+SPACES     | ' '
+WORD       | 'output.txt'
+==============
+```
+
+---
+
+## ✅ TEST 7: Variables d'environnement
+```bash
+minishell$ echo $USER
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+VAR        | '$USER'
+==============
+```
+
+```bash
+minishell$ echo $?
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+VAR        | '$?'
+==============
+```
+
+---
+
+## ✅ TEST 8: Variables collées
+```bash
+minishell$ echo $USER$HOME
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+VAR        | '$USER'
+VAR        | '$HOME'
+==============
+```
+
+---
+
+## ✅ TEST 9: Guillemets simples (single quotes)
+```bash
+minishell$ echo 'hello world'
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | ''hello world''
+==============
+```
+
+```bash
+minishell$ echo '$USER'
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | ''$USER''
+==============
+```
+
+---
+
+## ✅ TEST 10: Guillemets doubles (double quotes)
+```bash
+minishell$ echo "hello world"
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | '"hello world"'
+==============
+```
+
+```bash
+minishell$ echo "$USER"
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | '"'
+VAR        | '$USER'
+WORD       | '"'
+==============
+```
+
+⚠️ **Note:** Pour les quotes doubles avec variables, le comportement peut varier selon ton implémentation.
+
+---
+
+## ✅ TEST 11: Guillemets non fermés
+```bash
+minishell$ echo "hello
+```
+**Attendu:**
+```
+minishell: unclosed quote `"`
+```
+
+```bash
+minishell$ echo 'hello
+```
+**Attendu:**
+```
+minishell: unclosed quote `'`
+```
+
+---
+
+## ✅ TEST 12: Commande complexe
+```bash
+minishell$ cat file.txt | grep "test" | wc -l > result.txt
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'cat'
+SPACES     | ' '
+WORD       | 'file.txt'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'grep'
+SPACES     | ' '
+WORD       | '"test"'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'wc'
+SPACES     | ' '
+WORD       | '-l'
+SPACES     | ' '
+TRUNC      | '>'
+SPACES     | ' '
+WORD       | 'result.txt'
+==============
+```
+
+---
+
+## ✅ TEST 13: Sans espaces
+```bash
+minishell$ cat<input.txt>output.txt
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'cat'
+INPUT      | '<'
+WORD       | 'input.txt'
+TRUNC      | '>'
+WORD       | 'output.txt'
+==============
+```
+
+---
+
+## ✅ TEST 14: Pipes multiples
+```bash
+minishell$ ls | cat | cat | cat
+```
+**Attendu:**
+```
+=== TOKENS ===
+WORD       | 'ls'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'cat'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'cat'
+SPACES     | ' '
+PIPE       | '|'
+SPACES     | ' '
+WORD       | 'cat'
+==============
+```
+
+---
+
+## ✅ TEST 15: Caractères spéciaux dans quotes
+```bash
+minishell$ echo "cat | grep > test"
+```
+**Attendu:** Tout doit être dans un seul token WORD
+```
+=== TOKENS ===
+WORD       | 'echo'
+SPACES     | ' '
+WORD       | '"cat | grep > test"'
+==============
+```
+
+---
+
+## ❌ TESTS D'ERREURS
+
+### TEST 16: Unclosed quotes
+```bash
+minishell$ echo "hello
+# Doit afficher: minishell: unclosed quote `"`
+```
+
+### TEST 17: Input NULL
+```bash
+# Dans le code, tester avec tokenize(NULL)
+# Doit retourner NULL sans crash
+```
+
+---
+
+## 🔍 Checklist de validation
+
+- [ ] Commandes simples tokenisées
+- [ ] Arguments séparés par SPACES
+- [ ] Pipes détectés (PIPE)
+- [ ] Redirections simples (<, >)
+- [ ] Redirections doubles (<<, >>)
+- [ ] Variables $USER, $?, etc.
+- [ ] Guillemets simples conservés
+- [ ] Guillemets doubles conservés
+- [ ] Guillemets non fermés → erreur
+- [ ] Pas de crash sur entrée vide/NULL
+- [ ] Pas de memory leaks
+
 ==================================================
 
 Tests Phase 3:

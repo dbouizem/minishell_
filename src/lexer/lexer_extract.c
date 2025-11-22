@@ -7,6 +7,8 @@ char	*extract_substring(char *input, int start, int end)
 	int		i;
 
 	len = end - start;
+	if (len <= 0)
+		return (NULL);
 	str = malloc(len + 1);
 	if (!str)
 		return (NULL);
@@ -14,19 +16,22 @@ char	*extract_substring(char *input, int start, int end)
 	while (start < end)
 		str[i++] = input[start++];
 	str[i] = '\0';
-	if (i > 0 && str[i - 1] == '\n')
-		str[i - 1] = '\0';
 	return (str);
 }
 
-void	handle_quotes(char *input, int *i)
+int	handle_quotes(char *input, int *i)
 {
-	char	quote;
+	char	quote_type;
 
-	quote = input[*i];
+	quote_type = input[*i];
 	(*i)++;
-	while (input[*i] && input[*i] != quote)
+	while (input[*i] && input[*i] != quote_type)
 		(*i)++;
-	if (input[*i] == quote)
-		(*i)++;
+	if (!input[*i])
+	{
+		printf("minishell: unclosed quote `%c'\n", quote_type);
+		return (0);
+	}
+	(*i)++;
+	return (1);
 }

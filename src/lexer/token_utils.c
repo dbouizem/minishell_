@@ -6,7 +6,10 @@ t_token	*create_token(t_token_type type, char *value)
 
 	token = malloc(sizeof(t_token));
 	if (!token)
+	{
+		perror("minishell: malloc");
 		return (NULL);
+	}
 	token->type = type;
 	token->value = value;
 	token->next = NULL;

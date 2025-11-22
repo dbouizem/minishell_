@@ -20,6 +20,7 @@ typedef struct s_shell
 {
 	char			**env;
 	int				exit_status;
+	int				interactive; //  0 ou 1  isatty()
 	struct termios	original_term; // SAUVEGARDE DU TERMINAL
 }	t_shell;
 
