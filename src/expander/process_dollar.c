@@ -20,10 +20,8 @@ char	*extract_var_name(char *str, int *i)
 	}
 	while (str[*i] && is_valid_var_char(str[*i]))
 		(*i)++;
-
 	if (*i == start)
 		return (ft_strdup("$"));
-
 	var_name = malloc(*i - start + 1);
 	if (!var_name)
 		return (NULL);
@@ -36,7 +34,8 @@ char	*process_dollar(char *str, int *i, t_shell *shell)
 	char	*var_name;
 	char	*var_value;
 
-	if (!str[*i + 1] || str[*i + 1] == ' ' || str[*i + 1] == '\'' || str[*i + 1] == '\"')
+	if (!str[*i + 1] || str[*i + 1] == ' '
+		|| str[*i + 1] == '\'' || str[*i + 1] == '\"')
 	{
 		(*i)++;
 		return (ft_strdup("$"));
