@@ -18,7 +18,6 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/tokenize.c \
 		$(SRC_DIR)/lexer/token_utils.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
-		$(SRC_DIR)/lexer/lexer_extract.c \
 		$(SRC_DIR)/lexer/lexer_handlers.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
