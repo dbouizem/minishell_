@@ -6,7 +6,7 @@
 typedef struct s_redir
 {
 	int				type;		// INPUT, TRUNC, HEREDOC, APPEND
-	char			*file;		// Nom du fichier
+	char			*file;
 	struct s_redir	*next;
 }	t_redir;
 

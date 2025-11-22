@@ -28,13 +28,16 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 		redir = cmd->redirs;
 		while (redir)
 		{
-			expanded = expand_string(redir->file, shell);
-			if (expanded)
+			if (redir->type != HEREDOC)
 			{
-				no_quotes = remove_quotes(expanded);
-				free(redir->file);
-				free(expanded);
-				redir->file = no_quotes;
+				expanded = expand_string(redir->file, shell);
+				if (expanded)
+				{
+					no_quotes = remove_quotes(expanded);
+					free(redir->file);
+					free(expanded);
+					redir->file = no_quotes;
+				}
 			}
 			redir = redir->next;
 		}

@@ -32,7 +32,11 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/expand_var.c \
 		$(SRC_DIR)/expander/expand_quotes.c \
 		$(SRC_DIR)/expander/expand_utils.c \
-		$(SRC_DIR)/expander/expand_string.c
+		$(SRC_DIR)/expander/expand_string.c \
+		$(SRC_DIR)/expander/process_dollar.c \
+		$(SRC_DIR)/expander/process_normal.c
+
+
 
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
