@@ -20,7 +20,6 @@ libft/*.o
 *.tmp
 *.bak
 *.dSYM/
-core
 vgcore.*
 .valgrind.log
 
