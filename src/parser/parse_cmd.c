@@ -1,30 +1,75 @@
 #include "../includes/minishell.h"
 
-t_cmd	*parse_command(t_token **tokens)
+static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd)
 {
-	t_cmd	*cmd;
 	t_redir	*redir;
 
-	cmd = create_cmd();
-	if (!cmd)
-		return (NULL);
+	while (*tokens && (*tokens)->type != PIPE && is_redir((*tokens)->type))
+	{
+		redir = parse_redirection(tokens);
+		if (!redir)
+			return (0);
+		add_redir(&cmd->redirs, redir);
+		while (*tokens && (*tokens)->type == SPACES)
+			*tokens = (*tokens)->next;
+	}
+	return (1);
+}
+
+static int	handle_args(t_token **tokens, t_cmd *cmd)
+{
 	cmd->args = parse_arguments(tokens);
 	if (!cmd->args)
-		return (free_cmd(cmd), NULL);
+	{
+		if (!cmd->redirs)
+			return (0);
+		cmd->args = malloc(sizeof(char *));
+		if (!cmd->args)
+			return (0);
+		cmd->args[0] = NULL;
+	}
+	return (1);
+}
+
+static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd)
+{
+	t_redir	*redir;
+
 	while (*tokens && (*tokens)->type != PIPE)
 	{
-		if ((*tokens)->type == INPUT || (*tokens)->type == TRUNC
-			|| (*tokens)->type == HEREDOC || (*tokens)->type == APPEND)
+		if (is_redir((*tokens)->type))
 		{
 			redir = parse_redirection(tokens);
 			if (!redir)
-				return (free_cmd(cmd), NULL);
+				return (0);
 			add_redir(&cmd->redirs, redir);
 		}
 		else if ((*tokens)->type == SPACES)
 			*tokens = (*tokens)->next;
 		else
 			*tokens = (*tokens)->next;
+	}
+	return (1);
+}
+
+t_cmd	*parse_command(t_token **tokens)
+{
+	t_cmd	*cmd;
+
+	cmd = create_cmd();
+	if (!cmd)
+		return (NULL);
+	if (!handle_initial_redirs(tokens, cmd))
+		return (NULL);
+	if (!handle_args(tokens, cmd))
+	{
+		free_cmd(cmd);
+		return (NULL);
+	}
+	if (!handle_remaining_redirs(tokens, cmd))
+	{
+		free_cmd(cmd);
+		return (NULL);
 	}
 	return (cmd);
 }

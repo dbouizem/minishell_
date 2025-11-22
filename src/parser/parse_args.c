@@ -38,14 +38,12 @@ static int	process_argument(t_token **tokens, char **args, int *i)
 	return (1);
 }
 
-char	**parse_arguments(t_token **tokens)
+static char	**process_arguments(t_token **tokens, int count)
 {
 	char	**args;
-	int		count;
 	int		i;
 	int		result;
 
-	count = count_args(*tokens);
 	args = malloc(sizeof(char *) * (count + 1));
 	if (!args)
 		return (NULL);
@@ -60,4 +58,21 @@ char	**parse_arguments(t_token **tokens)
 	}
 	args[i] = NULL;
 	return (args);
+}
+
+char	**parse_arguments(t_token **tokens)
+{
+	char	**args;
+	int		count;
+
+	count = count_args(*tokens);
+	if (count == 0)
+	{
+		args = malloc(sizeof(char *));
+		if (!args)
+			return (NULL);
+		args[0] = NULL;
+		return (args);
+	}
+	return (process_arguments(tokens, count));
 }

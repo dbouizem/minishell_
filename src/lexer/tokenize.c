@@ -30,9 +30,6 @@ static void	process_char(char *input, int *i, t_token **head, t_token **current)
 {
 	if (is_whitespace(input[*i]))
 		handle_spaces(input, i, head, current);
-	// désactiver les tokens VAR
-	// else if (input[*i] == '$')
-	// 	handle_variable(input, i, head, current);
 	else if (is_special_char(input[*i]))
 		handle_pipe_or_redir(input, i, head, current);
 	else
@@ -57,12 +54,7 @@ t_token	*tokenize(char *input)
 	while (input[i])
 		process_char(input, &i, &head, &current);
 
-	if (head && check_syntax_errors(head))
-		return (head);
-	else
-	{
-		if (head)
-			free_tokens(head);
-		return (NULL);
-	}
+	//  SUPPRIMER le check_syntax_errors
+	// Le lexer doit TOUJOURS retourner les tokens, même si syntaxe invalide
+	return (head);
 }

@@ -21,14 +21,13 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_handlers.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
-		$(SRC_DIR)/lexer/lexer_redir_utils.c \
-		$(SRC_DIR)/lexer/syntax_checker.c \
 		$(SRC_DIR)/parser/parse.c \
 		$(SRC_DIR)/parser/parse_cmd.c \
 		$(SRC_DIR)/parser/parse_args.c \
 		$(SRC_DIR)/parser/parse_redir.c \
 		$(SRC_DIR)/parser/parse_utils.c \
 		$(SRC_DIR)/parser/parse_cleanup.c \
+		$(SRC_DIR)/parser/parse_syntax.c \
 		$(SRC_DIR)/expander/expand.c \
 		$(SRC_DIR)/expander/expand_var.c \
 		$(SRC_DIR)/expander/expand_quotes.c \

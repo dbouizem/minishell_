@@ -19,23 +19,6 @@ char	*extract_substring(char *input, int start, int end)
 	return (str);
 }
 
-int	handle_quotes(char *input, int *i)
-{
-	char	quote_type;
-
-	quote_type = input[*i];
-	(*i)++;
-	while (input[*i] && input[*i] != quote_type)
-		(*i)++;
-	if (!input[*i])
-	{
-		printf("minishell: unclosed quote `%c'\n", quote_type);
-		return (0);
-	}
-	(*i)++;
-	return (1);
-}
-
 void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
 {
 	int		start;

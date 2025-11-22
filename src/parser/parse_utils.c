@@ -31,14 +31,17 @@ t_redir	*create_redir(int type, char *file)
 
 static void	print_args_list(char **args)
 {
-	int	i;
+	int		i;
+	char	*trimmed;
 
 	i = 0;
 	if (!args)
 		return ;
 	while (args[i])
 	{
-		printf("'%s'", args[i]);
+		trimmed = ft_strtrim(args[i], "\n\r");
+		printf("'%s'", trimmed);
+		free(trimmed);
 		if (args[i + 1])
 			printf(", ");
 		i++;

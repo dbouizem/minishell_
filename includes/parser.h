@@ -28,5 +28,6 @@ t_redir	*create_redir(int type, char *file);
 void	free_cmd(t_cmd *cmd);
 void	free_redirs(t_redir *redirs);
 void	print_cmd(t_cmd *cmd);
+int		check_parser_syntax(t_cmd *cmds);
 
 #endif

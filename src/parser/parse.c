@@ -20,7 +20,18 @@ static void	skip_pipe_token(t_token **tokens)
 		*tokens = (*tokens)->next;
 }
 
-t_cmd	*parse(t_token *tokens)
+static int	check_final_pipe(t_token *tokens, t_cmd *head)
+{
+	if (tokens && tokens->type == PIPE && !tokens->next)
+	{
+		printf("minishell: syntax error near unexpected token `|'\n");
+		free_cmd(head);
+		return (0);
+	}
+	return (1);
+}
+
+static t_cmd	*process_tokens(t_token *tokens)
 {
 	t_cmd	*head;
 	t_cmd	*current;
@@ -28,15 +39,36 @@ t_cmd	*parse(t_token *tokens)
 
 	head = NULL;
 	current = NULL;
-	if (!tokens)
-		return (NULL);
 	while (tokens)
 	{
 		new_cmd = parse_command(&tokens);
 		if (!new_cmd)
-			break ;
+		{
+			if (head)
+				free_cmd(head);
+			return (NULL);
+		}
 		add_command_to_list(&head, &current, new_cmd);
+		if (!check_final_pipe(tokens, head))
+			return (NULL);
 		skip_pipe_token(&tokens);
+	}
+	return (head);
+}
+
+t_cmd	*parse(t_token *tokens)
+{
+	t_cmd	*head;
+
+	if (!tokens)
+		return (NULL);
+	head = process_tokens(tokens);
+	if (!head)
+		return (NULL);
+	if (!check_parser_syntax(head))
+	{
+		free_cmd(head);
+		return (NULL);
 	}
 	return (head);
 }

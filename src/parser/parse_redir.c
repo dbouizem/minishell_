@@ -1,27 +1,64 @@
 #include "../includes/minishell.h"
 
+static int	skip_spaces(t_token **tokens)
+{
+	while (*tokens && (*tokens)->type == SPACES)
+		*tokens = (*tokens)->next;
+	return (1);
+}
+
+static t_redir	*create_valid_redir(t_token **tokens, t_token_type type)
+{
+	char	*file;
+	t_redir	*redir;
+
+	file = ft_strdup((*tokens)->value);
+	if (!file)
+		return (NULL);
+	*tokens = (*tokens)->next;
+	redir = create_redir(type, file);
+	if (!redir)
+	{
+		free(file);
+		return (NULL);
+	}
+	return (redir);
+}
+
+static void	handle_syntax_error(t_token **tokens)
+{
+	if (*tokens && is_redir((*tokens)->type))
+	{
+		printf("minishell: syntax error near unexpected token `%c'\n",
+			(*tokens)->value[0]);
+	}
+	else if (*tokens)
+	{
+		printf("minishell: syntax error near unexpected token `%s'\n",
+			(*tokens)->value);
+	}
+	else
+	{
+		printf("minishell: syntax error near unexpected token `newline'\n");
+	}
+}
+
 t_redir	*parse_redirection(t_token **tokens)
 {
 	t_token_type	type;
-	char			*file;
-	t_redir			*redir;
 
 	if (!tokens || !*tokens)
 		return (NULL);
 	type = (*tokens)->type;
 	*tokens = (*tokens)->next;
-	while (*tokens && (*tokens)->type == SPACES)
-		*tokens = (*tokens)->next;
+	skip_spaces(tokens);
 	if (*tokens && ((*tokens)->type == WORD || (*tokens)->type == VAR))
-	{
-		file = ft_strdup((*tokens)->value);
-		*tokens = (*tokens)->next;
-		redir = create_redir(type, file);
-		return (redir);
-	}
+		return (create_valid_redir(tokens, type));
 	else
-		return (write(2, "minishell: syntax error near unexpected token\n", 46),
-			NULL);
+	{
+		handle_syntax_error(tokens);
+		return (NULL);
+	}
 }
 
 void	add_redir(t_redir **head, t_redir *new_redir)
