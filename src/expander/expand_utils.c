@@ -5,6 +5,11 @@ int	is_valid_var_char(char c)
 	return (ft_isalnum(c) || c == '_');
 }
 
+int	is_valid_var_start_char(char c)
+{
+	return (ft_isalpha(c) || c == '_');
+}
+
 char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*result;
