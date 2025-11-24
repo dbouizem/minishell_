@@ -465,16 +465,79 @@ Erreurs syntaxiques : ls > → message d'erreur
 
 Tests Phase 4:
 
-echo $USER → djh
-echo '$USER' → $USER
-echo "Bonjour $USER" → Bonjour djh
-echo $UNDEFINED → (ligne vide)
-echo "Test:$UNDEFINED" → Test:
-echo $1 → (ligne vide)
-echo "User:'$USER'" → User:'djh'
-echo '"$USER"' → "$USER"
-echo "Bonjour"$USER"!" → Bonjourdjh!
-echo "$USER est dans $PWD" → djh est dans /chemin
+Voici **LE TABLEAU OFFICIEL COMPLET** pour **TESTER la PHASE 4 (EXPANSION)** de ton minishell.
+Il couvre **100%** des cas attendus dans cette phase (et seulement ceux-là).
+
+Tu peux t’en servir comme **checklist de validation**.
+
+---
+
+# 🟦📘 **TABLEAU DE TESTS — PHASE 4 : EXPANSION (Minishell 42)**
+
+| Catégorie                                | Commande                         | Résultat attendu (Bash / Minishell Phase 4) |                        |
+| ---------------------------------------- | -------------------------------- | ------------------------------------------- | ---------------------- |
+| **1. Expansion simple**                  | `echo $USER`                     | `djh`                                       |                        |
+|                                          | `echo $HOME`                     | `/home/djh`                                 |                        |
+|                                          | `echo $PATH`                     | *(valeur du PATH)*                          |                        |
+|                                          | `echo $PWD`                      | *(répertoire courant)*                      |                        |
+| **2. Variable inexistante**              | `echo $NOTHING`                  | *(argument vide)*                           |                        |
+|                                          | `echo ABC$NOTHINGDEF`            | `ABCDEF`                                    |                        |
+|                                          | `echo "$NOTHING"`                | `""`                                        |                        |
+| **3. Variables collées**                 | `echo ABC$USERDEF`               | `ABC`                                       |                        |
+|                                          | `echo $USER$HOME$PWD`            | `djh/home/djh/...`                          |                        |
+|                                          | `echo "$USER"_test`              | `djh_test`                                  |                        |
+|                                          | `echo A"$USER"B`                 | `AdjhB`                                     |                        |
+| **4. Double quotes : expansion activée** | `echo "$USER"`                   | `djh`                                       |                        |
+|                                          | `echo "Hello $USER"`             | `Hello djh`                                 |                        |
+|                                          | `echo " $USER "`                 | `djh`                                       |                        |
+|                                          | `echo "$USER$HOME"`              | `djh/home/djh`                              |                        |
+| **5. Simple quotes : pas d’expansion**   | `echo '$USER'`                   | `$USER`                                     |                        |
+|                                          | `echo 'hello $USER'`             | `hello $USER`                               |                        |
+|                                          | `echo 'ABC$USERDEF'`             | `ABC$USERDEF`                               |                        |
+|                                          | `echo '$HOME and $PWD'`          | `$HOME and $PWD`                            |                        |
+| **6. Mélange quotes**                    | `echo "$USER'$HOME'"`            | `djh'/home/djh'`                            |                        |
+|                                          | `echo "$USER"toto'$HOME'$PATH`   | `djhtoto$HOME/usr/...`                      |                        |
+|                                          | `echo '$USER'"$HOME"'$PWD'`      | `$USER/home/djh$PWD`                        |                        |
+| **7. `$?` code retour (PHASE 4)**        | `ls` + `echo $?`                 | `0`                                         |                        |
+|                                          | `ls                              | `+`echo $?`                                 | `2` *(erreur syntaxe)* |
+|                                          | `toto` + `echo $?`               | **Phase 4** = dernier g_exit_status         |                        |
+| **8. `$$` : PID**                        | `echo $$`                        | PID du minishell                            |                        |
+| **9. Expansion dans les redirections**   | `FILE=out.txt ; echo hi > $FILE` | crée *out.txt*                              |                        |
+|                                          | `echo hi > "$USER".txt`          | crée *djh.txt*                              |                        |
+|                                          | `cat < "$HOME"/file.txt`         | ouvre */home/djh/file.txt*                  |                        |
+| **10. Heredoc (phase 4)**                | `cat << EOF`                     | delimiter = `EOF`, expand=1                 |                        |
+|                                          | `cat << "EOF"`                   | delimiter = `EOF`, expand=0                 |                        |
+| **11. Arguments vides**                  | `EMPTY="" ; echo "$EMPTY"`       | `""`                                        |                        |
+|                                          | `echo $EMPTY`                    | argument vide (SUPPRESSION plus tard)       |                        |
+|                                          | `echo "$EMPTY""$EMPTY"`          | `""`                                        |                        |
+| **12. Séquences complexes**              | `echo $$$USER`                   | `PIDdjh` *(minishell)*                      |                        |
+|                                          | `echo "$""USER"`                 | `$USER`                                     |                        |
+|                                          | `echo '"$USER"'`                 | `"$USER"`                                   |                        |
+| **13. Cas non supportés = littéral**     | `echo ${USER}`                   | `${USER}`                                   |                        |
+|                                          | `echo $[1+1]`                    | `$[1+1]`                                    |                        |
+|                                          | `echo $USER:home`                | `djh:home`                                  |                        |
+
+---
+
+# 🟩 Notes importantes (PHASE 4 uniquement)
+
+### ✔ Tu dois gérer :
+
+* `$VAR`
+* `$?`
+* `$$`
+* quotes `"..."` et `'...'`
+* assemblement des arguments
+* delimiter du heredoc + flag expand
+
+### ❌ Tu ne dois PAS gérer :
+
+* execution
+* PATH
+* “command not found” = 127
+* suppression automatique des arguments vides
+* expansion du contenu du heredoc
+
 
 ==================================================
 

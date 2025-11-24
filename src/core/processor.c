@@ -70,7 +70,7 @@ int	process_input(char *input, t_shell *shell)
 		shell->exit_status = 2;
 		return (0);
 	}
-	cmds = parse(tokens);
+	cmds = parse(tokens, shell);
 	if (!cmds)
 	{
 		if (tokens)

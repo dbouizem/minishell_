@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-static int	check_pipe_syntax(t_cmd *cmds)
+static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
 {
 	t_cmd	*current;
 
@@ -13,6 +13,7 @@ static int	check_pipe_syntax(t_cmd *cmds)
 	if (current && (!current->args || !current->args[0]))
 	{
 		printf("minishell: syntax error near unexpected token `|'\n");
+		shell->exit_status = 2;
 		return (0);
 	}
 	current = cmds;
@@ -21,6 +22,7 @@ static int	check_pipe_syntax(t_cmd *cmds)
 		if (!current->args || !current->args[0])
 		{
 			printf("minishell: syntax error near unexpected token `|'\n");
+			shell->exit_status = 2;
 			return (0);
 		}
 		current = current->next;
@@ -28,7 +30,7 @@ static int	check_pipe_syntax(t_cmd *cmds)
 	return (1);
 }
 
-static int	check_redir_syntax(t_cmd *cmds)
+static int	check_redir_syntax(t_cmd *cmds, t_shell *shell)
 {
 	t_cmd		*current_cmd;
 	t_redir		*current_redir;
@@ -43,6 +45,7 @@ static int	check_redir_syntax(t_cmd *cmds)
 			{
 				printf("minishell: syntax error near "
 					"unexpected token `newline'\n");
+				shell->exit_status = 2;
 				return (0);
 			}
 			current_redir = current_redir->next;
@@ -52,15 +55,15 @@ static int	check_redir_syntax(t_cmd *cmds)
 	return (1);
 }
 
-int	check_parser_syntax(t_cmd *cmds)
+int	check_parser_syntax(t_cmd *cmds, t_shell *shell)
 {
 	if (!cmds)
 		return (1);
 
-	if (!check_pipe_syntax(cmds))
+	if (!check_pipe_syntax(cmds, shell))
 		return (0);
 
-	if (!check_redir_syntax(cmds))
+	if (!check_redir_syntax(cmds, shell))
 		return (0);
 
 	return (1);

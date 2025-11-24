@@ -1,12 +1,12 @@
 #include "../includes/minishell.h"
 
-static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd)
+static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd, t_shell *shell)
 {
 	t_redir	*redir;
 
 	while (*tokens && (*tokens)->type != PIPE && is_redir((*tokens)->type))
 	{
-		redir = parse_redirection(tokens);
+		redir = parse_redirection(tokens, shell);
 		if (!redir)
 			return (0);
 		add_redir(&cmd->redirs, redir);
@@ -31,7 +31,8 @@ static int	handle_args(t_token **tokens, t_cmd *cmd)
 	return (1);
 }
 
-static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd)
+static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd,
+		t_shell *shell)
 {
 	t_redir	*redir;
 
@@ -39,7 +40,7 @@ static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd)
 	{
 		if (is_redir((*tokens)->type))
 		{
-			redir = parse_redirection(tokens);
+			redir = parse_redirection(tokens, shell);
 			if (!redir)
 				return (0);
 			add_redir(&cmd->redirs, redir);
@@ -52,21 +53,21 @@ static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd)
 	return (1);
 }
 
-t_cmd	*parse_command(t_token **tokens)
+t_cmd	*parse_command(t_token **tokens, t_shell *shell)
 {
 	t_cmd	*cmd;
 
 	cmd = create_cmd();
 	if (!cmd)
 		return (NULL);
-	if (!handle_initial_redirs(tokens, cmd))
+	if (!handle_initial_redirs(tokens, cmd, shell))
 		return (NULL);
 	if (!handle_args(tokens, cmd))
 	{
 		free_cmd(cmd);
 		return (NULL);
 	}
-	if (!handle_remaining_redirs(tokens, cmd))
+	if (!handle_remaining_redirs(tokens, cmd, shell))
 	{
 		free_cmd(cmd);
 		return (NULL);

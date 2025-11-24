@@ -3,6 +3,8 @@
 
 # include "minishell.h"
 
+typedef struct	s_shell t_shell;
+
 typedef struct s_redir
 {
 	int				type;		// INPUT, TRUNC, HEREDOC, APPEND
@@ -17,17 +19,17 @@ typedef struct s_cmd
 	struct s_cmd	*next;		// Commande suivante (après pipe)
 }	t_cmd;
 
-t_cmd	*parse(t_token *tokens);
-t_cmd	*parse_command(t_token **tokens);
+t_cmd	*parse(t_token *tokens, t_shell *shell);
+t_cmd	*parse_command(t_token **tokens, t_shell *shell);
 char	**parse_arguments(t_token **tokens);
 int		count_args(t_token *tokens);
-t_redir	*parse_redirection(t_token **tokens);
+t_redir	*parse_redirection(t_token **tokens, t_shell *shell);
 void	add_redir(t_redir **head, t_redir *new_redir);
 t_cmd	*create_cmd(void);
 t_redir	*create_redir(int type, char *file);
 void	free_cmd(t_cmd *cmd);
 void	free_redirs(t_redir *redirs);
 void	print_cmd(t_cmd *cmd);
-int		check_parser_syntax(t_cmd *cmds);
+int		check_parser_syntax(t_cmd *cmds, t_shell *shell);
 
 #endif

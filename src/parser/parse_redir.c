@@ -25,7 +25,7 @@ static t_redir	*create_valid_redir(t_token **tokens, t_token_type type)
 	return (redir);
 }
 
-static void	handle_syntax_error(t_token **tokens)
+static void	handle_syntax_error(t_token **tokens, t_shell *shell)
 {
 	if (*tokens && is_redir((*tokens)->type))
 	{
@@ -41,9 +41,10 @@ static void	handle_syntax_error(t_token **tokens)
 	{
 		printf("minishell: syntax error near unexpected token `newline'\n");
 	}
+	shell->exit_status = 2;
 }
 
-t_redir	*parse_redirection(t_token **tokens)
+t_redir	*parse_redirection(t_token **tokens, t_shell *shell)
 {
 	t_token_type	type;
 
@@ -56,7 +57,7 @@ t_redir	*parse_redirection(t_token **tokens)
 		return (create_valid_redir(tokens, type));
 	else
 	{
-		handle_syntax_error(tokens);
+		handle_syntax_error(tokens, shell);
 		return (NULL);
 	}
 }
