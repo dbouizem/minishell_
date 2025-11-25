@@ -37,3 +37,4 @@ vgcore.*
 # === Test scripts output ===
 tests/output/
 tests/tmp/
+Doc.md

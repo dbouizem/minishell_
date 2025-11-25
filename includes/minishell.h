@@ -27,6 +27,7 @@ typedef struct s_shell
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 char	*read_input(void);
+char	*read_input_non_interactive(void);
 void	display_welcome(void);
 int		process_input(char *input, t_shell *shell);
 

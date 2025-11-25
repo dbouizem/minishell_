@@ -1,542 +1,223 @@
-==================================================
+# 🐚 **MINISHELL – TABLEAUX DE TESTS**
+*Pour voir le rendu d’un fichier ```Ctrl + Shift + V```*
 
-Tests Phase 1:
 
- Compilation sans erreurs (-Wall -Wextra -Werror)
- Pas de relink inutile
- Message de bienvenue affiché
- Prompt fonctionnel
- Historique avec ↑↓
- Commande exit fonctionne
- Ctrl+D quitte proprement
- Gestion environnement vide
- Détection stdin non-terminal
- Pas de memory leaks (sauf readline)
+# ===============================
 
- Test 1: Compilation
-bashmake
-# Vérifier : pas d'erreurs, pas de warnings
-# Vérifier : pas de relink si on refait make
-make
-Test 2: Lancement basique
-bash./minishell
-# Attendu :
-# - Message de bienvenue coloré avec 🐚
-# - Information sur le terminal
-# - Prompt "minishell$ " qui apparaît
-Test 3: Environnement
-bash# Dans minishell :
-(vide - juste Enter)
-# Attendu : nouveau prompt, pas de crash
+# 🟦 **PHASE 1 — Tests de base**
 
-# Test avec espaces :
+Cette phase consiste à mettre en place l’ossature minimale d’un shell.
+Elle valide surtout la mise en place des fondations :
 
-(plusieurs espaces + Enter)
-# Attendu : nouveau prompt, pas de crash
-Test 4: Historique readline
-bash# Dans minishell, taper :
-hello
-world
-test
+✔ Objectifs
 
-# Puis utiliser les flèches ↑ ↓
-# Attendu : navigation dans l'historique (hello, world, test)
-Test 5: Commande exit
-bash# Dans minishell :
-exit
-# Attendu : message "Exiting minishell..." et fermeture propre
-Test 6: Ctrl+D (EOF)
-bash./minishell
-# Appuyer sur Ctrl+D
-# Attendu : sortie propre du shell
-Test 7: Environnement vide
-bash# Lancer sans environnement :
-env -i ./minishell
-# Attendu :
-# - Warning "No environment, creating minimal one"
-# - Shell fonctionne quand même avec PWD, SHLVL, _
-Test 8: Test avec stdin non-terminal
-bashecho "test" | ./minishell
-# Attendu : message d'erreur "stdin is not a terminal" et exit
-Test 9: Mémoire (Valgrind)
-bashvalgrind --leak-check=full --show-leak-kinds=all ./minishell
-# Dans minishell :
-test1
-test2
+Compiler sans erreurs ni warnings (-Wall -Wextra -Werror)
+
+Gérer l’affichage d’un prompt
+
+Lire une ligne de commande (readline)
+
+Ajouter la ligne à l’historique
+
+Gérer :
+
+Ctrl+D (EOF)
+
 exit
 
-# Attendu :
-# - Pas de leaks de TON code
-# - Leaks de readline() sont acceptés (indiqués dans le sujet)
+un environnement vide
 
-==================================================
+stdin non-interactif
 
-Tests Phase 2:
+Aucun crash, comportement stable
 
-## 📋 Préparation
-```bash
-make re
-./minishell
-```
+Pas de memory leaks (hors readline)
 
----
+🧠 Idée globale
 
-## ✅ TEST 1: Commande simple
-```bash
-minishell$ ls
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'ls'
-==============
-```
+→ Mettre en place un shell minimal fonctionnel, capable de s’ouvrir, afficher un prompt, répondre proprement à l’utilisateur et se fermer correctement.
 
----
+| Test                   | Commande / Action                                | Attendu                                       |                                              |
+| ---------------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------- |
+| **Compilation**        | `make`                                           | Aucun warning, aucune erreur, pas de relink   |                                              |
+| **Relink**             | `make` après un premier make                     | Aucune recompilation                          |                                              |
+| **Lancement**          | `./minishell`                                    | Message de bienvenue 🐚 + prompt `minishell$` |                                              |
+| **Entrée vide**        | `<Enter>`                                        | Nouveau prompt, aucun crash                   |                                              |
+| **Espaces seulement**  | `␣␣␣␣<Enter>`                                    | Nouveau prompt, aucun crash                   |                                              |
+| **Historique**         | Entrer `hello`, `world`, `test`, puis flèches ↑↓ | Historique opérationnel                       |                                              |
+| **exit**               | `exit`                                           | Message de sortie + fermeture propre          |                                              |
+| **Ctrl+D**             | `Ctrl + D`                                       | Fermeture propre                              |                                              |
+| **env vide**           | `env -i ./minishell`                             | Création PWD, SHLVL, _, warning si vide       |                                              |
+| **stdin non-terminal** | echo "ls" ./minishell                            | stdin = pip -> lire, exécuter, quitter (Afficher “stdin is not a terminal” ? pas demanse a 42) |
+| **Valgrind**           | `valgrind ./minishell`                           | Pas de leaks (hors readline)                  |                                              |
 
-## ✅ TEST 2: Commande avec arguments
-```bash
-minishell$ ls -la
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'ls'
-SPACES     | ' '
-WORD       | '-la'
-==============
-```
 
----
+# ===============================
 
-## ✅ TEST 3: Espaces multiples
-```bash
-minishell$ ls    -la
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'ls'
-SPACES     | '    '
-WORD       | '-la'
-==============
-```
+# 🟩 **PHASE 2 — Tokenizer**
 
----
+Ici, tu dois transformer la ligne tapée en une liste de tokens lisibles par ton programme.
 
-## ✅ TEST 4: Pipe simple
-```bash
-minishell$ ls | grep test
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'ls'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'grep'
-SPACES     | ' '
-WORD       | 'test'
-==============
-```
+✔ Objectifs
 
----
+Découper la ligne en tokens :
 
-## ✅ TEST 5: Redirections simples
-```bash
-minishell$ cat < input.txt
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'cat'
-SPACES     | ' '
-INPUT      | '<'
-SPACES     | ' '
-WORD       | 'input.txt'
-==============
-```
+mots (WORD)
 
-```bash
-minishell$ echo hello > output.txt
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | 'hello'
-SPACES     | ' '
-TRUNC      | '>'
-SPACES     | ' '
-WORD       | 'output.txt'
-==============
-```
+espaces (SPACES)
 
----
+pipes (|)
 
-## ✅ TEST 6: Redirections doubles
-```bash
-minishell$ cat << EOF
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'cat'
-SPACES     | ' '
-HEREDOC    | '<<'
-SPACES     | ' '
-WORD       | 'EOF'
-==============
-```
+redirections (<, >, <<, >>)
 
-```bash
-minishell$ echo hello >> output.txt
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | 'hello'
-SPACES     | ' '
-APPEND     | '>>'
-SPACES     | ' '
-WORD       | 'output.txt'
-==============
-```
+variables ($USER, $?, etc.)
 
----
+quotes simples '...'
 
-## ✅ TEST 7: Variables d'environnement
-```bash
-minishell$ echo $USER
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-VAR        | '$USER'
-==============
-```
+quotes doubles "..."
 
-```bash
-minishell$ echo $?
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-VAR        | '$?'
-==============
-```
+Détecter les erreurs : quotes non fermées
 
----
+Aucun crash quelle que soit l’entrée
 
-## ✅ TEST 8: Variables collées
-```bash
-minishell$ echo $USER$HOME
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-VAR        | '$USER'
-VAR        | '$HOME'
-==============
-```
+🧠 Idée globale
 
----
+→ Le tokenizer lit la ligne caractère par caractère et identifie tous les éléments syntaxiques nécessaires à la suite.
+C’est une phase pure analyse lexicale, rien n’est encore exécuté.
 
-## ✅ TEST 9: Guillemets simples (single quotes)
-```bash
-minishell$ echo 'hello world'
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | ''hello world''
-==============
-```
 
-```bash
-minishell$ echo '$USER'
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | ''$USER''
-==============
-```
+| Catégorie                | Commande          | Tokens attendus                                               |                                                      |                                  |
+| ------------------------ | ----------------- | ------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------- |
+| **Simple**               | `ls`              | `WORD 'ls'`                                                   |                                                      |                                  |
+| **Arguments**            | `ls -la`          | WORD `'ls'` / SPACES / WORD `'-la'`                           |                                                      |                                  |
+| **Espaces multiples**    | `ls    -la`       | WORD `'ls'` / SPACES `'    '` / WORD `'-la'`                  |                                                      |                                  |
+| **Pipe**                 | `ls               | grep test`                                                    | WORD / SPACES / PIPE / SPACES / WORD / SPACES / WORD |                                  |
+| **Redirection <**        | `cat < input.txt` | WORD `'cat'` / SPACES / INPUT `'<'` / SPACES / WORD           |                                                      |                                  |
+| **Redirection >**        | `echo hi > out`   | WORD / SPACES / WORD / SPACES / TRUNC `'>'` / SPACES / WORD   |                                                      |                                  |
+| **Redirection <<**       | `cat << EOF`      | WORD / SPACES / HEREDOC `'<<'` / SPACES / WORD                |                                                      |                                  |
+| **Redirection >>**       | `echo hi >> out`  | WORD / SPACES / WORD / SPACES / APPEND `'>>'` / SPACES / WORD |                                                      |                                  |
+| **Variable**             | `echo $USER`      | WORD `'echo'` / SPACES / VAR `'$USER'`                        |                                                      |                                  |
+| **Variable $?**          | `echo $?`         | WORD / SPACES / VAR                                           |                                                      |                                  |
+| **Variables collées**    | `echo $USER$HOME` | VAR `'$USER'` / VAR `'$HOME'`                                 |                                                      |                                  |
+| **Quotes simples**       | `echo 'hello'`    | WORD `'echo'` / SPACES / WORD `"'hello'"`                     |                                                      |                                  |
+| **Quotes simples + $**   | `echo '$USER'`    | WORD / SPACES / WORD `"'$USER'"`                              |                                                      |                                  |
+| **Quotes doubles**       | `echo "hello"`    | WORD / SPACES / WORD `"hello"`                                |                                                      |                                  |
+| **Quotes doubles + var** | `echo "$USER"`    | WORD / SPACES / WORD `'"'` + VAR + WORD `'"'`                 |                                                      |                                  |
+| **Quotes non fermées**   | `echo "hello`     | Erreur : `unclosed quote '"'`                                 |                                                      |                                  |
+| **Commande complexe**    | `cat f            | grep "test"                                                   | wc -l > out`                                         | Tous tokens correctement séparés |
+| **Sans espaces**         | `cat<input>out`   | WORD / INPUT / WORD / TRUNC / WORD                            |                                                      |                                  |
+| **Pipes multiples**      | `ls               | cat                                                           | cat`                                                 | Tokens PIPE successifs           |
+| **Quotes contenant       | >**               | `echo "x                                                      | y > z"`                                              | Un seul WORD                     |
+| **tokenize(NULL)**       | —                 | Retourne NULL sans crash                                      |                                                      |                                  |
 
----
 
-## ✅ TEST 10: Guillemets doubles (double quotes)
-```bash
-minishell$ echo "hello world"
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | '"hello world"'
-==============
-```
+# ===============================
 
-```bash
-minishell$ echo "$USER"
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | '"'
-VAR        | '$USER'
-WORD       | '"'
-==============
-```
+# 🟧 **PHASE 3 — Parsing**
 
-⚠️ **Note:** Pour les quotes doubles avec variables, le comportement peut varier selon ton implémentation.
+Maintenant que tu as une liste de tokens, tu dois construire une structure logique qui décrit la commande.
 
----
+✔ Objectifs
 
-## ✅ TEST 11: Guillemets non fermés
-```bash
-minishell$ echo "hello
-```
-**Attendu:**
-```
-minishell: unclosed quote `"`
-```
+Construire la liste des commandes (cmd1, cmd2…)
 
-```bash
-minishell$ echo 'hello
-```
-**Attendu:**
-```
-minishell: unclosed quote `'`
-```
+Gérer correctement :
 
----
+arguments
 
-## ✅ TEST 12: Commande complexe
-```bash
-minishell$ cat file.txt | grep "test" | wc -l > result.txt
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'cat'
-SPACES     | ' '
-WORD       | 'file.txt'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'grep'
-SPACES     | ' '
-WORD       | '"test"'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'wc'
-SPACES     | ' '
-WORD       | '-l'
-SPACES     | ' '
-TRUNC      | '>'
-SPACES     | ' '
-WORD       | 'result.txt'
-==============
-```
+pipes
 
----
+redirections (entrée, sortie, append, heredoc)
 
-## ✅ TEST 13: Sans espaces
-```bash
-minishell$ cat<input.txt>output.txt
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'cat'
-INPUT      | '<'
-WORD       | 'input.txt'
-TRUNC      | '>'
-WORD       | 'output.txt'
-==============
-```
+Valider la syntaxe :
 
----
+ls | → erreur
 
-## ✅ TEST 14: Pipes multiples
-```bash
-minishell$ ls | cat | cat | cat
-```
-**Attendu:**
-```
-=== TOKENS ===
-WORD       | 'ls'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'cat'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'cat'
-SPACES     | ' '
-PIPE       | '|'
-SPACES     | ' '
-WORD       | 'cat'
-==============
-```
+> sans fichier → erreur
 
----
+Préparer une structure exploitable pour l’exécution
 
-## ✅ TEST 15: Caractères spéciaux dans quotes
-```bash
-minishell$ echo "cat | grep > test"
-```
-**Attendu:** Tout doit être dans un seul token WORD
-```
-=== TOKENS ===
-WORD       | 'echo'
-SPACES     | ' '
-WORD       | '"cat | grep > test"'
-==============
-```
+🧠 Idée globale
 
----
+→ Le parsing transforme les tokens en arbre de commandes ou en structures chaînées, comme un mini interpréteur.
+C’est comme traduire une phrase en grammaire C : sujet, verbe, complément.
 
-## ❌ TESTS D'ERREURS
+| Catégorie             | Commande       | Attendu                            |                      |
+| --------------------- | -------------- | ---------------------------------- | -------------------- |
+| **Commande simple**   | `ls -la`       | 1 commande, args = ["ls", "-la"]   |                      |
+| **Pipe**              | `cmd1          | cmd2`                              | 2 commandes chaînées |
+| **Redirection >**     | `cmd > f`      | redirection TRUNC                  |                      |
+| **Redirection <**     | `cmd < f`      | redirection INPUT                  |                      |
+| **Append**            | `cmd >> f`     | redirection APPEND                 |                      |
+| **Heredoc**           | `cmd << EOF`   | redirection HEREDOC                |                      |
+| **Variable**          | `echo $HOME`   | token VAR                          |                      |
+| **Quotes**            | `echo "hello"` | WORD `"hello"`                     |                      |
+| **Erreur syntaxique** | `ls >`         | erreur de parsing (missing target) |                      |
 
-### TEST 16: Unclosed quotes
-```bash
-minishell$ echo "hello
-# Doit afficher: minishell: unclosed quote `"`
-```
 
-### TEST 17: Input NULL
-```bash
-# Dans le code, tester avec tokenize(NULL)
-# Doit retourner NULL sans crash
-```
+# ===============================
 
----
+# 🟨 **PHASE 4 — Expansion**
 
-## 🔍 Checklist de validation
+Cette phase applique les règles du shell pour remplacer certains éléments :
 
-- [ ] Commandes simples tokenisées
-- [ ] Arguments séparés par SPACES
-- [ ] Pipes détectés (PIPE)
-- [ ] Redirections simples (<, >)
-- [ ] Redirections doubles (<<, >>)
-- [ ] Variables $USER, $?, etc.
-- [ ] Guillemets simples conservés
-- [ ] Guillemets doubles conservés
-- [ ] Guillemets non fermés → erreur
-- [ ] Pas de crash sur entrée vide/NULL
-- [ ] Pas de memory leaks
+✔ Objectifs
 
-==================================================
+Résoudre les variables :
 
-Tests Phase 3:
+```$USER $HOME $? $$```
 
-Commande simple : ls -la → 1 commande, 2 args
-Pipe : cmd1 | cmd2 → 2 commandes liées
-Redirection sortie : cmd > file → redir TRUNC
-Redirection entrée : cmd < file → redir INPUT
-Append : cmd >> file → redir APPEND
-Heredoc : cmd << EOF → redir HEREDOC
-Variables : echo $HOME → token VAR
-Quotes : echo "hello" → token WORD avec quotes
-Erreurs syntaxiques : ls > → message d'erreur
+Gérer les expansions à l’intérieur des quotes :
 
-==================================================
+'...' : pas d’expansion "..." : expansion activée Fusionner les morceaux d’arguments
 
-Tests Phase 4:
+Gérer : arguments vides expansions dans les redirections (> $FILE)
 
-Voici **LE TABLEAU OFFICIEL COMPLET** pour **TESTER la PHASE 4 (EXPANSION)** de ton minishell.
-Il couvre **100%** des cas attendus dans cette phase (et seulement ceux-là).
+🧠 Idée globale
 
-Tu peux t’en servir comme **checklist de validation**.
+→ Cette phase transforme ce que l'utilisateur a tapé en valeurs réelles utilisées par le shell.
 
----
 
-# 🟦📘 **TABLEAU DE TESTS — PHASE 4 : EXPANSION (Minishell 42)**
-
-| Catégorie                                | Commande                         | Résultat attendu (Bash / Minishell Phase 4) |                        |
-| ---------------------------------------- | -------------------------------- | ------------------------------------------- | ---------------------- |
-| **1. Expansion simple**                  | `echo $USER`                     | `djh`                                       |                        |
-|                                          | `echo $HOME`                     | `/home/djh`                                 |                        |
-|                                          | `echo $PATH`                     | *(valeur du PATH)*                          |                        |
-|                                          | `echo $PWD`                      | *(répertoire courant)*                      |                        |
-| **2. Variable inexistante**              | `echo $NOTHING`                  | *(argument vide)*                           |                        |
-|                                          | `echo ABC$NOTHINGDEF`            | `ABCDEF`                                    |                        |
-|                                          | `echo "$NOTHING"`                | `""`                                        |                        |
-| **3. Variables collées**                 | `echo ABC$USERDEF`               | `ABC`                                       |                        |
-|                                          | `echo $USER$HOME$PWD`            | `djh/home/djh/...`                          |                        |
-|                                          | `echo "$USER"_test`              | `djh_test`                                  |                        |
-|                                          | `echo A"$USER"B`                 | `AdjhB`                                     |                        |
-| **4. Double quotes : expansion activée** | `echo "$USER"`                   | `djh`                                       |                        |
-|                                          | `echo "Hello $USER"`             | `Hello djh`                                 |                        |
-|                                          | `echo " $USER "`                 | `djh`                                       |                        |
-|                                          | `echo "$USER$HOME"`              | `djh/home/djh`                              |                        |
-| **5. Simple quotes : pas d’expansion**   | `echo '$USER'`                   | `$USER`                                     |                        |
-|                                          | `echo 'hello $USER'`             | `hello $USER`                               |                        |
-|                                          | `echo 'ABC$USERDEF'`             | `ABC$USERDEF`                               |                        |
-|                                          | `echo '$HOME and $PWD'`          | `$HOME and $PWD`                            |                        |
-| **6. Mélange quotes**                    | `echo "$USER'$HOME'"`            | `djh'/home/djh'`                            |                        |
-|                                          | `echo "$USER"toto'$HOME'$PATH`   | `djhtoto$HOME/usr/...`                      |                        |
-|                                          | `echo '$USER'"$HOME"'$PWD'`      | `$USER/home/djh$PWD`                        |                        |
-| **7. `$?` code retour (PHASE 4)**        | `ls` + `echo $?`                 | `0`                                         |                        |
-|                                          | `ls                              | `+`echo $?`                                 | `2` *(erreur syntaxe)* |
-|                                          | `toto` + `echo $?`               | **Phase 4** = dernier g_exit_status         |                        |
-| **8. `$$` : PID**                        | `echo $$`                        | PID du minishell                            |                        |
-| **9. Expansion dans les redirections**   | `FILE=out.txt ; echo hi > $FILE` | crée *out.txt*                              |                        |
-|                                          | `echo hi > "$USER".txt`          | crée *djh.txt*                              |                        |
-|                                          | `cat < "$HOME"/file.txt`         | ouvre */home/djh/file.txt*                  |                        |
-| **10. Heredoc (phase 4)**                | `cat << EOF`                     | delimiter = `EOF`, expand=1                 |                        |
-|                                          | `cat << "EOF"`                   | delimiter = `EOF`, expand=0                 |                        |
-| **11. Arguments vides**                  | `EMPTY="" ; echo "$EMPTY"`       | `""`                                        |                        |
-|                                          | `echo $EMPTY`                    | argument vide (SUPPRESSION plus tard)       |                        |
-|                                          | `echo "$EMPTY""$EMPTY"`          | `""`                                        |                        |
-| **12. Séquences complexes**              | `echo $$$USER`                   | `PIDdjh` *(minishell)*                      |                        |
-|                                          | `echo "$""USER"`                 | `$USER`                                     |                        |
-|                                          | `echo '"$USER"'`                 | `"$USER"`                                   |                        |
-| **13. Cas non supportés = littéral**     | `echo ${USER}`                   | `${USER}`                                   |                        |
-|                                          | `echo $[1+1]`                    | `$[1+1]`                                    |                        |
-|                                          | `echo $USER:home`                | `djh:home`                                  |                        |
-
----
-
-# 🟩 Notes importantes (PHASE 4 uniquement)
-
-### ✔ Tu dois gérer :
-
-* `$VAR`
-* `$?`
-* `$$`
-* quotes `"..."` et `'...'`
-* assemblement des arguments
-* delimiter du heredoc + flag expand
-
-### ❌ Tu ne dois PAS gérer :
-
-* execution
-* PATH
-* “command not found” = 127
-* suppression automatique des arguments vides
-* expansion du contenu du heredoc
+| Catégorie                           | Commande                         | Résultat attendu         |
+| ----------------------------------- | -------------------------------- | ------------------------ |
+| **Expansion simple**                | `echo $USER`                     | djh                      |
+|                                     | `echo $HOME`                     | /home/djh                |
+|                                     | `echo $PATH`                     | valeur PATH              |
+|                                     | `echo $PWD`                      | pwd actuel               |
+| **Variable inexistante**            | `echo $NOTHING`                  | *(vide)*                 |
+|                                     | `echo ABC$NOTHINGDEF`            | ABCDEF                   |
+|                                     | `echo "$NOTHING"`                | ""                       |
+| **Variables collées**               | `echo ABC$USERDEF`               | ABCdjhDEF                |
+|                                     | `echo $USER$HOME$PWD`            | djh/home/djh/...         |
+|                                     | `echo "$USER"_test`              | djh_test                 |
+|                                     | `echo A"$USER"B`                 | AdjhB                    |
+| **Double quotes**                   | `echo "$USER"`                   | djh                      |
+|                                     | `echo "Hello $USER"`             | Hello djh                |
+|                                     | `echo "$USER$HOME"`              | djh/home/djh             |
+| **Simple quotes (pas d’expansion)** | `echo '$USER'`                   | $USER                    |
+|                                     | `echo 'hello $USER'`             | hello $USER              |
+|                                     | `echo '$HOME and $PWD'`          | $HOME and $PWD           |
+| **Mélange de quotes**               | `echo "$USER'$HOME'"`            | djh'/home/djh'           |
+|                                     | `echo "$USER"toto'$HOME'$PATH`   | djhtoto$HOME/usr/...     |
+|                                     | `echo '$USER'"$HOME"'$PWD'`      | $USER/home/djh$PWD       |
+| **$?**                              | `ls` + `echo $?`                 | 0                        |
+|                                     | erreur syntaxe puis `echo $?`    | 2                        |
+|                                     | commande inconnue puis `echo $?` | g_exit_status            |
+| **$$**                              | `echo $$`                        | PID minishell            |
+| **Redirections + expansion**        | `echo hi > $FILE`                | crée out.txt             |
+|                                     | `echo hi > "$USER".txt`          | crée djh.txt             |
+|                                     | `cat < "$HOME"/file.txt`         | ouvre /home/djh/file.txt |
+| **Heredoc**                         | `<< EOF`                         | expand=1                 |
+|                                     | `<< "EOF"`                       | expand=0                 |
+| **Arguments vides**                 | `EMPTY="" ; echo "$EMPTY"`       | ""                       |
+|                                     | `echo $EMPTY`                    | (argument vide)          |
+|                                     | `echo "$EMPTY""$EMPTY"`          | ""                       |
+| **Séquences complexes**             | `echo $$$USER`                   | PIDdjh                   |
+|                                     | `echo "$""USER"`                 | `$USER`                  |
+|                                     | `echo '"$USER"'`                 | "$USER"                  |
+| **Non supporté (littéral)**         | `echo ${USER}`                   | ${USER}                  |
+|                                     | `echo $[1+1]`                    | $[1+1]                   |
+|                                     | `echo $USER:home`                | djh:home                 |
 
 
 ==================================================

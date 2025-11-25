@@ -12,10 +12,12 @@ int	main(int argc, char **argv, char **envp)
 	init_shell(&shell, envp);
 	printf("%s=== Minishell Started ===%s\n", GREEN, RESET);
 	printf("%sType 'exit' to quit or Ctrl+D%s\n", CYAN, RESET);
-
 	while (1)
 	{
-		input = read_input();
+		if (shell.interactive)
+			input = read_input();
+		else
+			input = read_input_non_interactive();
 		if (!input)
 			break ;
 		should_exit = process_input(input, &shell);

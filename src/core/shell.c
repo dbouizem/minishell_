@@ -59,7 +59,7 @@ static char	**copy_env(char **envp)
 
 static void	check_terminal(t_shell *shell)
 {
-	shell->interactive = isatty(STDIN_FILENO);
+	shell->interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 	if (shell->interactive)
 	{
 		if (tcgetattr(STDIN_FILENO, &shell->original_term) == -1)
