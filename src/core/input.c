@@ -22,19 +22,13 @@ char	*read_input_non_interactive(void)
 {
 	char	*line;
 	size_t	len;
-	ssize_t	read_bytes;
 
-	line = NULL;
-	len = 0;
-	read_bytes = getline(&line, &len, stdin);
-	if (read_bytes == -1)
-	{
-		if (line)
-			free(line);
+	line = get_next_line(STDIN_FILENO);
+	if (!line)
 		return (NULL);
-	}
-	if (read_bytes > 0 && line[read_bytes - 1] == '\n')
-		line[read_bytes - 1] = '\0';
+	len = ft_strlen(line);
+	if (len > 0 && line[len - 1] == '\n')
+		line[len - 1] = '\0';
 	return (line);
 }
 

@@ -62,21 +62,21 @@ Ici, tu dois transformer la ligne tapée en une liste de tokens lisibles par ton
 
 Découper la ligne en tokens :
 
-mots (WORD)
+mots ```WORD```
 
-espaces (SPACES)
+espaces ```SPACES```
 
-pipes (|)
+pipes ```|```
 
-redirections (<, >, <<, >>)
+redirections ```<, >, <<, >>```
 
-variables ($USER, $?, etc.)
+variables ```$USER, $?, etc.```
 
-quotes simples '...'
+quotes simples ```'...'```
 
-quotes doubles "..."
+quotes doubles ```"..."```
 
-Détecter les erreurs : quotes non fermées
+Détecter les erreurs : ```quotes non fermées```
 
 Aucun crash quelle que soit l’entrée
 
@@ -91,7 +91,7 @@ C’est une phase pure analyse lexicale, rien n’est encore exécuté.
 | **Simple**               | `ls`              | `WORD 'ls'`                                                   |                                                      |                                  |
 | **Arguments**            | `ls -la`          | WORD `'ls'` / SPACES / WORD `'-la'`                           |                                                      |                                  |
 | **Espaces multiples**    | `ls    -la`       | WORD `'ls'` / SPACES `'    '` / WORD `'-la'`                  |                                                      |                                  |
-| **Pipe**                 | `ls               | grep test`                                                    | WORD / SPACES / PIPE / SPACES / WORD / SPACES / WORD |                                  |
+| **Pipe**                 | `ls \| grep test`                              | WORD / SPACES / PIPE / SPACES / WORD / SPACES / WORD |                                  |
 | **Redirection <**        | `cat < input.txt` | WORD `'cat'` / SPACES / INPUT `'<'` / SPACES / WORD           |                                                      |                                  |
 | **Redirection >**        | `echo hi > out`   | WORD / SPACES / WORD / SPACES / TRUNC `'>'` / SPACES / WORD   |                                                      |                                  |
 | **Redirection <<**       | `cat << EOF`      | WORD / SPACES / HEREDOC `'<<'` / SPACES / WORD                |                                                      |                                  |
