@@ -47,7 +47,7 @@ void	free_tokens(t_token *tokens)
 void	print_tokens(t_token *tokens)
 {
 	const char	*names[] = {
-		"", "SPACES", "WORD", "VAR", "PIPE",
+		"", "SPACES", "WORD", "PIPE",
 		"INPUT", "TRUNC", "HEREDOC", "APPEND", "END"
 	};
 	const char	*val;
