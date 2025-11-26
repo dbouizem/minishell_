@@ -46,14 +46,11 @@ t_token	*tokenize(char *input)
 		return (NULL);
 	if (has_quote_error(input))
 		return (NULL);
-
 	head = NULL;
 	current = NULL;
 	i = 0;
-
 	while (input[i])
 		process_char(input, &i, &head, &current);
-
 	//  SUPPRIMER le check_syntax_errors
 	// Le lexer doit TOUJOURS retourner les tokens, même si syntaxe invalide
 	return (head);

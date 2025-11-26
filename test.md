@@ -1,5 +1,5 @@
 # 🐚 **MINISHELL – TABLEAUX DE TESTS**
-*Pour voir le rendu d’un fichier ```Ctrl + Shift + V```*
+*Pour voir le rendu d’un fichier `Ctrl + Shift + V`*
 
 
 # ===============================
@@ -11,27 +11,27 @@ Elle valide surtout la mise en place des fondations :
 
 ✔ Objectifs
 
-Compiler sans erreurs ni warnings (-Wall -Wextra -Werror)
+Compiler sans `erreurs` ni `warnings (-Wall -Wextra -Werror)`
 
-Gérer l’affichage d’un prompt
+Gérer l’affichage d’un `prompt`
 
-Lire une ligne de commande (readline)
+Lire une ligne de commande `(readline)`
 
 Ajouter la ligne à l’historique
 
 Gérer :
 
-Ctrl+D (EOF)
+`Ctrl+D (EOF)`
 
-exit
+`exit`
 
-un environnement vide
+`un environnement vide`
 
-stdin non-interactif
+`stdin non-interactif`
 
-Aucun crash, comportement stable
+Aucun `crash`, comportement stable
 
-Pas de memory leaks (hors readline)
+Pas de `memory leaks` (hors readline)
 
 🧠 Idée globale
 
@@ -62,21 +62,21 @@ Ici, tu dois transformer la ligne tapée en une liste de tokens lisibles par ton
 
 Découper la ligne en tokens :
 
-mots ```WORD```
+mots `WORD`
 
-espaces ```SPACES```
+espaces `SPACES`
 
-pipes ```|```
+pipes `|`
 
-redirections ```<, >, <<, >>```
+redirections `<, >, <<, >>`
 
-variables ```$USER, $?, etc.```
+variables `$USER, $?, etc.`
 
-quotes simples ```'...'```
+quotes simples `'...'`
 
-quotes doubles ```"..."```
+quotes doubles `"..."`
 
-Détecter les erreurs : ```quotes non fermées```
+Détecter les erreurs : `quotes non fermées`
 
 Aucun crash quelle que soit l’entrée
 
@@ -164,7 +164,7 @@ Cette phase applique les règles du shell pour remplacer certains éléments :
 
 Résoudre les variables :
 
-```$USER $HOME $? $$```
+`$USER $HOME $? $$`
 
 Gérer les expansions à l’intérieur des quotes :
 
