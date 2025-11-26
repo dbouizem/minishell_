@@ -122,37 +122,43 @@ Construire la liste des commandes (cmd1, cmd2…)
 
 Gérer correctement :
 
-arguments
+`arguments`
 
-pipes
+`pipes`
 
-redirections (entrée, sortie, append, heredoc)
+`redirections (entrée, sortie, append, heredoc)`
 
 Valider la syntaxe :
 
-ls | → erreur
+`ls | → erreur`
 
-> sans fichier → erreur
+`> sans fichier → erreur`
 
-Préparer une structure exploitable pour l’exécution
+`Préparer une structure exploitable pour l’exécution`
 
 🧠 Idée globale
 
 → Le parsing transforme les tokens en arbre de commandes ou en structures chaînées, comme un mini interpréteur.
 C’est comme traduire une phrase en grammaire C : sujet, verbe, complément.
 
-| Catégorie             | Commande       | Attendu                            |                      |
-| --------------------- | -------------- | ---------------------------------- | -------------------- |
-| **Commande simple**   | `ls -la`       | 1 commande, args = ["ls", "-la"]   |                      |
-| **Pipe**              | `cmd1          | cmd2`                              | 2 commandes chaînées |
-| **Redirection >**     | `cmd > f`      | redirection TRUNC                  |                      |
-| **Redirection <**     | `cmd < f`      | redirection INPUT                  |                      |
-| **Append**            | `cmd >> f`     | redirection APPEND                 |                      |
-| **Heredoc**           | `cmd << EOF`   | redirection HEREDOC                |                      |
-| **Variable**          | `echo $HOME`   | token VAR                          |                      |
-| **Quotes**            | `echo "hello"` | WORD `"hello"`                     |                      |
-| **Erreur syntaxique** | `ls >`         | erreur de parsing (missing target) |                      |
-
+| Catégorie                           | Commande          | Résultat attendu (structure parser)                 |   |
+| ----------------------------------- | ----------------- | --------------------------------------------------- | - |
+| **Commande simple**                 | `ls -la`          | 1 commande ; args = `["ls","-la"]`                  |   |
+| **Pipe simple**                     | `ls \| grep a`    | 2 commandes ; `["ls"]` → pipe → `["grep","a"]`      |   |
+| **Pipe multiple**                   | `ls \| cat \| wc` | 3 commandes chaînées                                |   |
+| **Redirection >**                   | `ls > file`       | cmd args=`["ls"]` ; redir: `>` `"file"`             |   |
+| **Redirection <**                   | `ls < file`       | cmd args=`["ls"]` ; redir: `<` `"file"`             |   |
+| **Append >>**                       | `ls >> file`      | cmd args=`["ls"]` ; redir: `>>` `"file"`            |   |
+| **Heredoc <<**                      | `ls << EOF`       | cmd args=`["ls"]` ; redir: `<<` `"EOF"`             |   |
+| **Concat sans espace**              | `cat<input>out`   | args=`["cat"]` ; redirs: `< "input"`, `> "out"`     |   |
+| **Redirs avant commande**           | `< in cmd`        | redir `< "in"` puis args=`["cmd"]`                  |   |
+| **Quote double**                    | `echo "hi"`       | args=`["echo","\"hi\""]` *(lexer garde les quotes)* |   |
+| **Quote simple**                    | `echo 'hello'`    | args=`["echo","'hello'"]`                           |   |
+| **Expansion plus tard**             | `echo $HOME`      | args=`["echo","$HOME"]` *(pas d'expansion ici)*     |   |
+| **Variables collées**               | `echo $USER$PWD`  | args=`["echo","$USER$PWD"]`                         |   |
+| **Erreur : redirection sans cible** | `ls >`            | erreur : unexpected `newline`                       |   |
+| **Erreur : pipe final**             | `ls \|`           | erreur : unexpected `                               | ` |
+| **Erreur : quotes non fermées**     | `echo "hi`        | erreur : unclosed quote                             |   |
 
 # ===============================
 
@@ -168,9 +174,9 @@ Résoudre les variables :
 
 Gérer les expansions à l’intérieur des quotes :
 
-'...' : pas d’expansion "..." : expansion activée Fusionner les morceaux d’arguments
+`'...'` : pas d’expansion `"..."` : expansion activée Fusionner les morceaux d’arguments
 
-Gérer : arguments vides expansions dans les redirections (> $FILE)
+Gérer : arguments vides expansions dans les redirections `(> $FILE)`
 
 🧠 Idée globale
 
