@@ -14,7 +14,7 @@ typedef struct s_redir
 
 typedef struct s_cmd
 {
-	char			**args;		// ["echo", "hello", NULL]
+	char			**args;
 	t_redir			*redirs;	// Liste des redirections
 	struct s_cmd	*next;		// Commande suivante (après pipe)
 }	t_cmd;
@@ -30,6 +30,6 @@ t_redir	*create_redir(int type, char *file);
 void	free_cmd(t_cmd *cmd);
 void	free_redirs(t_redir *redirs);
 void	print_cmd(t_cmd *cmd);
-int		check_parser_syntax(t_cmd *cmds, t_shell *shell);
+int		check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell);
 
 #endif

@@ -11,6 +11,7 @@ typedef enum e_token_type
 	TRUNC,
 	HEREDOC,
 	APPEND,
+	INVALID,
 	END
 }	t_token_type;
 
@@ -33,12 +34,14 @@ int				is_whitespace(char c);
 int				is_special_char(char c);
 int				is_quote(char c);
 int				is_redir(t_token_type type);
-//int				is_valid_vars_char(char c);
+int				is_forbidden_char(char c);
 
 char			*extract_substring(char *input, int start, int end);
 void			handle_spaces(char *input, int *i,
 					t_token **head, t_token **current);
 void			handle_word(char *input, int *i,
+					t_token **head, t_token **current);
+void			handle_invalid_char(char *input, int *i,
 					t_token **head, t_token **current);
 
 t_token_type	get_redir_type(char *input, int i);

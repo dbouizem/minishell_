@@ -2,21 +2,31 @@
 
 char	*extract_substring(char *input, int start, int end)
 {
-	char	*str;
-	int		len;
-	int		i;
+	int	len;
 
 	len = end - start;
 	if (len <= 0)
 		return (NULL);
-	str = malloc(len + 1);
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (start < end)
-		str[i++] = input[start++];
-	str[i] = '\0';
-	return (str);
+	return (ft_substr(input, start, len));
+}
+
+void	handle_invalid_char(char *input, int *i,
+			t_token **head, t_token **current)
+{
+	char	*invalid;
+	t_token	*token;
+
+	invalid = extract_substring(input, *i, *i + 1);
+	if (!invalid)
+		return ;
+	token = create_token(INVALID, invalid);
+	if (token)
+	{
+		add_token(head, current, token);
+		(*i)++;
+	}
+	else
+		free(invalid);
 }
 
 void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
@@ -40,23 +50,22 @@ void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
 		free(spaces);
 }
 
-void	handle_word(char *input, int *i, t_token **head, t_token **current)
+void	handle_word(char *input, int *i, t_token **head,
+			t_token **current)
 {
 	char	*word;
 	t_token	*token;
 	int		start_index;
 
 	start_index = *i;
+	if (is_forbidden_char(input[*i]))
+		return (handle_invalid_char(input, i, head, current));
 	word = extract_word_without_quotes(input, i);
 	if (!word)
 	{
 		if (*i > start_index)
-		{
 			word = ft_strdup("");
-			if (!word)
-				return ;
-		}
-		else
+		if (!word)
 			return ;
 	}
 	token = create_token(WORD, word);
