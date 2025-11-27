@@ -27,6 +27,12 @@ int	is_forbidden_char(char c)
 		return (1);
 	if (c == ';')
 		return (1);
+	if (c == ',')
+		return (1);
+	if (c == '-')
+		return (1);
+	if (c == '+')
+		return (1);
 	if (c == '&')
 		return (1);
 	if (c >= 0 && c <= 31)

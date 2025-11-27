@@ -7,7 +7,7 @@ int	count_args(t_token *tokens)
 	count = 0;
 	while (tokens && tokens->type != PIPE)
 	{
-		if (tokens->type == WORD || tokens->type == VAR)
+		if (tokens->type == WORD)
 			count++;
 		tokens = tokens->next;
 	}
@@ -23,7 +23,7 @@ static void	free_args_until(char **args, int i)
 
 static int	process_argument(t_token **tokens, char **args, int *i)
 {
-	if ((*tokens)->type == WORD || (*tokens)->type == VAR)
+	if ((*tokens)->type == WORD)
 	{
 		args[*i] = ft_strdup((*tokens)->value);
 		if (!args[*i])

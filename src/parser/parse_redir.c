@@ -53,7 +53,7 @@ t_redir	*parse_redirection(t_token **tokens, t_shell *shell)
 	type = (*tokens)->type;
 	*tokens = (*tokens)->next;
 	skip_spaces(tokens);
-	if (*tokens && ((*tokens)->type == WORD || (*tokens)->type == VAR))
+	if (*tokens && (*tokens)->type == WORD)
 		return (create_valid_redir(tokens, type));
 	else
 	{
