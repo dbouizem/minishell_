@@ -48,7 +48,7 @@ void	print_tokens(t_token *tokens)
 {
 	const char	*names[] = {
 		"", "SPACES", "WORD", "VAR", "PIPE",
-		"INPUT", "TRUNC", "HEREDOC", "APPEND", "END"
+		"INPUT", "TRUNC", "HEREDOC", "APPEND", "INVALID", "END"
 	};
 	const char	*val;
 

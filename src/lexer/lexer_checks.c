@@ -21,10 +21,17 @@ int	is_redir(t_token_type type)
 		|| type == HEREDOC || type == APPEND);
 }
 
-int	is_valid_vars_char(char c)
+int	is_forbidden_char(char c)
 {
-	return (c == '_'
-		|| (c >= 'a' && c <= 'z')
-		|| (c >= 'A' && c <= 'Z')
-		|| (c >= '0' && c <= '9'));
+	if (c == '\\')
+		return (1);
+	if (c == ';')
+		return (1);
+	if (c == '&')
+		return (1);
+	if (c >= 0 && c <= 31)
+		return (1);
+	if (c == 127)
+		return (1);
+	return (0);
 }

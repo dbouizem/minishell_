@@ -4,6 +4,11 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 INCLUDES = -I./includes -I./libft
 
+# --- Readline (Homebrew) Fix for macOS ---
+READLINE_DIR := $(shell brew --prefix readline)
+CFLAGS += -I$(READLINE_DIR)/include
+LDFLAGS += -L$(READLINE_DIR)/lib -lreadline
+
 RM = rm -rf
 
 SRC_DIR = src
@@ -36,15 +41,12 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/process_dollar.c \
 		$(SRC_DIR)/expander/process_normal.c
 
-
-
-
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 LIBFT_LIB = $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS = -L$(LIBFT_DIR) -lft
 
-# Couleurs complètes
+# Colors
 BOLD = \033[1m
 CYAN = \033[0;36m
 GREEN = \033[0;32m
@@ -52,26 +54,22 @@ RED = \033[0;31m
 BLUE = \033[0;34m
 YELLOW = \033[0;33m
 NC = \033[0m
-RESET = \033[0m
 
 all: $(LIBFT_LIB) $(NAME)
 
 $(LIBFT_LIB):
-	@echo "$(BOLD)$(CYAN)🔧 Compilation de libft...$(RESET)"
+	@echo "$(BOLD)$(CYAN)🔧 Compilation de libft...$(NC)"
 	@make -C $(LIBFT_DIR)
-	@echo "$(GREEN)✅ Libft compilée avec succès$(RESET)"
+	@echo "$(GREEN)✅ Libft compilée avec succès$(NC)"
 
 $(NAME): $(OBJ) $(LIBFT_LIB)
 	@echo "$(BLUE)🔨 Building Minishell...$(NC)"
-	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) -o $(NAME) -lreadline
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 	@echo "$(GREEN)✅ Minishell built successfully!$(NC)"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
 
 clean:
 	@make -C $(LIBFT_DIR) clean

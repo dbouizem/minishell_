@@ -1,5 +1,5 @@
 # 🐚 **MINISHELL – TABLEAUX DE TESTS**
-*Pour voir le rendu d’un fichier ```Ctrl + Shift + V```*
+*Pour voir le rendu d’un fichier `Ctrl + Shift + V`*
 
 
 # ===============================
@@ -11,27 +11,27 @@ Elle valide surtout la mise en place des fondations :
 
 ✔ Objectifs
 
-Compiler sans erreurs ni warnings (-Wall -Wextra -Werror)
+Compiler sans `erreurs` ni `warnings (-Wall -Wextra -Werror)`
 
-Gérer l’affichage d’un prompt
+Gérer l’affichage d’un `prompt`
 
-Lire une ligne de commande (readline)
+Lire une ligne de commande `(readline)`
 
 Ajouter la ligne à l’historique
 
 Gérer :
 
-Ctrl+D (EOF)
+`Ctrl+D (EOF)`
 
-exit
+`exit`
 
-un environnement vide
+`un environnement vide`
 
-stdin non-interactif
+`stdin non-interactif`
 
-Aucun crash, comportement stable
+Aucun `crash`, comportement stable
 
-Pas de memory leaks (hors readline)
+Pas de `memory leaks` (hors readline)
 
 🧠 Idée globale
 
@@ -48,7 +48,7 @@ Pas de memory leaks (hors readline)
 | **exit**               | `exit`                                           | Message de sortie + fermeture propre          |                                              |
 | **Ctrl+D**             | `Ctrl + D`                                       | Fermeture propre                              |                                              |
 | **env vide**           | `env -i ./minishell`                             | Création PWD, SHLVL, _, warning si vide       |                                              |
-| **stdin non-terminal** | echo "ls" ./minishell                            | stdin = pip -> lire, exécuter, quitter (Afficher “stdin is not a terminal” ? pas demanse a 42) |
+| **stdin non-terminal** | `echo "ls" \| ./minishell`                            | stdin = pip -> lire, exécuter, quitter (Afficher “stdin is not a terminal” ? pas demanse a 42) |
 | **Valgrind**           | `valgrind ./minishell`                           | Pas de leaks (hors readline)                  |                                              |
 
 
@@ -62,21 +62,21 @@ Ici, tu dois transformer la ligne tapée en une liste de tokens lisibles par ton
 
 Découper la ligne en tokens :
 
-mots ```WORD```
+mots `WORD`
 
-espaces ```SPACES```
+espaces `SPACES`
 
-pipes ```|```
+pipes `|`
 
-redirections ```<, >, <<, >>```
+redirections `<, >, <<, >>`
 
-variables ```$USER, $?, etc.```
+variables `$USER, $?, etc.`
 
-quotes simples ```'...'```
+quotes simples `'...'`
 
-quotes doubles ```"..."```
+quotes doubles `"..."`
 
-Détecter les erreurs : ```quotes non fermées```
+Détecter les erreurs : `quotes non fermées`
 
 Aucun crash quelle que soit l’entrée
 
@@ -85,31 +85,30 @@ Aucun crash quelle que soit l’entrée
 → Le tokenizer lit la ligne caractère par caractère et identifie tous les éléments syntaxiques nécessaires à la suite.
 C’est une phase pure analyse lexicale, rien n’est encore exécuté.
 
+# Minishell – Tests du Lexer
 
-| Catégorie                | Commande          | Tokens attendus                                               |                                                      |                                  |
-| ------------------------ | ----------------- | ------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------- |
-| **Simple**               | `ls`              | `WORD 'ls'`                                                   |                                                      |                                  |
-| **Arguments**            | `ls -la`          | WORD `'ls'` / SPACES / WORD `'-la'`                           |                                                      |                                  |
-| **Espaces multiples**    | `ls    -la`       | WORD `'ls'` / SPACES `'    '` / WORD `'-la'`                  |                                                      |                                  |
-| **Pipe**                 | `ls \| grep test`                              | WORD / SPACES / PIPE / SPACES / WORD / SPACES / WORD |                                  |
-| **Redirection <**        | `cat < input.txt` | WORD `'cat'` / SPACES / INPUT `'<'` / SPACES / WORD           |                                                      |                                  |
-| **Redirection >**        | `echo hi > out`   | WORD / SPACES / WORD / SPACES / TRUNC `'>'` / SPACES / WORD   |                                                      |                                  |
-| **Redirection <<**       | `cat << EOF`      | WORD / SPACES / HEREDOC `'<<'` / SPACES / WORD                |                                                      |                                  |
-| **Redirection >>**       | `echo hi >> out`  | WORD / SPACES / WORD / SPACES / APPEND `'>>'` / SPACES / WORD |                                                      |                                  |
-| **Variable**             | `echo $USER`      | WORD `'echo'` / SPACES / VAR `'$USER'`                        |                                                      |                                  |
-| **Variable $?**          | `echo $?`         | WORD / SPACES / VAR                                           |                                                      |                                  |
-| **Variables collées**    | `echo $USER$HOME` | VAR `'$USER'` / VAR `'$HOME'`                                 |                                                      |                                  |
-| **Quotes simples**       | `echo 'hello'`    | WORD `'echo'` / SPACES / WORD `"'hello'"`                     |                                                      |                                  |
-| **Quotes simples + $**   | `echo '$USER'`    | WORD / SPACES / WORD `"'$USER'"`                              |                                                      |                                  |
-| **Quotes doubles**       | `echo "hello"`    | WORD / SPACES / WORD `"hello"`                                |                                                      |                                  |
-| **Quotes doubles + var** | `echo "$USER"`    | WORD / SPACES / WORD `'"'` + VAR + WORD `'"'`                 |                                                      |                                  |
-| **Quotes non fermées**   | `echo "hello`     | Erreur : `unclosed quote '"'`                                 |                                                      |                                  |
-| **Commande complexe**    | `cat f            | grep "test"                                                   | wc -l > out`                                         | Tous tokens correctement séparés |
-| **Sans espaces**         | `cat<input>out`   | WORD / INPUT / WORD / TRUNC / WORD                            |                                                      |                                  |
-| **Pipes multiples**      | `ls               | cat                                                           | cat`                                                 | Tokens PIPE successifs           |
-| **Quotes contenant       | >**               | `echo "x                                                      | y > z"`                                              | Un seul WORD                     |
-| **tokenize(NULL)**       | —                 | Retourne NULL sans crash                                      |                                                      |                                  |
-
+| Catégorie                 | Commande                    | Tokens attendus (selon les règles du vrai minishell)                          |
+|---------------------------|-----------------------------|-------------------------------------------------------------------------------|
+| **Simple**                | `ls`                        | `WORD:'ls'`                                                                   |
+| **Arguments**             | `ls -la`                    | `WORD:'ls'` / `SPACES` / `WORD:'-la'`                                         |
+| **Espaces multiples**     | `ls    -la`                 | `WORD:'ls'` / `SPACES:'    '` / `WORD:'-la'`                                  |
+| **Pipe**                  | `ls \| grep test`            | `WORD:'ls'` / `SPACES` / `PIPE:'\|'` / `SPACES` / `WORD:'grep'` / `SPACES` / `WORD:'test'` |
+| **Redirection <**         | `cat < input.txt`           | `WORD:'cat'` / `SPACES` / `INPUT:'<'` / `SPACES` / `WORD:'input.txt'`         |
+| **Redirection >**         | `echo hi > out`             | `WORD:'echo'` / `SPACES` / `WORD:'hi'` / `SPACES` / `TRUNC:'>'` / `SPACES` / `WORD:'out'` |
+| **Redirection <<**        | `cat << EOF`                | `WORD:'cat'` / `SPACES` / `HEREDOC:'<<'` / `SPACES` / `WORD:'EOF'`            |
+| **Redirection >>**        | `echo hi >> out`            | `WORD:'echo'` / `SPACES` / `WORD:'hi'` / `SPACES` / `APPEND:'>>'` / `SPACES` / `WORD:'out'` |
+| **Variable**              | `echo $USER`                | `WORD:'echo'` / `SPACES` / `WORD:'$USER'`                                     |
+| **Variable $?**           | `echo $?`                   | `WORD:'echo'` / `SPACES` / `WORD:'$?'`                                        |
+| **Variables collées**     | `echo $USER$HOME`           | `WORD:'echo'` / `SPACES` / `WORD:'$USER$HOME'`                                |
+| **Quotes simples**        | `echo 'hello'`              | `WORD:'echo'` / `SPACES` / `WORD:'hello'`                                     |
+| **Quotes simples + $**    | `echo '$USER'`              | `WORD:'echo'` / `SPACES` / `WORD:'$USER'`                                     |
+| **Quotes doubles**        | `echo "hello"`              | `WORD:'echo'` / `SPACES` / `WORD:'hello'`                                     |
+| **Quotes doubles + var**  | `echo "$USER"`              | `WORD:'echo'` / `SPACES` / `WORD:'$USER'`                                     |
+| **Quotes non fermées**    | `echo "hello`               | Erreur : `unclosed quote '"'"`                                                |
+| **Sans espaces**          | `cat<input>out`             | `WORD:'cat'` / `INPUT:'<'` / `WORD:'input'` / `TRUNC:'>'` / `WORD:'out'`       |
+| **Pipes multiples**       | `ls \| cat \| cat`            | `WORD:'ls'` / `SPACES` / `PIPE` / `SPACES` / `WORD:'cat'` / `SPACES` / `PIPE` / `SPACES` / `WORD:'cat'` |
+| **Quotes contenant opérateurs** | `echo "x \| y > z"`  | `WORD:'echo'` / `SPACES` / `WORD:'x \| y > z'` *(un seul WORD)*                |
+| **tokenize(NULL)**        | —                           | Retourne `NULL` sans crash                                                    |
 
 # ===============================
 
@@ -123,37 +122,43 @@ Construire la liste des commandes (cmd1, cmd2…)
 
 Gérer correctement :
 
-arguments
+`arguments`
 
-pipes
+`pipes`
 
-redirections (entrée, sortie, append, heredoc)
+`redirections (entrée, sortie, append, heredoc)`
 
 Valider la syntaxe :
 
-ls | → erreur
+`ls | → erreur`
 
-> sans fichier → erreur
+`> sans fichier → erreur`
 
-Préparer une structure exploitable pour l’exécution
+`Préparer une structure exploitable pour l’exécution`
 
 🧠 Idée globale
 
 → Le parsing transforme les tokens en arbre de commandes ou en structures chaînées, comme un mini interpréteur.
 C’est comme traduire une phrase en grammaire C : sujet, verbe, complément.
 
-| Catégorie             | Commande       | Attendu                            |                      |
-| --------------------- | -------------- | ---------------------------------- | -------------------- |
-| **Commande simple**   | `ls -la`       | 1 commande, args = ["ls", "-la"]   |                      |
-| **Pipe**              | `cmd1          | cmd2`                              | 2 commandes chaînées |
-| **Redirection >**     | `cmd > f`      | redirection TRUNC                  |                      |
-| **Redirection <**     | `cmd < f`      | redirection INPUT                  |                      |
-| **Append**            | `cmd >> f`     | redirection APPEND                 |                      |
-| **Heredoc**           | `cmd << EOF`   | redirection HEREDOC                |                      |
-| **Variable**          | `echo $HOME`   | token VAR                          |                      |
-| **Quotes**            | `echo "hello"` | WORD `"hello"`                     |                      |
-| **Erreur syntaxique** | `ls >`         | erreur de parsing (missing target) |                      |
-
+| Catégorie                           | Commande          | Résultat attendu (structure parser)                 |   |
+| ----------------------------------- | ----------------- | --------------------------------------------------- | - |
+| **Commande simple**                 | `ls -la`          | 1 commande ; args = `["ls","-la"]`                  |   |
+| **Pipe simple**                     | `ls \| grep a`    | 2 commandes ; `["ls"]` → pipe → `["grep","a"]`      |   |
+| **Pipe multiple**                   | `ls \| cat \| wc` | 3 commandes chaînées                                |   |
+| **Redirection >**                   | `ls > file`       | cmd args=`["ls"]` ; redir: `>` `"file"`             |   |
+| **Redirection <**                   | `ls < file`       | cmd args=`["ls"]` ; redir: `<` `"file"`             |   |
+| **Append >>**                       | `ls >> file`      | cmd args=`["ls"]` ; redir: `>>` `"file"`            |   |
+| **Heredoc <<**                      | `ls << EOF`       | cmd args=`["ls"]` ; redir: `<<` `"EOF"`             |   |
+| **Concat sans espace**              | `cat<input>out`   | args=`["cat"]` ; redirs: `< "input"`, `> "out"`     |   |
+| **Redirs avant commande**           | `< in cmd`        | redir `< "in"` puis args=`["cmd"]`                  |   |
+| **Quote double**                    | `echo "hi"`       | args=`["echo","\"hi\""]` *(lexer garde les quotes)* |   |
+| **Quote simple**                    | `echo 'hello'`    | args=`["echo","'hello'"]`                           |   |
+| **Expansion plus tard**             | `echo $HOME`      | args=`["echo","$HOME"]` *(pas d'expansion ici)*     |   |
+| **Variables collées**               | `echo $USER$PWD`  | args=`["echo","$USER$PWD"]`                         |   |
+| **Erreur : redirection sans cible** | `ls >`            | erreur : unexpected `newline`                       |   |
+| **Erreur : pipe final**             | `ls \|`           | erreur : unexpected `                               | ` |
+| **Erreur : quotes non fermées**     | `echo "hi`        | erreur : unclosed quote                             |   |
 
 # ===============================
 
@@ -165,13 +170,13 @@ Cette phase applique les règles du shell pour remplacer certains éléments :
 
 Résoudre les variables :
 
-```$USER $HOME $? $$```
+`$USER $HOME $? $$`
 
 Gérer les expansions à l’intérieur des quotes :
 
-'...' : pas d’expansion "..." : expansion activée Fusionner les morceaux d’arguments
+`'...'` : pas d’expansion `"..."` : expansion activée Fusionner les morceaux d’arguments
 
-Gérer : arguments vides expansions dans les redirections (> $FILE)
+Gérer : arguments vides expansions dans les redirections `(> $FILE)`
 
 🧠 Idée globale
 
