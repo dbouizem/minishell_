@@ -412,3 +412,151 @@ handle_quoted  handle_normal
 
 ---
 
+# Logique du parser
+Transforme une LISTE DE TOKENS en LISTE DE COMMANDES (t_cmd).
+```
+Input utilisateur:
+"echo hello > file | cat"
+
+         ↓ LEXER
+
+Liste de tokens:
+[WORD:"echo"] [SPACES:" "] [WORD:"hello"] [SPACES:" "]
+[TRUNC:">"] [SPACES:" "] [WORD:"file"] [SPACES:" "]
+[PIPE:"|"] [SPACES:" "] [WORD:"cat"]
+
+         ↓ PARSER
+
+Structure de commandes:
+┌─────────────────────────────┐    ┌─────────────────────┐
+│ Commande 1                  │ →  │ Commande 2          │
+│ - args: ["echo", "hello"]   │    │ - args: ["cat"]     │
+│ - redirs: [TRUNC:"file"]    │    │ - redirs: NULL      │
+└─────────────────────────────┘    └─────────────────────┘
+```
+
+```
+// Pour "> file"
+redir->type = TRUNC
+redir->file = "file"
+redir->next = NULL
+```
+
+---
+## 🔄 **Le flux du parser en 3 étapes**
+```
+┌─────────────────────────────────────────┐
+│ ÉTAPE 1: parse()                        │
+│ - Reçoit la liste de tokens             │
+│ - Boucle sur les tokens                 │
+│ - Pour chaque commande, appelle         │
+│   parse_command()                       │
+│ - Sépare les commandes au PIPE          │
+└──────────────┬──────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────┐
+│ ÉTAPE 2: parse_command()                │
+│ - Parse UNE commande complète           │
+│ - Extrait les redirections              │
+│ - Extrait les arguments                 │
+│ - S'arrête au PIPE ou fin               │
+└──────────────┬──────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────┐
+│ ÉTAPE 3: Vérification syntaxe           │
+│ - Vérifie les pipes                     │
+│ - Vérifie les redirections              │
+│ - Retourne erreur si invalide           │
+└─────────────────────────────────────────┘
+```
+---
+
+# Logique de l'expander
+
+L'expander transforme les variables et enlève les quotes pour préparer les commandes à l'exécution.
+
+```
+
+Input utilisateur:
+echo "$USER" 'hello' $PATH
+
+         ↓ LEXER
+
+[WORD:"echo"] [WORD:"$USER"] [WORD:"'hello'"] [WORD:"$PATH"]
+
+         ↓ PARSER
+
+cmd->args = ["echo", "$USER", "'hello'", "$PATH", NULL]
+
+         ↓ EXPANDER
+
+cmd->args = ["echo", "alice", "hello", "/usr/bin:/bin", NULL]
+                      ↑         ↑            ↑
+                   Var expd   Quotes enl   Var expd
+
+```
+
+## Les 2 rôles principaux de l'expander
+### 1️⃣ Expansion des variables
+```
+bash$USER → alice
+$HOME → /home/alice
+$? → 0 (exit status)
+$$ → 12345 (PID du shell)
+```
+### 2️⃣ Suppression des quotes
+```
+bash"hello" → hello
+'world' → world
+"$USER" → alice (expand puis enlève quotes)
+'$USER' → $USER (pas d'expansion dans single quotes)
+```
+
+---
+
+## 📋 **Les fonctions principales**
+
+| Fonction | Rôle |
+|----------|------|
+| `expand_commands()` | Point d'entrée - Parcourt toutes les commandes |
+| `expand_string()` | Traite UNE chaîne complète (variables + quotes) |
+| `process_dollar()` | Remplace `$VAR` par sa valeur |
+| `extract_var_name()` | Extrait le nom de la variable |
+| `get_var_value()` | Récupère la valeur dans l'environnement |
+| `remove_quotes()` | Enlève les quotes de la chaîne |
+| `process_normal_char()` | Traite les caractères normaux |
+| `extract_single_quoted_content()` | Extrait le contenu entre `'...'` |
+
+---
+
+## **Le flux complet**
+```
+expand_commands()
+    │
+    ├─→ Pour chaque commande
+    │      │
+    │      ├─→ Pour chaque argument
+    │      │      │
+    │      │      └─→ expand_string()
+    │      │             │
+    │      │             ├─→ Parcourt la chaîne char par char
+    │      │             │
+    │      │             ├─→ Si '$' → process_dollar()
+    │      │             │              │
+    │      │             │              └─→ get_var_value()
+    │      │             │
+    │      │             ├─→ Si '\'' → extract_single_quoted_content()
+    │      │             │
+    │      │             └─→ Sinon → process_normal_char()
+    │      │
+    │      │      └─→ remove_quotes()
+    │      │
+    │      └─→ Pour chaque redirection
+    │             │
+    │             └─→ expand_string() + remove_quotes()
+    │                 (sauf HEREDOC)
+    │
+    └─→ Retourne les commandes expandées
+```
