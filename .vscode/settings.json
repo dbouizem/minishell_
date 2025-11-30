@@ -1,9 +1,0 @@
-{
-	"files.associations": {
-		"libft.h": "c",
-		"minishell.h": "c",
-		"expander.h": "c",
-		"string": "c",
-		"streambuf": "c"
-	}
-}

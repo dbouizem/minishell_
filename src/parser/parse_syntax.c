@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-static int	check_invalid_tokens(t_token *tokens, t_shell *shell)
+/* static int	check_invalid_tokens(t_token *tokens, t_shell *shell)
 {
 	while (tokens)
 	{
@@ -14,7 +14,7 @@ static int	check_invalid_tokens(t_token *tokens, t_shell *shell)
 		tokens = tokens->next;
 	}
 	return (1);
-}
+} */
 
 static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
 {
@@ -75,8 +75,8 @@ int	check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell)
 {
 	if (!tokens)
 		return (1);
-	if (!check_invalid_tokens(tokens, shell))
-		return (0);
+/* 	if (!check_invalid_tokens(tokens, shell))
+		return (0); */
 	if (!cmds)
 		return (1);
 	if (!check_pipe_syntax(cmds, shell))

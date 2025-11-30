@@ -32,8 +32,8 @@ static void	process_char(char *input, int *i, t_token **head, t_token **current)
 		handle_spaces(input, i, head, current);
 	else if (is_special_char(input[*i]))
 		handle_pipe_or_redir(input, i, head, current);
-	else if (is_forbidden_char(input[*i]))
-		handle_invalid_char(input, i, head, current);
+	// else if (is_forbidden_char(input[*i]))
+	// 	handle_invalid_char(input, i, head, current);
 	else
 		handle_word(input, i, head, current);
 }

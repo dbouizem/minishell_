@@ -21,7 +21,7 @@ int	is_redir(t_token_type type)
 		|| type == HEREDOC || type == APPEND);
 }
 
-int	is_forbidden_char(char c)
+/* int	is_forbidden_char(char c)
 {
 	if (c == '\\')
 		return (1);
@@ -40,4 +40,4 @@ int	is_forbidden_char(char c)
 	if (c == 127)
 		return (1);
 	return (0);
-}
+} */
