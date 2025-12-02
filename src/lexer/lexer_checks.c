@@ -20,8 +20,6 @@ int	is_redir(t_token_type type)
 	return (type == INPUT || type == TRUNC
 		|| type == HEREDOC || type == APPEND);
 }
-<<<<<<< HEAD
-=======
 
 int	is_forbidden_char(char c)
 {
@@ -35,4 +33,3 @@ int	is_forbidden_char(char c)
 		return (1);
 	return (0);
 }
->>>>>>> 4-expansion-basic#4

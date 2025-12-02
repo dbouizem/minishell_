@@ -32,10 +32,10 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 		exit_status = builtin_echo(cmd->args);
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		exit_status = builtin_pwd();
-	/*else if (ft_strcmp(cmd->args[0], "cd") == 0)
+	else if (ft_strcmp(cmd->args[0], "cd") == 0)
 		exit_status = builtin_cd(cmd->args, shell);
 	else if (ft_strcmp(cmd->args[0], "export") == 0)
-		exit_status = builtin_export(cmd->args, shell);
+		exit_status = builtin_export(cmd->args, shell);/*
 	else if (ft_strcmp(cmd->args[0], "unset") == 0)
 		exit_status = builtin_unset(cmd->args, shell);
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
