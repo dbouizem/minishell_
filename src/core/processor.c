@@ -78,7 +78,7 @@ int	process_input(char *input, t_shell *shell)
 	}
 	expand_commands(cmds, shell);
 	should_exit = handle_exit_command(cmds);
-	if (!should_exit)
+	if (should_exit)
 	{
 		debug_lexer_parser(tokens, cmds, shell);
 	}
