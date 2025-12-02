@@ -20,3 +20,19 @@ int	is_redir(t_token_type type)
 	return (type == INPUT || type == TRUNC
 		|| type == HEREDOC || type == APPEND);
 }
+<<<<<<< HEAD
+=======
+
+int	is_forbidden_char(char c)
+{
+	if (c == '\\')
+		return (1);
+	if (c == ';')
+		return (1);
+	if (c >= 0 && c <= 31)
+		return (1);
+	if (c == 127)
+		return (1);
+	return (0);
+}
+>>>>>>> 4-expansion-basic#4

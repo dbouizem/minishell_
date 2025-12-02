@@ -14,6 +14,7 @@
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
+# include "builtin.h"
 
 // Structure principale
 typedef struct s_shell
@@ -30,5 +31,8 @@ char	*read_input(void);
 char	*read_input_non_interactive(void);
 void	display_welcome(void);
 int		process_input(char *input, t_shell *shell);
+
+int		execute_commands(t_cmd *cmd, t_shell *shell);
+int	execute_external(t_cmd *cmd, t_shell *shell);
 
 #endif

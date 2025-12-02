@@ -76,11 +76,13 @@ int	process_input(char *input, t_shell *shell)
 			free_tokens(tokens);
 		return (0);
 	}
+	expand_commands(cmds, shell);
 	should_exit = handle_exit_command(cmds);
 	if (!should_exit)
 	{
 		debug_lexer_parser(tokens, cmds, shell);
 	}
+	execute_commands(cmds, shell);
 	if (cmds)
 		free_cmd(cmds);
 	if (tokens)
