@@ -39,7 +39,12 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/expand_utils.c \
 		$(SRC_DIR)/expander/expand_string.c \
 		$(SRC_DIR)/expander/process_dollar.c \
-		$(SRC_DIR)/expander/process_normal.c
+		$(SRC_DIR)/expander/process_normal.c \
+		$(SRC_DIR)/execution/execute.c \
+		$(SRC_DIR)/builtin/builtin.c \
+		$(SRC_DIR)/builtin/builtin_echo.c \
+		$(SRC_DIR)/builtin/builtin_exit.c \
+		$(SRC_DIR)/builtin/builtin_pwd_env.c \
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
