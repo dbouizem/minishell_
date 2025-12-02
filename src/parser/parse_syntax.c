@@ -1,21 +1,5 @@
 #include "../includes/minishell.h"
 
-/* static int	check_invalid_tokens(t_token *tokens, t_shell *shell)
-{
-	while (tokens)
-	{
-		if (tokens->type == INVALID)
-		{
-			printf("minishell: syntax error near unexpected token `%s'\n",
-				tokens->value);
-			shell->exit_status = 2;
-			return (0);
-		}
-		tokens = tokens->next;
-	}
-	return (1);
-} */
-
 static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
 {
 	t_cmd	*current;
@@ -75,8 +59,6 @@ int	check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell)
 {
 	if (!tokens)
 		return (1);
-/* 	if (!check_invalid_tokens(tokens, shell))
-		return (0); */
 	if (!cmds)
 		return (1);
 	if (!check_pipe_syntax(cmds, shell))

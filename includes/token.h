@@ -11,7 +11,6 @@ typedef enum e_token_type
 	TRUNC,
 	HEREDOC,
 	APPEND,
-	//INVALID,
 	END
 }	t_token_type;
 

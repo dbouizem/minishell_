@@ -10,25 +10,6 @@ char	*extract_substring(char *input, int start, int end)
 	return (ft_substr(input, start, len));
 }
 
-/* void	handle_invalid_char(char *input, int *i,
-			t_token **head, t_token **current)
-{
-	char	*invalid;
-	t_token	*token;
-
-	invalid = extract_substring(input, *i, *i + 1);
-	if (!invalid)
-		return ;
-	token = create_token(INVALID, invalid);
-	if (token)
-	{
-		add_token(head, current, token);
-		(*i)++;
-	}
-	else
-		free(invalid);
-} */
-
 void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
 {
 	int		start;
@@ -58,8 +39,6 @@ void	handle_word(char *input, int *i, t_token **head,
 	int		start_index;
 
 	start_index = *i;
-	// if (is_forbidden_char(input[*i]))
-	// 	return (handle_invalid_char(input, i, head, current));
 	word = extract_word_without_quotes(input, i);
 	if (!word)
 	{
