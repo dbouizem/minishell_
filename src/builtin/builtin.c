@@ -1,5 +1,8 @@
 #include "../../includes/minishell.h"
 
+/* VERIFIER TOUTES LES EXIS STATUS*/
+
+
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
@@ -35,11 +38,11 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)
 		exit_status = builtin_cd(cmd->args, shell);
 	else if (ft_strcmp(cmd->args[0], "export") == 0)
-		exit_status = builtin_export(cmd->args, shell);/*
+		exit_status = builtin_export(cmd->args, shell);
 	else if (ft_strcmp(cmd->args[0], "unset") == 0)
 		exit_status = builtin_unset(cmd->args, shell);
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
-		exit_status = builtin_env(shell);*/
+		exit_status = builtin_env(shell);
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
 		exit_status = builtin_exit(cmd->args, shell);
 	return (exit_status);

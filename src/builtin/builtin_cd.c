@@ -6,12 +6,14 @@
 /*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 13:45:24 by fadzejli          #+#    #+#             */
-/*   Updated: 2025/12/02 14:50:21 by fadzejli         ###   ########.fr       */
+/*   Updated: 2025/12/03 12:14:32 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+
+/* VERIFIER POUR "cd ~/Documents" */
 
 static void	update_pwd(char *old_pwd, t_shell *shell)
 {

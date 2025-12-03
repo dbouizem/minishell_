@@ -44,9 +44,11 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/builtin/builtin.c \
 		$(SRC_DIR)/builtin/builtin_echo.c \
 		$(SRC_DIR)/builtin/builtin_exit.c \
-		$(SRC_DIR)/builtin/builtin_pwd_env.c \
+		$(SRC_DIR)/builtin/builtin_pwd.c \
+		$(SRC_DIR)/builtin/builtin_env.c \
 		$(SRC_DIR)/builtin/builtin_cd.c \
 		$(SRC_DIR)/builtin/builtin_export.c \
+		$(SRC_DIR)/builtin/builtin_unset.c \
 		$(SRC_DIR)/builtin/env_utils.c \
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

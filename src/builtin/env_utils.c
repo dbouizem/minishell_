@@ -136,17 +136,3 @@ int	unset_env_value(char *key, t_shell *shell)
 	shell->env = new_env;
 	return (1);
 }
-
-void	print_env(t_shell *shell)
-{
-	int	i;
-
-	if (!shell || !shell->env)
-		return ;
-	i = 0;
-	while (shell->env[i])
-	{
-		printf("%s\n", shell->env[i]);
-		i++;
-	}
-}
