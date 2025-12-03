@@ -31,7 +31,7 @@ static void	process_char(char *input, int *i, t_token **head, t_token **current)
 	if (is_whitespace(input[*i]))
 		handle_spaces(input, i, head, current);
 	else if (is_special_char(input[*i]))
-		handle_pipe_or_redir(input, i, head, current);
+		handle_operator(input, i, head, current);
 	else
 		handle_word(input, i, head, current);
 }

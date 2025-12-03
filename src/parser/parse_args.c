@@ -5,7 +5,7 @@ int	count_args(t_token *tokens)
 	int	count;
 
 	count = 0;
-	while (tokens && tokens->type != PIPE)
+	while (tokens && !is_command_separator(tokens->type))
 	{
 		if (tokens->type == WORD)
 			count++;
@@ -48,7 +48,7 @@ static char	**process_arguments(t_token **tokens, int count)
 	if (!args)
 		return (NULL);
 	i = 0;
-	while (*tokens && (*tokens)->type != PIPE && i < count)
+	while (*tokens && !is_command_separator((*tokens)->type) && i < count)
 	{
 		result = process_argument(tokens, args, &i);
 		if (result == 0)

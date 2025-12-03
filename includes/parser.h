@@ -15,6 +15,7 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char			**args;
+	int				separator;
 	t_redir			*redirs;	// Liste des redirections
 	struct s_cmd	*next;		// Commande suivante (après pipe)
 }	t_cmd;
@@ -31,5 +32,9 @@ void	free_cmd(t_cmd *cmd);
 void	free_redirs(t_redir *redirs);
 void	print_cmd(t_cmd *cmd);
 int		check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell);
+
+int		is_command_separator(t_token_type type);
+int		is_separator(t_token *tokens);
+void	create_operator_token(t_token_type type, t_token **head, t_token **current, int *i);
 
 #endif

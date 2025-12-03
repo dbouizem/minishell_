@@ -5,12 +5,15 @@ typedef enum e_token_type
 {
 	SPACES = 1,
 	WORD,
-	VAR,
+	AND,
+	OR,
+	//VAR,
 	PIPE,
 	INPUT,
 	TRUNC,
 	HEREDOC,
 	APPEND,
+	INVALID,
 	END
 }	t_token_type;
 
@@ -44,7 +47,7 @@ void			handle_word(char *input, int *i,
 //					t_token **head, t_token **current);
 
 t_token_type	get_redir_type(char *input, int i);
-void			handle_pipe_or_redir(char *input, int *i, t_token **head,
+void			handle_operator(char *input, int *i, t_token **head,
 					t_token **current);
 
 char			*extract_word_without_quotes(char *input, int *i);

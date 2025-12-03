@@ -60,11 +60,23 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 	(*i)++;
 }
 
-void	handle_pipe_or_redir(char *input, int *i, t_token **head,
+void	handle_operator(char *input, int *i, t_token **head,
 		t_token **current)
 {
 	if (input[*i] == '|')
-		create_pipe_token(head, current, i);
+	{
+		if (input[*i + 1] == '|')
+			create_operator_token(OR, head, current, i);
+		else
+			create_pipe_token(head, current, i);
+	}
+	else if (input[*i] == '&')
+	{
+		if (input[*i + 1] == '&')
+			create_operator_token(AND, head, current, i);
+		else
+			create_operator_token(INVALID, head, current, i);
+	}
 	else
 		create_redir_token(input, i, head, current);
 }

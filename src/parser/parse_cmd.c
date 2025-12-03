@@ -1,10 +1,15 @@
 #include "../includes/minishell.h"
 
+int	is_command_separator(t_token_type type)
+{
+	return (type == PIPE || type == AND || type == OR);
+}
+
 static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd, t_shell *shell)
 {
 	t_redir	*redir;
 
-	while (*tokens && (*tokens)->type != PIPE && is_redir((*tokens)->type))
+	while (*tokens && !is_command_separator((*tokens)->type) && is_redir((*tokens)->type))
 	{
 		redir = parse_redirection(tokens, shell);
 		if (!redir)
@@ -36,7 +41,7 @@ static int	handle_remaining_redirs(t_token **tokens, t_cmd *cmd,
 {
 	t_redir	*redir;
 
-	while (*tokens && (*tokens)->type != PIPE)
+	while (*tokens && !is_command_separator((*tokens)->type))
 	{
 		if (is_redir((*tokens)->type))
 		{

@@ -1,18 +1,21 @@
 #include "../includes/minishell.h"
 
-static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
+static int	check_sep_syntax(t_cmd *cmds, t_shell *shell)
 {
 	t_cmd	*current;
+	const char	*op_names[] = {"", "", "", "", "|", "&&", "||"};
 
 	if (!cmds)
 		return (1);
 	current = cmds;
 	while (current && current->next)
 		current = current->next;
-
 	if (current && (!current->args || !current->args[0]))
 	{
-		printf("minishell: syntax error near unexpected token `|'\n");
+		if (current->separator)
+			printf("minishell: syntax error near unexpected token %s\n", op_names[current->separator]);
+		else
+			printf("minishell: syntax error near unexpected token `newline'\n");
 		shell->exit_status = 2;
 		return (0);
 	}
@@ -21,7 +24,9 @@ static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
 	{
 		if (!current->args || !current->args[0])
 		{
-			printf("minishell: syntax error near unexpected token `|'\n");
+			if (current->separator)
+				printf("minishell: syntax error near unexpected token `%s'\n",
+					op_names[current->separator]);
 			shell->exit_status = 2;
 			return (0);
 		}
@@ -61,7 +66,7 @@ int	check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell)
 		return (1);
 	if (!cmds)
 		return (1);
-	if (!check_pipe_syntax(cmds, shell))
+	if (!check_sep_syntax(cmds, shell))
 		return (0);
 	if (!check_redir_syntax(cmds, shell))
 		return (0);
