@@ -20,6 +20,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/core/input.c \
 		$(SRC_DIR)/core/shell.c \
 		$(SRC_DIR)/core/processor.c \
+		$(SRC_DIR)/core/signals.c \
 		$(SRC_DIR)/lexer/tokenize.c \
 		$(SRC_DIR)/lexer/token_utils.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
@@ -41,6 +42,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/process_dollar.c \
 		$(SRC_DIR)/expander/process_normal.c \
 		$(SRC_DIR)/execution/execute.c \
+		$(SRC_DIR)/execution/execute_cmds.c \
 		$(SRC_DIR)/builtin/builtin.c \
 		$(SRC_DIR)/builtin/builtin_echo.c \
 		$(SRC_DIR)/builtin/builtin_exit.c \

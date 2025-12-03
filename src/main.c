@@ -10,6 +10,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	display_welcome();
 	init_shell(&shell, envp);
+	setup_signals();
 	printf("%s=== Minishell Started ===%s\n", GREEN, RESET);
 	printf("%sType 'exit' to quit or Ctrl+D%s\n", CYAN, RESET);
 	while (1)

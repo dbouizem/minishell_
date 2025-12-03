@@ -12,7 +12,7 @@ static int	handle_exit_command(t_cmd *cmds)
 
 static void	debug_lexer_parser(t_token *tokens, t_cmd *cmds, t_shell *shell)
 {
-	// (void)tokens;
+	 (void)tokens;
 	(void)shell;
 	// (void)cmds;
 	// LEXER
@@ -28,12 +28,12 @@ static void	debug_lexer_parser(t_token *tokens, t_cmd *cmds, t_shell *shell)
 		print_cmd(cmds);
 	}
 	// EXPANDER
-/*	if (cmds && !handle_exit_command(cmds))
+	if (cmds && !handle_exit_command(cmds))
 	{
 		expand_commands(cmds, shell);
 		printf("\n%s AFTER EXPANSION:%s\n", MAGENTA, RESET);
 		print_cmd(cmds);
-	} */
+	} 
 }
 
 static int	is_only_whitespace(char *str)

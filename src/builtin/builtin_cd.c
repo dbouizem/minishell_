@@ -6,7 +6,7 @@
 /*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 13:45:24 by fadzejli          #+#    #+#             */
-/*   Updated: 2025/12/03 12:14:32 by fadzejli         ###   ########.fr       */
+/*   Updated: 2025/12/03 14:16:54 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 
 static void	update_pwd(char *old_pwd, t_shell *shell)
 {
-	char cwd[2064];
+	char cwd[2048];
 
 	if (old_pwd)
 		set_env_value("OLDPWD", old_pwd, shell);
 	if (getcwd(cwd, sizeof(cwd)))
 		set_env_value("PWD", cwd, shell);
+	else if (!getcwd(cwd, sizeof(cwd)))
+		cwd[0] = '\0';
 }
 
 static int	cd_home(t_shell *shell, char *old_pwd)
@@ -33,15 +35,11 @@ static int	cd_home(t_shell *shell, char *old_pwd)
 	if (!home)
 	{
 		ft_putendl_fd("minishell: cd: HOME not set", 2);
-		if (old_pwd)
-			free(old_pwd);
 		return (1);
 	}
 	if (chdir(home) == -1)
 	{
 		perror("minishell: cd");
-		if (old_pwd)
-			free(old_pwd);
 		return (1);
 	}
 	update_pwd(old_pwd, shell);
@@ -51,11 +49,12 @@ static int	cd_home(t_shell *shell, char *old_pwd)
 
 int	builtin_cd(char **args, t_shell *shell)
 {
-	char	*old_pwd;
+	char	old_pwd[2048];
 	int		exit_status;
 
 	exit_status = 0;
-	old_pwd = getcwd(NULL, 0);
+	if (!getcwd(old_pwd, sizeof(old_pwd)))
+		old_pwd[0] = '\0';
 	if (!args[1] || !*args[1])
 		return (cd_home(shell, old_pwd));
 	if (args[2])
@@ -73,7 +72,5 @@ int	builtin_cd(char **args, t_shell *shell)
 	}
 	else
 		update_pwd(old_pwd, shell);
-	if (old_pwd)
-		free(old_pwd);
 	return (exit_status);
 }
