@@ -1,5 +1,7 @@
 #include "../includes/minishell.h"
 
+//Il faut verifier le signal avec un processus enfant
+
 void	handle_sigint()
 {
 	write(STDOUT_FILENO, "\n", 1);

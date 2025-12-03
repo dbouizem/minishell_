@@ -11,6 +11,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <signal.h>
+# include <fcntl.h>
 
 # include "../libft/libft.h"
 # include "colors.h"
