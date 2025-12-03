@@ -4,7 +4,6 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 {
 	int		i;
 	char	*expanded;
-	char	*no_quotes;
 	t_redir	*redir;
 
 	while (cmd)
@@ -17,10 +16,8 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 				expanded = expand_string(cmd->args[i], shell);
 				if (expanded)
 				{
-					no_quotes = remove_quotes(expanded);
 					free(cmd->args[i]);
-					free(expanded);
-					cmd->args[i] = no_quotes;
+					cmd->args[i] = expanded;  // ← NE PAS supprimer les quotes ici !
 				}
 				i++;
 			}
@@ -28,15 +25,13 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 		redir = cmd->redirs;
 		while (redir)
 		{
-			if (redir->type != HEREDOC)
+			if (redir->type != HEREDOC && redir->file)
 			{
 				expanded = expand_string(redir->file, shell);
 				if (expanded)
 				{
-					no_quotes = remove_quotes(expanded);
 					free(redir->file);
-					free(expanded);
-					redir->file = no_quotes;
+					redir->file = expanded;  // ← NE PAS supprimer les quotes ici !
 				}
 			}
 			redir = redir->next;

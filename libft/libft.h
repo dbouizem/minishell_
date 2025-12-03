@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 00:50:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/11/05 16:27:45 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/03 16:22:13 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int			ft_isprint(int c);
 int			ft_tolower(int c);
 int			ft_toupper(int c);
 int			ft_isspace(char c);
+int			ft_isnumber(char *str);
 
 size_t		ft_strlen(const char *str);
 size_t		ft_strlcpy(char *dest, const char *src, size_t size);
@@ -150,5 +151,8 @@ void		ft_lstiter(t_list *lst, void (*f)(void *));
 
 int			ft_lstsize(t_list *lst);
 char		*ft_strncpy(char *dst, const char *src, size_t n);
+char		*ft_strjoin3(char const *s1, char const *s2, char const *s3);
+void		ft_free_tab(char **tab);
+
 
 #endif

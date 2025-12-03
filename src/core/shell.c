@@ -1,64 +1,82 @@
 #include "../../includes/minishell.h"
 
-static char	**create_minimal_env(void)
+// Fonction pour convertir envp en liste chaÃ®nÃ©e (sans strndup)
+static t_env *env_array_to_list(char **envp)
 {
-	char	**env;
-	char	cwd[1024];
+	t_env *head = NULL;
+	t_env *new_node;
+	char *equal_sign;
+	char *key;
+	int i = 0;
+	int len;
 
-	env = malloc(sizeof(char *) * 4);
-	if (!env)
-		return (NULL);
-	if (getcwd(cwd, sizeof(cwd)))
-		env[0] = ft_strjoin("PWD=", cwd);
-	else
-		env[0] = ft_strdup("PWD=/");
-	if (!env[0])
-		return (free(env), NULL);
-	env[1] = ft_strdup("SHLVL=1");
-	env[2] = ft_strdup("_=./minishell");
-	env[3] = NULL;
-	if (!env[1] || !env[2])
+	while (envp && envp[i])
 	{
-		free(env[0]);
-		free(env[1]);
-		free(env[2]);
-		free(env);
-		return (NULL);
-	}
-	return (env);
-}
+		new_node = malloc(sizeof(t_env));
+		if (!new_node)
+			return (NULL);
 
-static char	**copy_env(char **envp)
-{
-	char	**new_env;
-	int		count;
-	int		i;
-
-	count = 0;
-	while (envp[count])
-		count++;
-	new_env = malloc(sizeof(char *) * (count + 1));
-	if (!new_env)
-		return (NULL);
-	i = 0;
-	while (i < count)
-	{
-		new_env[i] = ft_strdup(envp[i]);
-		if (!new_env[i])
+		equal_sign = ft_strchr(envp[i], '=');
+		if (equal_sign)
 		{
-			while (--i >= 0)
-				free(new_env[i]);
-			free(new_env);
+			// Extraire la clÃ© (sans utiliser strndup)
+			len = equal_sign - envp[i];
+			key = malloc(len + 1);
+			if (key)
+			{
+				ft_strlcpy(key, envp[i], len + 1);
+				new_node->key = key;
+				new_node->value = ft_strdup(equal_sign + 1);
+			}
+			else
+			{
+				free(new_node);
+				return (NULL);
+			}
+		}
+		else
+		{
+			new_node->key = ft_strdup(envp[i]);
+			new_node->value = NULL;
+		}
+
+		if (!new_node->key || (equal_sign && !new_node->value))
+		{
+			free(new_node->key);
+			free(new_node);
 			return (NULL);
 		}
+
+		new_node->next = head;
+		head = new_node;
 		i++;
 	}
-	new_env[count] = NULL;
-	return (new_env);
+	return (head);
 }
 
-static void	check_terminal(t_shell *shell)
+// Fonction utilitaire pour afficher la liste d'environnement (debug)
+static void debug_env_list(t_env *env)
 {
+	printf("=== Environment List ===\n");
+	while (env)
+	{
+		printf("%s=%s\n", env->key, env->value ? env->value : "(null)");
+		env = env->next;
+	}
+	printf("=======================\n");
+}
+
+void init_shell(t_shell *shell, char **envp)
+{
+	char *term_name;
+
+	// Initialiser tous les champs
+	ft_memset(shell, 0, sizeof(t_shell));
+	shell->exit_status = 0;
+	shell->env = NULL;
+	shell->env_list = NULL;
+
+	// VÃ©rifier le terminal
 	shell->interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 	if (shell->interactive)
 	{
@@ -68,42 +86,56 @@ static void	check_terminal(t_shell *shell)
 			exit(1);
 		}
 	}
-}
 
-void	init_shell(t_shell *shell, char **envp)
-{
-	char	*term_name;
+	// Convertir envp en liste chaÃ®nÃ©e
+	shell->env_list = env_array_to_list(envp);
 
-	shell->exit_status = 0;
-	shell->env = NULL;
-	check_terminal(shell);
+	if (!shell->env_list && envp && *envp)
+	{
+		fprintf(stderr, "Error: Failed to initialize environment list\n");
+		exit(1);
+	}
+
+	// Debug
+	debug_env_list(shell->env_list);
+
+	// Convertir la liste en tableau pour execve
+	env_list_to_array(shell);
+
+	// Afficher les infos terminal
 	term_name = ttyname(STDIN_FILENO);
 	if (term_name)
 		printf("%sTerminal: %s%s\n", CYAN, term_name, RESET);
-	if (envp && *envp)
-		shell->env = copy_env(envp);
-	else
+
+	printf("%sâœ“ Minishell initialized successfully%s\n", GREEN, RESET);
+}
+
+// Fonction pour libÃ©rer la liste d'environnement
+static void free_env_list(t_env *env)
+{
+	t_env *tmp;
+
+	while (env)
 	{
-		printf("%sWarning: No environment, creating minimal one%s\n",
-			YELLOW, RESET);
-		shell->env = create_minimal_env();
-	}
-	if (!shell->env)
-	{
-		perror("minishell: environment initialization failed");
-		exit(1);
+		tmp = env;
+		env = env->next;
+		free(tmp->key);
+		free(tmp->value);
+		free(tmp);
 	}
 }
 
-void	cleanup_shell(t_shell *shell)
+void cleanup_shell(t_shell *shell)
 {
-	int	i;
+	int i;
 
 	if (shell->interactive)
 	{
 		if (tcsetattr(STDIN_FILENO, TCSANOW, &shell->original_term) == -1)
 			perror("minishell: tcsetattr");
 	}
+
+	// LibÃ©rer le tableau d'environnement
 	if (shell->env)
 	{
 		i = 0;
@@ -115,5 +147,13 @@ void	cleanup_shell(t_shell *shell)
 		free(shell->env);
 		shell->env = NULL;
 	}
+
+	// LibÃ©rer la liste d'environnement
+	if (shell->env_list)
+	{
+		free_env_list(shell->env_list);
+		shell->env_list = NULL;
+	}
+
 	rl_clear_history();
 }
