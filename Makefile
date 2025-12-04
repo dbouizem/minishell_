@@ -51,7 +51,10 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/redirections.c \
 		$(SRC_DIR)/executor/remove_quotes_final.c \
 		$(SRC_DIR)/executor/env_utils.c \
-		$(SRC_DIR)/executor/execute_pipeline.c
+		$(SRC_DIR)/executor/execute_pipeline.c \
+		$(SRC_DIR)/executor/execute_command_child.c \
+		\
+		$(SRC_DIR)/debug/debug_executor.c
 
 EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)
 

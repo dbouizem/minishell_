@@ -2,7 +2,7 @@
 
 static int	count_commands(t_cmd *cmd)
 {
-	int	count;
+	int		count;
 
 	count = 0;
 	while (cmd)
@@ -15,7 +15,7 @@ static int	count_commands(t_cmd *cmd)
 
 static void	close_all_pipes(int **pipes, int num_pipes)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	while (i < num_pipes)
@@ -41,8 +41,7 @@ static void	free_pipes(int **pipes, int num_pipes)
 	free(pipes);
 }
 
-
-static	int **create_pipes(int num_pipes)
+static int	**create_pipes(int num_pipes)
 {
 	int		**pipes;
 	int		i;
@@ -78,7 +77,7 @@ static	int **create_pipes(int num_pipes)
 	return (pipes);
 }
 
-static void exec_child(t_cmd *cmd, t_shell *shell, int **pipes, int num_pipes, int cmd_index)
+static void	exec_child(t_cmd *cmd, t_shell *shell, int **pipes, int num_pipes, int cmd_index)
 {
 	int		input_fd;
 	int		output_fd;
@@ -109,24 +108,11 @@ static void exec_child(t_cmd *cmd, t_shell *shell, int **pipes, int num_pipes, i
 		}
 	}
 	close_all_pipes(pipes, num_pipes);
-
-	if (setup_redirections(cmd) != 0)
-		exit(1);
-	if (cmd->args && cmd->args[0])
-	{
-		if (is_builtin(cmd->args[0]))
-		{
-			int status = execute_builtin(cmd, shell);
-			exit(status);
-		}
-		else
-			execute_external_no_fork(cmd, shell);
-	}
-
-	exit(0);
+	execute_command_child(cmd, shell);
 }
 
-static int wait_all_children(pid_t *pids, int num_commands)
+
+static int	wait_all_children(pid_t *pids, int num_commands)
 {
 	int		i;
 	int		status;
@@ -146,7 +132,7 @@ static int wait_all_children(pid_t *pids, int num_commands)
 	return (last_status);
 }
 
-int execute_pipeline(t_cmd *cmd, t_shell *shell)
+int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 {
 	int		num_commands;
 	int		num_pipes;
@@ -158,6 +144,7 @@ int execute_pipeline(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd || !cmd->next)
 		return (execute_command(cmd, shell));
+
 	num_commands = count_commands(cmd);
 	num_pipes = num_commands - 1;
 
@@ -167,7 +154,6 @@ int execute_pipeline(t_cmd *cmd, t_shell *shell)
 		perror("create_pipes");
 		return (1);
 	}
-
 	pids = malloc(sizeof(pid_t) * num_commands);
 	if (!pids)
 	{
@@ -191,7 +177,6 @@ int execute_pipeline(t_cmd *cmd, t_shell *shell)
 
 		if (pids[i] == 0)
 			exec_child(current, shell, pipes, num_pipes, i);
-
 		current = current->next;
 		i++;
 	}

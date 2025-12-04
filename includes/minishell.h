@@ -20,6 +20,7 @@
 # include "parser.h"
 # include "expander.h"
 # include "executor.h"
+# include "debug.h"
 
 typedef struct s_env
 {

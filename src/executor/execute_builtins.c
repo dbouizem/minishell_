@@ -17,6 +17,7 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
 	if (!cmd->args[0])
 		return (1);
+
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
 		return (ft_echo(cmd));
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)
@@ -35,8 +36,6 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 	return (-1);
 }
 
-// ==================== IMPLEMENTATION DES BUILTINS ====================
-
 int	ft_echo(t_cmd *cmd)
 {
 	int	i;
@@ -44,15 +43,11 @@ int	ft_echo(t_cmd *cmd)
 
 	newline = 1;
 	i = 1;
-
-	// Vérifier l'option -n
 	if (cmd->args[1] && ft_strcmp(cmd->args[1], "-n") == 0)
 	{
 		newline = 0;
 		i = 2;
 	}
-
-	// Afficher les arguments
 	while (cmd->args[i])
 	{
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
@@ -60,10 +55,8 @@ int	ft_echo(t_cmd *cmd)
 			ft_putchar_fd(' ', STDOUT_FILENO);
 		i++;
 	}
-
 	if (newline)
 		ft_putchar_fd('\n', STDOUT_FILENO);
-
 	return (0);
 }
 
@@ -86,11 +79,10 @@ int	ft_env(t_shell *shell)
 
 	if (!shell || !shell->env_list)
 		return (1);
-
 	env = shell->env_list;
 	while (env)
 	{
-		if (env->value) // Afficher seulement les variables avec valeur
+		if (env->value)
 		{
 			ft_putstr_fd(env->key, STDOUT_FILENO);
 			ft_putchar_fd('=', STDOUT_FILENO);
@@ -123,7 +115,6 @@ int	ft_cd(t_cmd *cmd, t_shell *shell)
 	}
 	else
 		path = cmd->args[1];
-
 	if (!path)
 	{
 		ft_putendl_fd("minishell: cd: HOME not set", STDERR_FILENO);
@@ -162,7 +153,6 @@ int	ft_exit(t_cmd *cmd, t_shell *shell)
 	int	exit_code;
 
 	printf("exit\n");
-
 	if (cmd->args[1])
 	{
 		if (!ft_isnumber(cmd->args[1]))
@@ -182,7 +172,6 @@ int	ft_exit(t_cmd *cmd, t_shell *shell)
 	}
 	else
 		exit_code = shell->exit_status;
-
 	cleanup_shell(shell);
 	exit(exit_code);
 }

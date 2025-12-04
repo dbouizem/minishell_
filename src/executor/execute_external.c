@@ -55,6 +55,7 @@ char *find_command_path(char *cmd, t_shell *shell)
 	return (NULL);
 }
 
+// Dans execute_external.c
 void	handle_exec_error(char *cmd, t_shell *shell)
 {
 	struct stat	path_stat;
@@ -95,6 +96,7 @@ void	handle_exec_error(char *cmd, t_shell *shell)
 void	execute_external_no_fork(t_cmd *cmd, t_shell *shell)
 {
 	char	*cmd_path;
+
 	if (!cmd || !cmd->args || !cmd->args[0])
 		exit(1);
 	cmd_path = find_command_path(cmd->args[0], shell);
@@ -118,9 +120,6 @@ int	execute_external(t_cmd *cmd, t_shell *shell)
 	int		status;
 	char	*cmd_path;
 
-	if (!cmd || !cmd->args || !cmd->args[0])
-		return (1);
-
 	cmd_path = find_command_path(cmd->args[0], shell);
 	if (!cmd_path)
 	{
@@ -133,6 +132,7 @@ int	execute_external(t_cmd *cmd, t_shell *shell)
 	{
 		perror("fork");
 		free(cmd_path);
+		shell->exit_status = 1;
 		return (1);
 	}
 
@@ -140,16 +140,24 @@ int	execute_external(t_cmd *cmd, t_shell *shell)
 	{
 		env_list_to_array(shell);
 		execve(cmd_path, cmd->args, shell->env);
-		handle_exec_error(cmd->args[0], shell);
+
+		perror("execve");
 		free(cmd_path);
-		exit(shell->exit_status);
+		exit(127);
 	}
 	else
 	{
 		free(cmd_path);
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
-			return (WEXITSTATUS(status));
-		return (1);
+		{
+			shell->exit_status = WEXITSTATUS(status);
+			return (shell->exit_status);
+		}
+		else
+		{
+			shell->exit_status = 1;
+			return (1);
+		}
 	}
 }

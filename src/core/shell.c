@@ -1,14 +1,13 @@
 #include "../../includes/minishell.h"
 
-// Fonction pour convertir envp en liste chaÃ®nÃ©e (sans strndup)
-static t_env *env_array_to_list(char **envp)
+static t_env	*env_array_to_list(char **envp)
 {
-	t_env *head = NULL;
-	t_env *new_node;
-	char *equal_sign;
-	char *key;
-	int i = 0;
-	int len;
+	t_env	*head = NULL;
+	t_env	*new_node;
+	char	*equal_sign;
+	char	*key;
+	int		i = 0;
+	int		len;
 
 	while (envp && envp[i])
 	{
@@ -19,7 +18,6 @@ static t_env *env_array_to_list(char **envp)
 		equal_sign = ft_strchr(envp[i], '=');
 		if (equal_sign)
 		{
-			// Extraire la clÃ© (sans utiliser strndup)
 			len = equal_sign - envp[i];
 			key = malloc(len + 1);
 			if (key)
@@ -39,14 +37,12 @@ static t_env *env_array_to_list(char **envp)
 			new_node->key = ft_strdup(envp[i]);
 			new_node->value = NULL;
 		}
-
 		if (!new_node->key || (equal_sign && !new_node->value))
 		{
 			free(new_node->key);
 			free(new_node);
 			return (NULL);
 		}
-
 		new_node->next = head;
 		head = new_node;
 		i++;
@@ -54,8 +50,7 @@ static t_env *env_array_to_list(char **envp)
 	return (head);
 }
 
-// Fonction utilitaire pour afficher la liste d'environnement (debug)
-static void debug_env_list(t_env *env)
+static void	debug_env_list(t_env *env)
 {
 	printf("=== Environment List ===\n");
 	while (env)
@@ -66,17 +61,15 @@ static void debug_env_list(t_env *env)
 	printf("=======================\n");
 }
 
-void init_shell(t_shell *shell, char **envp)
+void	init_shell(t_shell *shell, char **envp)
 {
 	char *term_name;
 
-	// Initialiser tous les champs
 	ft_memset(shell, 0, sizeof(t_shell));
 	shell->exit_status = 0;
 	shell->env = NULL;
 	shell->env_list = NULL;
 
-	// VÃ©rifier le terminal
 	shell->interactive = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 	if (shell->interactive)
 	{
@@ -86,8 +79,6 @@ void init_shell(t_shell *shell, char **envp)
 			exit(1);
 		}
 	}
-
-	// Convertir envp en liste chaÃ®nÃ©e
 	shell->env_list = env_array_to_list(envp);
 
 	if (!shell->env_list && envp && *envp)
@@ -96,13 +87,10 @@ void init_shell(t_shell *shell, char **envp)
 		exit(1);
 	}
 
-	// Debug
 	debug_env_list(shell->env_list);
 
-	// Convertir la liste en tableau pour execve
 	env_list_to_array(shell);
 
-	// Afficher les infos terminal
 	term_name = ttyname(STDIN_FILENO);
 	if (term_name)
 		printf("%sTerminal: %s%s\n", CYAN, term_name, RESET);
@@ -110,10 +98,9 @@ void init_shell(t_shell *shell, char **envp)
 	printf("%sâœ“ Minishell initialized successfully%s\n", GREEN, RESET);
 }
 
-// Fonction pour libÃ©rer la liste d'environnement
-static void free_env_list(t_env *env)
+static void	free_env_list(t_env *env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	while (env)
 	{
@@ -125,7 +112,7 @@ static void free_env_list(t_env *env)
 	}
 }
 
-void cleanup_shell(t_shell *shell)
+void	cleanup_shell(t_shell *shell)
 {
 	int i;
 
@@ -135,7 +122,6 @@ void cleanup_shell(t_shell *shell)
 			perror("minishell: tcsetattr");
 	}
 
-	// LibÃ©rer le tableau d'environnement
 	if (shell->env)
 	{
 		i = 0;
@@ -148,12 +134,10 @@ void cleanup_shell(t_shell *shell)
 		shell->env = NULL;
 	}
 
-	// LibÃ©rer la liste d'environnement
 	if (shell->env_list)
 	{
 		free_env_list(shell->env_list);
 		shell->env_list = NULL;
 	}
-
 	rl_clear_history();
 }

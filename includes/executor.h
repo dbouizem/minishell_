@@ -21,10 +21,15 @@ int		ft_exit(t_cmd *cmd, t_shell *shell);
 int		execute_external(t_cmd *cmd, t_shell *shell);
 void	execute_external_no_fork(t_cmd *cmd, t_shell *shell);
 char	*find_command_path(char *cmd, t_shell *shell);
+void	execute_command_child(t_cmd *cmd, t_shell *shell);
+
 
 int		setup_redirections(t_cmd *cmd);
 
 void	remove_quotes_from_command(t_cmd *cmd);
 void	handle_exec_error(char *cmd, t_shell *shell);
+int		save_redirections(int *saved_stdin, int *saved_stdout);
+int		restore_redirections(int saved_stdin, int saved_stdout);
+
 
 #endif

@@ -7,7 +7,7 @@ typedef struct	s_shell t_shell;
 
 typedef struct s_redir
 {
-	int				type;		// INPUT, TRUNC, HEREDOC, APPEND
+	int				type;
 	char			*file;
 	struct s_redir	*next;
 }	t_redir;
@@ -15,8 +15,8 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char			**args;
-	t_redir			*redirs;	// Liste des redirections
-	struct s_cmd	*next;		// Commande suivante (après pipe)
+	t_redir			*redirs;
+	struct s_cmd	*next;
 }	t_cmd;
 
 t_cmd	*parse(t_token *tokens, t_shell *shell);

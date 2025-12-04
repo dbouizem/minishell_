@@ -17,7 +17,7 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 				if (expanded)
 				{
 					free(cmd->args[i]);
-					cmd->args[i] = expanded;  // ← NE PAS supprimer les quotes ici !
+					cmd->args[i] = expanded;
 				}
 				i++;
 			}
@@ -31,7 +31,7 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 				if (expanded)
 				{
 					free(redir->file);
-					redir->file = expanded;  // ← NE PAS supprimer les quotes ici !
+					redir->file = expanded;
 				}
 			}
 			redir = redir->next;

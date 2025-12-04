@@ -24,7 +24,6 @@ void	remove_quotes_from_command(t_cmd *cmd)
 				i++;
 			}
 		}
-
 		// Redirections (sauf heredoc)
 		redir = current->redirs;
 		while (redir)
