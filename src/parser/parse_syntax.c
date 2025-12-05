@@ -11,20 +11,13 @@ static int	check_pipe_syntax(t_cmd *cmds, t_shell *shell)
 		current = current->next;
 
 	if (current && (!current->args || !current->args[0]))
-	{
-		printf("minishell: syntax error near unexpected token `|'\n");
-		shell->exit_status = 2;
-		return (0);
-	}
+		return (pipe_syntax_error(shell), 0);
+
 	current = cmds;
 	while (current)
 	{
 		if (!current->args || !current->args[0])
-		{
-			printf("minishell: syntax error near unexpected token `|'\n");
-			shell->exit_status = 2;
-			return (0);
-		}
+			return (pipe_syntax_error(shell), 0);
 		current = current->next;
 	}
 	return (1);
@@ -42,12 +35,7 @@ static int	check_redir_syntax(t_cmd *cmds, t_shell *shell)
 		while (current_redir)
 		{
 			if (!current_redir->file || current_redir->file[0] == '\0')
-			{
-				printf("minishell: syntax error near "
-					"unexpected token `newline'\n");
-				shell->exit_status = 2;
-				return (0);
-			}
+				return (redir_syntax_error(shell), 0);
 			current_redir = current_redir->next;
 		}
 		current_cmd = current_cmd->next;
@@ -57,9 +45,7 @@ static int	check_redir_syntax(t_cmd *cmds, t_shell *shell)
 
 int	check_parser_syntax(t_token *tokens, t_cmd *cmds, t_shell *shell)
 {
-	if (!tokens)
-		return (1);
-	if (!cmds)
+	if (!tokens || !cmds)
 		return (1);
 	if (!check_pipe_syntax(cmds, shell))
 		return (0);

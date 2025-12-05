@@ -1,5 +1,6 @@
-// srcs/debug/debug_executor.c - VERSION CORRIGÉE
 #include "../includes/minishell.h"
+
+
 
 /**
  * Affiche le type de redirection en string
@@ -23,44 +24,55 @@ void	print_command(t_cmd *cmd, int cmd_num)
 	int		i;
 	t_redir	*redir;
 
-	printf("┌─────── COMMAND %d ───────┐\n", cmd_num);
+	printf(COLOR_BOLD COLOR_CYAN "┌───────" BG_BLUE COLOR_WHITE
+		" COMMAND %d " COLOR_RESET COLOR_BOLD COLOR_CYAN "───────┐" COLOR_RESET "\n", cmd_num);
 
 	// Arguments
 	if (cmd->args)
 	{
-		printf("│ Args: ");
+		printf(COLOR_CYAN "│" COLOR_RESET COLOR_BOLD " Args: " COLOR_RESET);
 		i = 0;
 		while (cmd->args[i])
 		{
-			printf("[%s] ", cmd->args[i]);
+			printf(COLOR_GREEN "[%s] " COLOR_RESET, cmd->args[i]);
 			i++;
 		}
 		printf("\n");
 	}
 	else
 	{
-		printf("│ Args: (none)\n");
+		printf(COLOR_CYAN "│" COLOR_RESET COLOR_BOLD " Args: " COLOR_RESET
+			COLOR_YELLOW "(none)" COLOR_RESET "\n");
 	}
 
 	// Redirections
 	redir = cmd->redirs;
 	if (redir)
 	{
-		printf("│ Redirections:\n");
+		printf(COLOR_CYAN "│" COLOR_RESET COLOR_BOLD " Redirections:" COLOR_RESET "\n");
 		while (redir)
 		{
-			printf("│   %-8s → %s\n",
+			const char *type_color = COLOR_WHITE;
+			if (redir->type == 1 || redir->type == 3) // INPUT ou HEREDOC
+				type_color = COLOR_YELLOW;
+			else if (redir->type == 2 || redir->type == 4) // TRUNC ou APPEND
+				type_color = COLOR_MAGENTA;
+
+			printf(COLOR_CYAN "│" COLOR_RESET "   %s%-8s" COLOR_RESET
+				" → " COLOR_CYAN "%s" COLOR_RESET "\n",
+				type_color,
 				redir_type_to_str(redir->type),
-				redir->file ? redir->file : "(null)");
+				redir->file ? redir->file : COLOR_YELLOW "(null)" COLOR_RESET);
 			redir = redir->next;
 		}
 	}
 	else
 	{
-		printf("│ Redirections: (none)\n");
+		printf(COLOR_CYAN "│" COLOR_RESET COLOR_BOLD " Redirections: " COLOR_RESET
+			COLOR_YELLOW "(none)" COLOR_RESET "\n");
 	}
 
-	printf("└──────────────────────────┘\n");
+	printf(COLOR_BOLD COLOR_CYAN "└──────────────────────────┘" COLOR_RESET "\n");
 }
 
 /**
@@ -73,14 +85,15 @@ void	print_pipeline(t_cmd *cmd)
 
 	if (!cmd)
 	{
-		printf("\n=== NO COMMANDS ===\n");
+		printf(COLOR_RED "\n=== NO COMMANDS ===" COLOR_RESET "\n");
 		return;
 	}
 
 	// Garder une référence au premier pour le comptage
 	first_cmd = cmd;
 
-	printf("\n══════════ PIPELINE DEBUG ══════════\n");
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "\n══════════ PIPELINE DEBUG ══════════"
+		COLOR_RESET "\n");
 
 	// Compter les commandes
 	cmd_num = 0;
@@ -89,7 +102,7 @@ void	print_pipeline(t_cmd *cmd)
 		cmd_num++;
 		cmd = cmd->next;
 	}
-	printf("Number of commands: %d\n\n", cmd_num);
+	printf(COLOR_BOLD "Number of commands: " COLOR_CYAN "%d" COLOR_RESET "\n\n", cmd_num);
 
 	// Réafficher chaque commande
 	cmd = first_cmd;
@@ -98,10 +111,11 @@ void	print_pipeline(t_cmd *cmd)
 	{
 		print_command(cmd, cmd_num++);
 		if (cmd->next)
-			printf("                 ↓\n                 PIPE\n                 ↓\n");
+			printf(COLOR_BLUE "                 ↓\n                 PIPE\n                 ↓\n" COLOR_RESET);
 		cmd = cmd->next;
 	}
-	printf("══════════════════════════════════════\n\n");
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "══════════════════════════════════════"
+		COLOR_RESET "\n\n");
 }
 
 /**
@@ -112,7 +126,7 @@ void	print_expansion_debug(t_cmd *cmd, const char *phase)
 	int		i;
 	t_cmd	*current;
 
-	printf("\n─── %s ───\n", phase);
+	printf(COLOR_BOLD COLOR_MAGENTA "\n─── %s ───" COLOR_RESET "\n", phase);
 	current = cmd;
 	while (current)
 	{
@@ -121,13 +135,14 @@ void	print_expansion_debug(t_cmd *cmd, const char *phase)
 			i = 0;
 			while (current->args[i])
 			{
-				printf("  arg[%d]: \"%s\"\n", i, current->args[i]);
+				printf("  " COLOR_BOLD "arg[%d]:" COLOR_RESET " \"" COLOR_GREEN "%s"
+					COLOR_RESET "\"\n", i, current->args[i]);
 				i++;
 			}
 		}
 		current = current->next;
 	}
-	printf("──────────\n\n");
+	printf(COLOR_BOLD COLOR_MAGENTA "──────────" COLOR_RESET "\n\n");
 }
 
 /**
@@ -135,8 +150,11 @@ void	print_expansion_debug(t_cmd *cmd, const char *phase)
  */
 void	print_fd_debug(const char *context)
 {
-	printf("[FD DEBUG %s] stdin=%d, stdout=%d, stderr=%d\n",
-		context, STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO);
+	printf(COLOR_BOLD BG_CYAN COLOR_WHITE "[FD DEBUG %s]" COLOR_RESET
+		" stdin=" COLOR_YELLOW "%d" COLOR_RESET
+		", stdout=" COLOR_GREEN "%d" COLOR_RESET
+		", stderr=" COLOR_RED "%d" COLOR_RESET "\n",
+		context, STDIN_FILENO, STDOUT_FILENO, STDOUT_FILENO);
 }
 
 /**
@@ -145,10 +163,18 @@ void	print_fd_debug(const char *context)
 void	print_execution_step(const char *step, t_cmd *cmd, t_shell *shell)
 {
 	(void)cmd;
-	printf("\n═══════════════════════════════════════════\n");
-	printf("STEP: %s\n", step);
-	printf("Exit status: %d\n", shell->exit_status);
-	printf("═══════════════════════════════════════════\n");
+
+	const char *status_color = COLOR_GREEN;
+	if (shell->exit_status != 0)
+		status_color = COLOR_RED;
+
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "\n═══════════════════════════════════════════"
+		COLOR_RESET "\n");
+	printf(COLOR_BOLD "STEP: " COLOR_CYAN "%s" COLOR_RESET "\n", step);
+	printf(COLOR_BOLD "Exit status: " COLOR_RESET "%s%d" COLOR_RESET "\n",
+		status_color, shell->exit_status);
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "═══════════════════════════════════════════"
+		COLOR_RESET "\n");
 }
 
 /**
@@ -162,12 +188,14 @@ void	debug_executor(t_cmd *cmd, t_shell *shell, const char *phase)
 
 	(void)shell;
 
-	printf("\n══════ EXECUTOR DEBUG [%s] ══════\n", phase);
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "\n══════ EXECUTOR DEBUG [%s] ══════"
+		COLOR_RESET "\n", phase);
 
 	if (!cmd)
 	{
-		printf("No commands\n");
-		printf("═══════════════════════════════\n\n");
+		printf(COLOR_RED "No commands" COLOR_RESET "\n");
+		printf(COLOR_BOLD BG_BLUE COLOR_WHITE "═══════════════════════════════"
+			COLOR_RESET "\n\n");
 		return;
 	}
 
@@ -180,22 +208,22 @@ void	debug_executor(t_cmd *cmd, t_shell *shell, const char *phase)
 		current = current->next;
 	}
 
-	printf("Total commands: %d\n", cmd_count);
-	printf("─────────────────────────────────\n");
+	printf(COLOR_BOLD "Total commands: " COLOR_CYAN "%d" COLOR_RESET "\n", cmd_count);
+	printf(COLOR_BOLD "─────────────────────────────────" COLOR_RESET "\n");
 
 	// Afficher chaque commande
 	current = cmd;
 	cmd_count = 0;
 	while (current)
 	{
-		printf("Cmd #%d:\n", cmd_count++);
-		printf("  Args: ");
+		printf(COLOR_BOLD "Cmd #%d:" COLOR_RESET "\n", cmd_count++);
+		printf("  " COLOR_BOLD "Args:" COLOR_RESET " ");
 		if (current->args)
 		{
 			i = 0;
 			while (current->args[i])
 			{
-				printf("\"%s\" ", current->args[i]);
+				printf("\"" COLOR_GREEN "%s" COLOR_RESET "\" ", current->args[i]);
 				i++;
 			}
 		}
@@ -205,10 +233,18 @@ void	debug_executor(t_cmd *cmd, t_shell *shell, const char *phase)
 		if (current->redirs)
 		{
 			t_redir *redir = current->redirs;
-			printf("  Redirs: ");
+			printf("  " COLOR_BOLD "Redirs:" COLOR_RESET " ");
 			while (redir)
 			{
-				printf("%s->%s ",
+				const char *type_color = COLOR_WHITE;
+				if (redir->type == 1 || redir->type == 3)
+					type_color = COLOR_YELLOW;
+				else if (redir->type == 2 || redir->type == 4)
+					type_color = COLOR_MAGENTA;
+
+				printf("%s%s" COLOR_RESET COLOR_BOLD "->" COLOR_RESET
+					COLOR_CYAN "%s" COLOR_RESET " ",
+					type_color,
 					redir_type_to_str(redir->type),
 					redir->file);
 				redir = redir->next;
@@ -217,9 +253,10 @@ void	debug_executor(t_cmd *cmd, t_shell *shell, const char *phase)
 		}
 
 		if (current->next)
-			printf("  └── PIPE ──┐\n");
+			printf("  " COLOR_BLUE "└── PIPE ──┐" COLOR_RESET "\n");
 		current = current->next;
 	}
 
-	printf("═══════════════════════════════\n\n");
+	printf(COLOR_BOLD BG_BLUE COLOR_WHITE "═══════════════════════════════"
+		COLOR_RESET "\n\n");
 }

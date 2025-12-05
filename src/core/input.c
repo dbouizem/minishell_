@@ -5,16 +5,13 @@ char	*read_input(void)
 	char	*input;
 
 	input = readline(PROMPT_COLOR "minishell$ " RESET_COLOR);
-	if (!input)
-	{
-		if (errno)
-			perror("minishell: readline error");
-		return (NULL);
-	}
+	if (!input && errno)
+		perror("minishell: readline error");
+	else if (*input)
+		add_history(input);
+
 	rl_replace_line("", 0);
 	rl_on_new_line();
-	if (*input)
-		add_history(input);
 	return (input);
 }
 
@@ -26,6 +23,7 @@ char	*read_input_non_interactive(void)
 	line = get_next_line(STDIN_FILENO);
 	if (!line)
 		return (NULL);
+
 	len = ft_strlen(line);
 	if (len > 0 && line[len - 1] == '\n')
 		line[len - 1] = '\0';

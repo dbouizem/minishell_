@@ -1,4 +1,3 @@
-// includes/minishell.h
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -16,20 +15,24 @@
 
 # include "../libft/libft.h"
 # include "colors.h"
+
+typedef struct s_env			t_env;
+typedef struct s_token			t_token;
+typedef struct s_redir			t_redir;
+typedef struct s_cmd			t_cmd;
+typedef struct s_state			t_state;
+typedef struct s_shell			t_shell;
+typedef struct s_pipeline_data	t_pipeline_data;
+
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
 # include "executor.h"
+# include "builtin.h"
+# include "env.h"
 # include "debug.h"
 
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
-
-typedef struct s_shell
+struct s_shell
 {
 	char			**env;
 	t_env			*env_list;
@@ -37,19 +40,17 @@ typedef struct s_shell
 	int				interactive;
 	struct termios	original_term;
 	int				num_pipes;
-}	t_shell;
+};
 
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
-
 char	*read_input(void);
 char	*read_input_non_interactive(void);
 void	display_welcome(void);
-
 int		process_input(char *input, t_shell *shell);
 
-void	env_list_to_array(t_shell *shell);
-char	*get_env_value(char *key, t_shell *shell);
-void	update_env_var(char *key, char *value, t_shell *shell);
+void	shell_error(char *message, int exit_code);
+void	process_error(char *context, t_shell *shell);
+void	*check_malloc(void *ptr, char *context);
 
 #endif

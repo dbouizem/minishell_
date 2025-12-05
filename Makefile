@@ -21,6 +21,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/core/input.c \
 		$(SRC_DIR)/core/shell.c \
 		$(SRC_DIR)/core/processor.c \
+		$(SRC_DIR)/core/shell_errors.c \
 		\
 		$(SRC_DIR)/lexer/tokenize.c \
 		$(SRC_DIR)/lexer/token_utils.c \
@@ -28,6 +29,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_handlers.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
+		$(SRC_DIR)/lexer/lexer_errors.c \
 		\
 		$(SRC_DIR)/parser/parse.c \
 		$(SRC_DIR)/parser/parse_cmd.c \
@@ -36,25 +38,44 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parser/parse_utils.c \
 		$(SRC_DIR)/parser/parse_cleanup.c \
 		$(SRC_DIR)/parser/parse_syntax.c \
+		$(SRC_DIR)/parser/parse_errors.c \
 		\
 		$(SRC_DIR)/expander/expand.c \
-		$(SRC_DIR)/expander/expand_var.c \
 		$(SRC_DIR)/expander/expand_quotes.c \
 		$(SRC_DIR)/expander/expand_utils.c \
 		$(SRC_DIR)/expander/expand_string.c \
 		$(SRC_DIR)/expander/process_dollar.c \
+		$(SRC_DIR)/expander/dollar_utils.c \
 		$(SRC_DIR)/expander/process_normal.c \
+		$(SRC_DIR)/expander/remove_quotes_final.c \
 		\
 		$(SRC_DIR)/executor/executor.c \
-		$(SRC_DIR)/executor/execute_builtins.c \
-		$(SRC_DIR)/executor/execute_external.c \
+		$(SRC_DIR)/executor/pipeline.c \
+		$(SRC_DIR)/executor/pipeline_utils.c \
+		$(SRC_DIR)/executor/external.c \
+		$(SRC_DIR)/executor/external_utils.c \
 		$(SRC_DIR)/executor/redirections.c \
-		$(SRC_DIR)/executor/remove_quotes_final.c \
-		$(SRC_DIR)/executor/env_utils.c \
-		$(SRC_DIR)/executor/execute_pipeline.c \
-		$(SRC_DIR)/executor/execute_command_child.c \
+		$(SRC_DIR)/executor/redirections_utils.c \
+		$(SRC_DIR)/executor/exec_errors.c \
 		\
+		$(SRC_DIR)/builtin/builtin.c \
+		$(SRC_DIR)/builtin/builtin_echo.c \
+		$(SRC_DIR)/builtin/builtin_exit.c \
+		$(SRC_DIR)/builtin/builtin_pwd.c \
+		$(SRC_DIR)/builtin/builtin_cd.c \
+		$(SRC_DIR)/builtin/builtin_env.c \
+		$(SRC_DIR)/builtin/builtin_export.c \
+		$(SRC_DIR)/builtin/builtin_unset.c \
+		\
+		$(SRC_DIR)/env/env_array.c \
+		$(SRC_DIR)/env/env_list.c \
+		$(SRC_DIR)/env/env_utils.c \
+		$(SRC_DIR)/env/env_errors.c \
+		\
+		$(SRC_DIR)/debug/debug_env.c \
+		$(SRC_DIR)/debug/debug_parse.c \
 		$(SRC_DIR)/debug/debug_executor.c
+
 
 EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)
 
