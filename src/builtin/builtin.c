@@ -1,7 +1,5 @@
 #include "../../includes/minishell.h"
 
-/* VERIFIER TOUTES LES EXIS STATUS*/
-
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
@@ -17,24 +15,23 @@ int	is_builtin(char *cmd)
 
 int	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
-	int	exit_status;
-
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
-	exit_status = 0;
+
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
-		exit_status = builtin_echo(cmd->args);
+		return (builtin_echo(cmd->args));
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
-		exit_status = builtin_pwd();
+		return (builtin_pwd());
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)
-		exit_status = builtin_cd(cmd->args, shell);
+		return (builtin_cd(cmd->args, shell));
 	else if (ft_strcmp(cmd->args[0], "export") == 0)
-		exit_status = builtin_export(cmd->args, shell);
+		return (builtin_export(cmd->args, shell));
 	else if (ft_strcmp(cmd->args[0], "unset") == 0)
-		exit_status = builtin_unset(cmd->args, shell);
+		return (builtin_unset(cmd->args, shell));
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
-		exit_status = builtin_env(shell);
+		return (builtin_env(shell));
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		exit_status = builtin_exit(cmd->args, shell);
-	return (exit_status);
+		return (builtin_exit(cmd->args, shell));
+
+	return (0);
 }

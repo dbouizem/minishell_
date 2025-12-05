@@ -82,7 +82,6 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	remove_quotes_from_command(cmd);
 	if (setup_redirections(cmd) != 0)
 		exit(1);
-
 	if (cmd->args && cmd->args[0])
 	{
 		if (is_builtin(cmd->args[0]))

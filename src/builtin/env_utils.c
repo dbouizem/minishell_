@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+/* #include "../includes/minishell.h"
 
 char	*get_env_value(char *key, t_shell *shell)
 {
@@ -137,3 +137,4 @@ int	unset_env_value(char *key, t_shell *shell)
 	return (1);
 }
 
+ */

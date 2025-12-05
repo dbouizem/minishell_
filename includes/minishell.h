@@ -12,6 +12,7 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <fcntl.h>
+# include <limits.h>
 
 # include "../libft/libft.h"
 # include "colors.h"
