@@ -13,7 +13,7 @@ t_cmd	*create_cmd(void)
 	return (cmd);
 }
 
-t_redir	*create_redir(int type, char *file)
+t_redir	*create_redir(t_redir_type type, char *file)
 {
 	t_redir	*redir;
 

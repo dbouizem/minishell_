@@ -16,6 +16,8 @@ typedef struct s_pipeline_data
 int		execute(t_cmd *cmd, t_shell *shell);
 int		execute_command(t_cmd *cmd, t_shell *shell);
 void	execute_command_child(t_cmd *cmd, t_shell *shell);
+void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index);
+
 
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);
 int		count_commands(t_cmd *cmd);

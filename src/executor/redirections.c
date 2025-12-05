@@ -13,11 +13,11 @@ static int	handle_input_redirection(t_redir *redir)
 	return (0);
 }
 
-static int	handle_output_redirection(t_redir *redir, int type)
+static int	handle_output_redirection(t_redir *redir, t_redir_type type)
 {
 	int	fd;
 
-	if (type == TRUNC)
+	if (type == REDIR_OUT)
 		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
 		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -36,17 +36,18 @@ int	setup_redirections(t_cmd *cmd)
 	redir = cmd->redirs;
 	while (redir)
 	{
-		if (redir->type == INPUT)
+		if (redir->type == REDIR_IN)
 		{
 			if (handle_input_redirection(redir) != 0)
 				return (1);
 		}
-		else if (redir->type == TRUNC || redir->type == APPEND)
+		else if (redir->type == REDIR_OUT
+			|| redir->type == REDIR_APPEND)
 		{
 			if (handle_output_redirection(redir, redir->type) != 0)
 				return (1);
 		}
-		else if (redir->type == HEREDOC)
+		else if (redir->type == REDIR_HEREDOC)
 		{
 			if (handle_heredoc_redirection(redir) != 0)
 				return (1);

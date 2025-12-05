@@ -8,7 +8,7 @@ static void	remove_quotes_from_redirections(t_cmd *current)
 	redir = current->redirs;
 	while (redir)
 	{
-		if (redir->type != HEREDOC && redir->file)
+		if (redir->type != REDIR_HEREDOC && redir->file)
 		{
 			cleaned = remove_quotes(redir->file);
 			if (cleaned)

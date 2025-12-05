@@ -37,3 +37,4 @@ vgcore.*
 tests/output/
 tests/tmp/
 
+rev.c

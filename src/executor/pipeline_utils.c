@@ -38,7 +38,7 @@ void	fork_all_commands(t_pipeline_data *data)
 		if (data->pids[i] == 0)
 		{
 			setup_child_pipes(data->pipes, i, data->num_pipes);
-			close_all_pipes(data->pipes, data->num_pipes);
+			cleanup_child_pipes(data->pipes, data->num_pipes, i);
 			execute_command_child(data->cmd, data->shell);
 		}
 		data->cmd = data->cmd->next;

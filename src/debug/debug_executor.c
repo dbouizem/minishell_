@@ -1,15 +1,20 @@
 #include "../includes/minishell.h"
 
-
+	// "NONE",          // 0
+	// "REDIR_IN",      // 1  (était "INPUT")
+	// "REDIR_OUT",     // 2  (était "TRUNC")
+	// "REDIR_APPEND",  // 3  (était "HEREDOC")
+	// "REDIR_HEREDOC"  // 4  (était "APPEND")
 
 /**
  * Affiche le type de redirection en string
  */
 static const char	*redir_type_to_str(int type)
 {
-	static const char	*names[] = {
-		"NONE", "INPUT", "TRUNC", "HEREDOC", "APPEND"
-	};
+const char	*names[] =
+{
+	"NONE", "REDIR_IN",	"REDIR_OUT", "REDIR_APPEND", "REDIR_HEREDOC"
+};
 
 	if (type >= 0 && type <= 4)
 		return (names[type]);

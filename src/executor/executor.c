@@ -58,6 +58,21 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
 }
 
+void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index)
+{
+	int	i;
+
+	i = 0;
+	while (i < num_pipes)
+	{
+		if (i != cmd_index - 1)
+			close(pipes[i][0]);
+		if (i != cmd_index)
+			close(pipes[i][1]);
+		i++;
+	}
+}
+
 void	execute_command_child(t_cmd *cmd, t_shell *shell)
 {
 	int	exit_status;
@@ -67,6 +82,7 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	remove_quotes_from_command(cmd);
 	if (setup_redirections(cmd) != 0)
 		exit(1);
+
 	if (cmd->args && cmd->args[0])
 	{
 		if (is_builtin(cmd->args[0]))

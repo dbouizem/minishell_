@@ -32,7 +32,9 @@ int	process_input(char *input, t_shell *shell)
 	t_cmd	*cmds;
 	int		should_exit;
 
-	if (!input || input[0] == '\0' || is_only_whitespace(input))
+	if (!input)
+		return (0);
+	if (input[0] == '\0' || is_only_whitespace(input))
 		return (0);
 	tokens = tokenize(input);
 	if (!tokens)

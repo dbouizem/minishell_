@@ -4,10 +4,15 @@ char	*read_input(void)
 {
 	char	*input;
 
+	errno = 0;
 	input = readline(PROMPT_COLOR "minishell$ " RESET_COLOR);
-	if (!input && errno)
-		perror("minishell: readline error");
-	else if (*input)
+	if (!input)
+	{
+		if (errno)
+			perror("minishell: readline error");
+		return (NULL);
+	}
+	if (*input)
 		add_history(input);
 
 	rl_replace_line("", 0);

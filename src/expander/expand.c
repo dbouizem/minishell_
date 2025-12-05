@@ -24,7 +24,7 @@ void	expand_redirs(t_redir *redir, t_shell *shell)
 
 	while (redir)
 	{
-		if (redir->type != HEREDOC && redir->file)
+		if (redir->type != REDIR_HEREDOC && redir->file)
 		{
 			expanded = expand_string(redir->file, shell);
 			if (expanded)
