@@ -1,5 +1,15 @@
 #include "../includes/minishell.h"
 
+static int	is_stateful_builtin(char *cmd)
+{
+	if (!cmd)
+		return (0);
+	return (ft_strcmp(cmd, "cd") == 0
+		|| ft_strcmp(cmd, "export") == 0
+		|| ft_strcmp(cmd, "unset") == 0
+		|| ft_strcmp(cmd, "exit") == 0);
+}
+
 int	execute(t_cmd *cmd, t_shell *shell)
 {
 	int	exit_status;
@@ -75,23 +85,43 @@ void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index)
 
 void	execute_command_child(t_cmd *cmd, t_shell *shell)
 {
-	int	exit_status;
+	int		exit_status;
+	t_cmd	cmd_copy;
 
 	if (!cmd)
 		exit(1);
-	remove_quotes_from_command(cmd);
-	if (setup_redirections(cmd) != 0)
+
+	cmd_copy.args = cmd->args;
+	cmd_copy.redirs = cmd->redirs;
+	cmd_copy.next = NULL;
+
+	// DEBUG
+	printf("DEBUG execute_command_child: ");
+	if (cmd_copy.args && cmd_copy.args[0])
+		printf("Commande: %s\n", cmd_copy.args[0]);
+
+	remove_quotes_from_command(&cmd_copy);
+
+	if (setup_redirections(&cmd_copy) != 0)
 		exit(1);
-	if (cmd->args && cmd->args[0])
+
+	if (cmd_copy.args && cmd_copy.args[0])
 	{
-		if (is_builtin(cmd->args[0]))
+		if (is_stateful_builtin(cmd_copy.args[0]))
 		{
-			exit_status = execute_builtin(cmd, shell);
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			ft_putstr_fd(cmd_copy.args[0], STDERR_FILENO);
+			ft_putendl_fd(": not allowed in pipeline", STDERR_FILENO);
+			exit(1);
+		}
+		if (is_builtin(cmd_copy.args[0]))
+		{
+			exit_status = execute_builtin(&cmd_copy, shell);
 			exit(exit_status);
 		}
 		else
 		{
-			execute_external_no_fork(cmd, shell);
+			execute_external_no_fork(&cmd_copy, shell);
 			exit(127);
 		}
 	}
