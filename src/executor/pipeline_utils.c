@@ -32,19 +32,14 @@ void	fork_all_commands(t_pipeline_data *data)
 	int		i;
 	t_cmd	*current_cmd;
 
-	fprintf(stderr, "\n=== DEBUG fork_all_commands ===\n");
-	fprintf(stderr, "Nombre de commandes à forker: %d\n",
-		data->num_pipes + 1);
+	// debug_fork_header(data->num_commands);
 
 	i = 0;
 	current_cmd = data->cmd;
 
 	while (i < data->num_pipes + 1 && current_cmd)
 	{
-		fprintf(stderr, "Command %d: ", i);
-		if (current_cmd->args && current_cmd->args[0])
-			fprintf(stderr, "'%s'", current_cmd->args[0]);
-		fprintf(stderr, "\n");
+		// debug_fork_command(i, current_cmd);
 
 		data->pids[i] = fork();
 		if (data->pids[i] == 0)
@@ -57,8 +52,7 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		else if (data->pids[i] > 0)
 		{
-			fprintf(stderr, "  Parent: fork réussi, pid=%d\n",
-				data->pids[i]);
+			// debug_fork_parent(i, data->pids[i]);
 			current_cmd = current_cmd->next;
 		}
 		else
@@ -68,7 +62,7 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		i++;
 	}
-	fprintf(stderr, "=== Fin fork_all_commands ===\n\n");
+	// debug_fork_footer();
 }
 
 void	close_all_pipes(int **pipes, int num_pipes)

@@ -74,7 +74,8 @@ SRC =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/debug/debug_env.c \
 		$(SRC_DIR)/debug/debug_parse.c \
-		$(SRC_DIR)/debug/debug_executor.c
+		$(SRC_DIR)/debug/debug_executor.c \
+		$(SRC_DIR)/debug/debug_fork.c
 
 
 EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)

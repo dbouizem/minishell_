@@ -14,5 +14,9 @@ void	debug_lexer_parser(t_token *tokens, t_cmd *cmds, t_shell *shell);
 void	print_cmd(t_cmd *cmd);
 void	debug_env_list(t_env *env);
 void	debug_executor(t_cmd *cmd, t_shell *shell, const char *phase);
+void	debug_fork_header(int total_cmds);
+void	debug_fork_command(int index, t_cmd *cmd);
+void	debug_fork_parent(int index, pid_t pid);
+void	debug_fork_footer(void);
 
 #endif
