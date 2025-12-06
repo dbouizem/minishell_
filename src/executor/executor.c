@@ -21,9 +21,9 @@ int	execute(t_cmd *cmd, t_shell *shell)
 		return (1);
 	}
 	expand_commands(cmd, shell);
-	debug_executor(cmd, shell, "AFTER EXPANSION");
+	//debug_executor(cmd, shell, "AFTER EXPANSION");
 	remove_quotes_from_command(cmd);
-	debug_executor(cmd, shell, "AFTER QUOTE REMOVAL");
+	//debug_executor(cmd, shell, "AFTER QUOTE REMOVAL");
 	if (cmd->next)
 		exit_status = execute_pipeline(cmd, shell);
 	else
@@ -95,11 +95,6 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	cmd_copy.redirs = cmd->redirs;
 	cmd_copy.next = NULL;
 
-	// DEBUG
-	printf("DEBUG execute_command_child: ");
-	if (cmd_copy.args && cmd_copy.args[0])
-		printf("Commande: %s\n", cmd_copy.args[0]);
-
 	remove_quotes_from_command(&cmd_copy);
 
 	if (setup_redirections(&cmd_copy) != 0)
@@ -109,9 +104,8 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	{
 		if (is_stateful_builtin(cmd_copy.args[0]))
 		{
-			ft_putstr_fd("minishell: ", STDERR_FILENO);
-			ft_putstr_fd(cmd_copy.args[0], STDERR_FILENO);
-			ft_putendl_fd(": not allowed in pipeline", STDERR_FILENO);
+			dprintf(STDERR_FILENO, "minishell: %s: not allowed in pipeline\n",
+				cmd_copy.args[0]);
 			exit(1);
 		}
 		if (is_builtin(cmd_copy.args[0]))

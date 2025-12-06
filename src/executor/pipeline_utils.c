@@ -32,25 +32,23 @@ void	fork_all_commands(t_pipeline_data *data)
 	int		i;
 	t_cmd	*current_cmd;
 
-	printf("\n=== DEBUG fork_all_commands ===\n");
-	printf("Nombre de commandes à forker: %d\n", data->num_pipes + 1);
+	fprintf(stderr, "\n=== DEBUG fork_all_commands ===\n");
+	fprintf(stderr, "Nombre de commandes à forker: %d\n",
+		data->num_pipes + 1);
 
 	i = 0;
 	current_cmd = data->cmd;
 
 	while (i < data->num_pipes + 1 && current_cmd)
 	{
-		printf("Command %d: ", i);
+		fprintf(stderr, "Command %d: ", i);
 		if (current_cmd->args && current_cmd->args[0])
-			printf("'%s'", current_cmd->args[0]);
-		printf("\n");
+			fprintf(stderr, "'%s'", current_cmd->args[0]);
+		fprintf(stderr, "\n");
 
 		data->pids[i] = fork();
 		if (data->pids[i] == 0)
 		{
-			printf("  Enfant %d créé pour commande: %s\n",
-				i, current_cmd->args ? current_cmd->args[0] : "(null)");
-
 			setup_child_pipes(data->pipes, i, data->num_pipes);
 			cleanup_child_pipes(data->pipes, data->num_pipes, i);
 			execute_command_child(current_cmd, data->shell);
@@ -59,7 +57,8 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		else if (data->pids[i] > 0)
 		{
-			printf("  Parent: fork réussi, pid=%d\n", data->pids[i]);
+			fprintf(stderr, "  Parent: fork réussi, pid=%d\n",
+				data->pids[i]);
 			current_cmd = current_cmd->next;
 		}
 		else
@@ -69,7 +68,7 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		i++;
 	}
-	printf("=== Fin fork_all_commands ===\n\n");
+	fprintf(stderr, "=== Fin fork_all_commands ===\n\n");
 }
 
 void	close_all_pipes(int **pipes, int num_pipes)
