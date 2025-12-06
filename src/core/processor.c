@@ -1,5 +1,6 @@
 #include "../../includes/minishell.h"
 
+<<<<<<< HEAD
 static int	handle_exit_command(t_cmd *cmds)
 {
 	if (cmds->args && ft_strcmp(cmds->args[0], "exit") == 0)
@@ -36,6 +37,8 @@ static void	debug_lexer_parser(t_token *tokens, t_cmd *cmds, t_shell *shell)
 	} 
 }
 
+=======
+>>>>>>> origin/5-exec
 static int	is_only_whitespace(char *str)
 {
 	int	i;
@@ -56,13 +59,11 @@ int	process_input(char *input, t_shell *shell)
 {
 	t_token	*tokens;
 	t_cmd	*cmds;
-	int		should_exit;
 
-	if (!input || input[0] == '\0' || is_only_whitespace(input))
+	if (!input)
 		return (0);
-	tokens = NULL;
-	cmds = NULL;
-	should_exit = 0;
+	if (input[0] == '\0' || is_only_whitespace(input))
+		return (0);
 	tokens = tokenize(input);
 	if (!tokens)
 	{
@@ -72,10 +73,10 @@ int	process_input(char *input, t_shell *shell)
 	cmds = parse(tokens, shell);
 	if (!cmds)
 	{
-		if (tokens)
-			free_tokens(tokens);
+		free_tokens(tokens);
 		return (0);
 	}
+<<<<<<< HEAD
 	expand_commands(cmds, shell);
 	should_exit = handle_exit_command(cmds);
 	if (should_exit)
@@ -89,4 +90,10 @@ int	process_input(char *input, t_shell *shell)
 		free_tokens(tokens);
 
 	return (should_exit);
+=======
+	execute(cmds, shell);
+	free_cmd(cmds);
+	free_tokens(tokens);
+	return (0);
+>>>>>>> origin/5-exec
 }

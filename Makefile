@@ -17,10 +17,16 @@ INC_DIR = includes
 LIBFT_DIR = libft
 
 SRC =	$(SRC_DIR)/main.c \
+		\
 		$(SRC_DIR)/core/input.c \
 		$(SRC_DIR)/core/shell.c \
 		$(SRC_DIR)/core/processor.c \
+<<<<<<< HEAD
 		$(SRC_DIR)/core/signals.c \
+=======
+		$(SRC_DIR)/core/shell_errors.c \
+		\
+>>>>>>> origin/5-exec
 		$(SRC_DIR)/lexer/tokenize.c \
 		$(SRC_DIR)/lexer/token_utils.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
@@ -28,6 +34,8 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
 		$(SRC_DIR)/lexer/lexer_op.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
+		$(SRC_DIR)/lexer/lexer_errors.c \
+		\
 		$(SRC_DIR)/parser/parse.c \
 		$(SRC_DIR)/parser/parse_cmd.c \
 		$(SRC_DIR)/parser/parse_args.c \
@@ -35,25 +43,65 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parser/parse_utils.c \
 		$(SRC_DIR)/parser/parse_cleanup.c \
 		$(SRC_DIR)/parser/parse_syntax.c \
+		$(SRC_DIR)/parser/parse_errors.c \
+		\
 		$(SRC_DIR)/expander/expand.c \
-		$(SRC_DIR)/expander/expand_var.c \
 		$(SRC_DIR)/expander/expand_quotes.c \
 		$(SRC_DIR)/expander/expand_utils.c \
 		$(SRC_DIR)/expander/expand_string.c \
 		$(SRC_DIR)/expander/process_dollar.c \
+<<<<<<< HEAD
 		$(SRC_DIR)/expander/process_normal.c \
 		$(SRC_DIR)/execution/execute.c \
 		$(SRC_DIR)/execution/execute_cmds.c \
 		$(SRC_DIR)/execution/execute_redir.c \
+=======
+		$(SRC_DIR)/expander/dollar_utils.c \
+		$(SRC_DIR)/expander/process_normal.c \
+		$(SRC_DIR)/expander/remove_quotes_final.c \
+		\
+		$(SRC_DIR)/executor/executor.c \
+		$(SRC_DIR)/executor/pipeline.c \
+		$(SRC_DIR)/executor/pipeline_utils.c \
+		$(SRC_DIR)/executor/external.c \
+		$(SRC_DIR)/executor/external_utils.c \
+		$(SRC_DIR)/executor/redirections.c \
+		$(SRC_DIR)/executor/redirections_utils.c \
+		$(SRC_DIR)/executor/exec_errors.c \
+		\
+>>>>>>> origin/5-exec
 		$(SRC_DIR)/builtin/builtin.c \
 		$(SRC_DIR)/builtin/builtin_echo.c \
 		$(SRC_DIR)/builtin/builtin_exit.c \
 		$(SRC_DIR)/builtin/builtin_pwd.c \
+<<<<<<< HEAD
 		$(SRC_DIR)/builtin/builtin_env.c \
 		$(SRC_DIR)/builtin/builtin_cd.c \
 		$(SRC_DIR)/builtin/builtin_export.c \
 		$(SRC_DIR)/builtin/builtin_unset.c \
 		$(SRC_DIR)/builtin/env_utils.c \
+=======
+		$(SRC_DIR)/builtin/builtin_cd.c \
+		$(SRC_DIR)/builtin/builtin_env.c \
+		$(SRC_DIR)/builtin/builtin_export.c \
+		$(SRC_DIR)/builtin/builtin_unset.c \
+		\
+		$(SRC_DIR)/env/env_array.c \
+		$(SRC_DIR)/env/env_list.c \
+		$(SRC_DIR)/env/env_utils.c \
+		$(SRC_DIR)/env/env_errors.c \
+		\
+		$(SRC_DIR)/debug/debug_env.c \
+		$(SRC_DIR)/debug/debug_parse.c \
+		$(SRC_DIR)/debug/debug_executor.c \
+		$(SRC_DIR)/debug/debug_fork.c
+
+
+EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)
+
+$(NAME): $(OBJS) $(EXECUTOR_OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(EXECUTOR_OBJS) -o $(NAME) $(LIBS)
+>>>>>>> origin/5-exec
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

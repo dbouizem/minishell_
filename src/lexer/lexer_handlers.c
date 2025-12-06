@@ -25,14 +25,13 @@ void	handle_spaces(char *input, int *i, t_token **head, t_token **current)
 	if (!spaces)
 		return ;
 	token = create_token(SPACES, spaces);
-	if (token)
-		add_token(head, current, token);
-	else
+	if (!token)
 		free(spaces);
+	else
+		add_token(head, current, token);
 }
 
-void	handle_word(char *input, int *i, t_token **head,
-			t_token **current)
+void	handle_word(char *input, int *i, t_token **head, t_token **current)
 {
 	char	*word;
 	t_token	*token;

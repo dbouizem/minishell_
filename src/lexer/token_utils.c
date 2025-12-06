@@ -43,6 +43,7 @@ void	free_tokens(t_token *tokens)
 		free(tmp);
 	}
 }
+<<<<<<< HEAD
 
 void	print_tokens(t_token *tokens)
 {
@@ -65,3 +66,5 @@ void	print_tokens(t_token *tokens)
 	}
 	printf("==============\n\n");
 }
+=======
+>>>>>>> origin/5-exec

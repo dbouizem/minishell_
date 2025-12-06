@@ -4,7 +4,6 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 	char	*input;
-	int		should_exit;
 
 	(void)argc;
 	(void)argv;
@@ -12,19 +11,22 @@ int	main(int argc, char **argv, char **envp)
 	init_shell(&shell, envp);
 	setup_signals();
 	printf("%s=== Minishell Started ===%s\n", GREEN, RESET);
-	printf("%sType 'exit' to quit or Ctrl+D%s\n", CYAN, RESET);
+	printf("%sType 'exit' to quit%s\n", CYAN, RESET);
 	while (1)
 	{
 		if (shell.interactive)
 			input = read_input();
 		else
 			input = read_input_non_interactive();
+
 		if (!input)
+		{
+			// Ctrl+D = sortie normale
+			printf("exit\n");
 			break ;
-		should_exit = process_input(input, &shell);
+		}
+		process_input(input, &shell);
 		free(input);
-		if (should_exit)
-			break ;
 	}
 	cleanup_shell(&shell);
 	printf("%sGoodbye!%s\n", RED, RESET);

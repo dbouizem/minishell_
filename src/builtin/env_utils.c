@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include "../includes/minishell.h"
+=======
+/* #include "../includes/minishell.h"
+>>>>>>> origin/5-exec
 
 char	*get_env_value(char *key, t_shell *shell)
 {
@@ -137,3 +141,7 @@ int	unset_env_value(char *key, t_shell *shell)
 	return (1);
 }
 
+<<<<<<< HEAD
+=======
+ */
+>>>>>>> origin/5-exec

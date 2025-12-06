@@ -58,7 +58,11 @@ SRCS =	ft_isalpha.c \
 	ft_print_int.c \
 	ft_print_u_int.c \
 	ft_print_hex.c \
-	ft_strcmp.c
+	ft_strcmp.c \
+	ft_strjoin3.c \
+	ft_isnumber.c \
+	ft_free_tab.c \
+	ft_atoll.c
 
 SRCS_BONUS =	ft_lstnew.c \
 	ft_lstadd_front.c \

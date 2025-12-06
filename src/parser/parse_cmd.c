@@ -66,16 +66,10 @@ t_cmd	*parse_command(t_token **tokens, t_shell *shell)
 	if (!cmd)
 		return (NULL);
 	if (!handle_initial_redirs(tokens, cmd, shell))
-		return (NULL);
+		return (free_cmd(cmd), NULL);
 	if (!handle_args(tokens, cmd))
-	{
-		free_cmd(cmd);
-		return (NULL);
-	}
+		return (free_cmd(cmd), NULL);
 	if (!handle_remaining_redirs(tokens, cmd, shell))
-	{
-		free_cmd(cmd);
-		return (NULL);
-	}
+		return (free_cmd(cmd), NULL);
 	return (cmd);
 }

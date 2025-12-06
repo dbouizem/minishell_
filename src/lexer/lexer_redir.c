@@ -1,30 +1,5 @@
 #include "../includes/minishell.h"
 
-void	create_redir_token(char *input, int *i, t_token **head, t_token **curr)
-{
-	t_token_type	type;
-	char			*value;
-	int				len;
-	t_token			*token;
-
-	type = get_redir_type(input, *i);
-	if (type == HEREDOC || type == APPEND)
-		len = 2;
-	else
-		len = 1;
-
-	value = extract_substring(input, *i, *i + len);
-	if (!value)
-		return ;
-
-	*i += len;
-	token = create_token(type, value);
-	if (!token)
-		free(value);
-	else
-		add_token(head, curr, token);
-}
-
 t_token_type	get_redir_type(char *input, int i)
 {
 	if (input[i] == '<')
@@ -40,6 +15,30 @@ t_token_type	get_redir_type(char *input, int i)
 		return (TRUNC);
 	}
 	return (WORD);
+}
+
+static void	create_redir_token(char *input, int *i,
+		t_token **head, t_token **curr)
+{
+	t_token_type	type;
+	char			*value;
+	int				len;
+	t_token			*token;
+
+	type = get_redir_type(input, *i);
+	if (type == HEREDOC || type == APPEND)
+		len = 2;
+	else
+		len = 1;
+	value = extract_substring(input, *i, *i + len);
+	if (!value)
+		return ;
+	*i += len;
+	token = create_token(type, value);
+	if (!token)
+		free(value);
+	else
+		add_token(head, curr, token);
 }
 
 static void	create_pipe_token(t_token **head, t_token **current, int *i)
@@ -60,8 +59,13 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 	(*i)++;
 }
 
+<<<<<<< HEAD
 void	handle_operator(char *input, int *i, t_token **head,
 		t_token **current)
+=======
+void	handle_pipe_or_redir(char *input, int *i,
+		t_token **head, t_token **current)
+>>>>>>> origin/5-exec
 {
 	if (input[*i] == '|')
 	{

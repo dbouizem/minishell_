@@ -1,31 +1,5 @@
 #include "../includes/minishell.h"
 
-static int	has_quote_error(char *input)
-{
-	int		i;
-	char	quote;
-
-	i = 0;
-	while (input[i])
-	{
-		if (is_quote(input[i]))
-		{
-			quote = input[i++];
-			while (input[i] && input[i] != quote)
-				i++;
-			if (!input[i])
-			{
-				printf("minishell: syntax error: unclosed quote `%c'\n", quote);
-				return (1);
-			}
-			i++;
-		}
-		else
-			i++;
-	}
-	return (0);
-}
-
 static void	process_char(char *input, int *i, t_token **head, t_token **current)
 {
 	if (is_whitespace(input[*i]))

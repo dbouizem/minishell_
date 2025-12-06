@@ -1,49 +1,58 @@
 #include "../includes/minishell.h"
 
+static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
+			t_shell *shell)
+{
+	if (str[*i] == '\'' && !state->in_double)
+	{
+		state->in_single = !state->in_single;
+		return (char_to_str(str[(*i)++]));
+	}
+	else if (str[*i] == '\"' && !state->in_single)
+	{
+		state->in_double = !state->in_double;
+		return (char_to_str(str[(*i)++]));
+	}
+	else if (str[*i] == '$' && !state->in_single)
+		return (process_dollar(str, i, shell));
+	else if (state->in_single)
+		return (extract_single_quoted_content(str, i));
+	else
+		return (process_normal_char(str, i, state->in_double));
+}
+
+static int	append_part(char **result, char *part)
+{
+	char	*new_result;
+
+	if (!part)
+		return (free(*result), 0);
+	new_result = ft_strjoin_free(*result, part);
+	free(part);
+	if (!new_result)
+		return (0);
+	*result = new_result;
+	return (1);
+}
+
 char	*expand_string(char *str, t_shell *shell)
 {
 	char	*result;
 	char	*part;
+	t_state	state;
 	int		i;
-	int		in_single;
-	int		in_double;
 
 	if (!str)
 		return (NULL);
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
+	state = (t_state){0, 0};
 	i = 0;
-	in_single = 0;
-	in_double = 0;
 	while (str[i])
 	{
-		if (str[i] == '\'' && !in_double)
-		{
-			in_single = !in_single;
-			part = char_to_str(str[i++]);
-		}
-		else if (str[i] == '\"' && !in_single)
-		{
-			in_double = !in_double;
-			part = char_to_str(str[i++]);
-		}
-		else if (str[i] == '$' && !in_single)
-			part = process_dollar(str, &i, shell);
-		else if (in_single)
-			part = extract_single_quoted_content(str, &i);
-		else
-			part = process_normal_char(str, &i, in_double);
-
-		if (!part)
-		{
-			free(result);
-			return (NULL);
-		}
-		char *new_result = ft_strjoin_free(result, part);
-		free(part);
-		result = new_result;
-		if (!result)
+		part = handle_quotes_dollar(str, &i, &state, shell);
+		if (!append_part(&result, part))
 			return (NULL);
 	}
 	return (result);

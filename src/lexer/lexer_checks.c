@@ -17,8 +17,8 @@ int	is_quote(char c)
 
 int	is_redir(t_token_type type)
 {
-	return (type == INPUT || type == TRUNC
-		|| type == HEREDOC || type == APPEND);
+	return (type == INPUT || type == TRUNC ||
+			type == HEREDOC || type == APPEND);
 }
 
 int	is_forbidden_char(char c)

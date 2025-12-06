@@ -71,14 +71,10 @@ t_cmd	*parse(t_token *tokens, t_shell *shell)
 
 	if (!tokens)
 		return (NULL);
-	//print_tokens(tokens);
 	head = process_tokens(tokens, shell);
 	if (!head)
 		return (NULL);
 	if (!check_parser_syntax(tokens, head, shell))
-	{
-		free_cmd(head);
-		return (NULL);
-	}
+		return (free_cmd(head), NULL);
 	return (head);
 }
