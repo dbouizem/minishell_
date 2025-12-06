@@ -29,10 +29,10 @@ static char	*create_env_entry(t_env *env)
 {
 	char	*entry;
 
-	if (env->value)
+	if (env->value)// Même si value = "" (chaîne vide)
 		entry = ft_strjoin3(env->key, "=", env->value);
 	else
-		entry = ft_strdup(env->key);
+		entry = ft_strjoin(env->key, "=");// VAR= pour variable exportée sans valeur
 	return (entry);
 }
 

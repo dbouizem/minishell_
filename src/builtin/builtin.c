@@ -17,7 +17,6 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
-
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
 		return (builtin_echo(cmd->args));
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
@@ -29,9 +28,8 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 	else if (ft_strcmp(cmd->args[0], "unset") == 0)
 		return (builtin_unset(cmd->args, shell));
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
-		return (builtin_env(shell));
+		return (builtin_env(cmd->args, shell));
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
 		return (builtin_exit(cmd->args, shell));
-
 	return (0);
 }
