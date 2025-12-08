@@ -66,6 +66,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/builtin/builtin_env.c \
 		$(SRC_DIR)/builtin/builtin_export.c \
 		$(SRC_DIR)/builtin/builtin_unset.c \
+		$(SRC_DIR)/builtin/errors_builtin.c \
 		\
 		$(SRC_DIR)/env/env_array.c \
 		$(SRC_DIR)/env/env_list.c \

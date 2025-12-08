@@ -1,12 +1,5 @@
 #include "../includes/minishell.h"
 
-static void	print_export_error(char *arg)
-{
-	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-	ft_putstr_fd(arg, STDERR_FILENO);
-	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
-}
-
 static void	print_exported_vars(t_shell *shell)
 {
 	int		i;

@@ -18,13 +18,6 @@ static int	is_invalid_identifier(char *str)
 	return (0);
 }
 
-static void	print_unset_error(char *arg)
-{
-	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
-	ft_putstr_fd(arg, STDERR_FILENO);
-	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
-}
-
 int	builtin_unset(char **args, t_shell *shell)
 {
 	int	i;

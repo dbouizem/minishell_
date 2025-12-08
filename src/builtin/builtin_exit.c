@@ -37,31 +37,24 @@ int	builtin_exit(char **args, t_shell *shell)
 	int			overflow;
 
 	write(STDERR_FILENO, "exit\n", 5);
-	// Cas 1: exit sans argument
-	if (!args[1])
+	if (!args[1])// Cas 1: exit sans argument
 		exit(shell->exit_status);
-	// Cas 2: Vérifier si l'argument est numérique
-	if (!is_numeric_arg(args[1]))
+	if (!is_numeric_arg(args[1]))// Cas 2: Vérifier si l'argument est numérique
 	{
-		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-		ft_putstr_fd(args[1], STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+		print_exit_error(args[1], "numeric");
 		exit(2);
 	}
-	// CAS SPÉCIAL : TROP D'ARGUMENTS
-	if (args[2])
+	if (args[2])// CAS SPÉCIAL : TROP D'ARGUMENTS
 	{
-		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+		print_exit_error(NULL, "too_many");
 		return (1);  // NE QUITTE JAMAIS, MÊME DANS UN PIPELINE !
 	}
-	// Cas 4: Conversion numérique
-	exit_code = ft_atoll(args[1], &overflow);
+	exit_code = ft_atoll(args[1], &overflow);// Cas 4: Conversion numérique
 	if (overflow)
 	{
-		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-		ft_putstr_fd(args[1], STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+		print_exit_error(args[1], "numeric");
 		exit(2);
 	}
 	exit((unsigned char)(exit_code % 256));
 }
+
