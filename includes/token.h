@@ -46,11 +46,6 @@ void			handle_pipe_or_redir(char *input, int *i,
 					t_token **head, t_token **current);
 char			*extract_word_without_quotes(char *input, int *i);
 t_token_type	get_redir_type(char *input, int i);
-<<<<<<< HEAD
-void			handle_operator(char *input, int *i, t_token **head,
-					t_token **current);
-=======
->>>>>>> origin/5-exec
 
 char			*extract_substring(char *input, int start, int end);
 

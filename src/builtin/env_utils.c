@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-#include "../includes/minishell.h"
-=======
 /* #include "../includes/minishell.h"
->>>>>>> origin/5-exec
 
 char	*get_env_value(char *key, t_shell *shell)
 {
@@ -78,7 +74,8 @@ static int	add_new_env(char *key, char *value, t_shell *shell)
 		return (free(new_env), 0);
 	new_env[count] = new_var;
 	new_env[count + 1] = NULL;
-	free(shell->env);
+	free
+(shell->env);
 	shell->env = new_env;
 	return (1);
 }
@@ -141,7 +138,4 @@ int	unset_env_value(char *key, t_shell *shell)
 	return (1);
 }
 
-<<<<<<< HEAD
-=======
  */
->>>>>>> origin/5-exec

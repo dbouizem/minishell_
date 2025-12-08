@@ -8,18 +8,11 @@
 # include <unistd.h>
 # include <termios.h>
 # include <errno.h>
-<<<<<<< HEAD
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <signal.h>
-# include <fcntl.h>
-=======
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <limits.h>
->>>>>>> origin/5-exec
 
 # include "../libft/libft.h"
 # include "colors.h"
@@ -35,14 +28,10 @@ typedef struct s_pipeline_data	t_pipeline_data;
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
-<<<<<<< HEAD
-# include "builtin.h"
-=======
 # include "executor.h"
 # include "builtin.h"
 # include "env.h"
 # include "debug.h"
->>>>>>> origin/5-exec
 
 struct s_shell
 {
@@ -64,15 +53,8 @@ char	*read_input_non_interactive(void);
 void	display_welcome(void);
 int		process_input(char *input, t_shell *shell);
 
-<<<<<<< HEAD
-
-
-int		execute_commands(t_cmd *cmd, t_shell *shell);
-int		execute_ext(t_cmd *cmds, t_shell *shell);
-=======
 void	shell_error(char *message, int exit_code);
 void	process_error(char *context, t_shell *shell);
 void	*check_malloc(void *ptr, char *context);
->>>>>>> origin/5-exec
 
 #endif

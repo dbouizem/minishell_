@@ -59,13 +59,8 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 	(*i)++;
 }
 
-<<<<<<< HEAD
-void	handle_operator(char *input, int *i, t_token **head,
-		t_token **current)
-=======
 void	handle_pipe_or_redir(char *input, int *i,
 		t_token **head, t_token **current)
->>>>>>> origin/5-exec
 {
 	if (input[*i] == '|')
 	{

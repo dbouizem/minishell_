@@ -22,14 +22,9 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char			**args;
-<<<<<<< HEAD
-	int				separator;
-	t_redir			*redirs;	// Liste des redirections
-	struct s_cmd	*next;		// Commande suivante (après pipe)
-=======
 	t_redir			*redirs;
+	int				separator;
 	struct s_cmd	*next;
->>>>>>> origin/5-exec
 }	t_cmd;
 
 t_cmd		*parse(t_token *tokens, t_shell *shell);
