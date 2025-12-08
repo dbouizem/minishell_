@@ -78,16 +78,11 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd)
 		exit(1);
-
 	cmd_copy.args = cmd->args;
 	cmd_copy.redirs = cmd->redirs;
 	cmd_copy.next = NULL;
-
-	remove_quotes_from_command(&cmd_copy);
-
 	if (setup_redirections(&cmd_copy) != 0)
 		exit(1);
-
 	if (cmd_copy.args && cmd_copy.args[0])
 	{
 		if (is_builtin(cmd_copy.args[0]))
