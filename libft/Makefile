@@ -49,7 +49,7 @@ SRCS =	ft_isalpha.c \
 	ft_strmapi.c \
 	ft_split.c \
 	ft_strncpy.c \
-	get_next_line.c \
+	ft_gnl.c \
 	ft_printf.c \
 	parse_format.c \
 	ft_print_char.c \

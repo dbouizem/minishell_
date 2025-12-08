@@ -34,8 +34,6 @@ char	*get_var_value(char *var_name, t_shell *shell)
 		return (ft_strdup(""));
 	if (ft_strcmp(var_name, "?") == 0)
 		return (ft_itoa(shell->exit_status));
-	if (ft_strcmp(var_name, "$") == 0)
-		return (ft_itoa(getpid()));
 	env = shell->env_list;
 	while (env)
 	{

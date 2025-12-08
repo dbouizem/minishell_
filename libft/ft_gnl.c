@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   ft_gnl.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 16:49:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/09/23 16:42:28 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/08 15:36:39 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ static char	*next_line(char *stock)
 	return (rest);
 }
 
-char	*get_next_line(int fd)
+char	*ft_gnl(int fd)
 {
 	static char	*stock;
 	char		*line;

@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 00:50:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/05 09:25:59 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/08 15:35:38 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ typedef struct s_fd_list
 	struct s_fd_list	*next;
 }	t_fd_list;
 
-char				*get_next_line(int fd);
+char				*ft_gnl(int fd);
 
 t_fd_list			*get_fd_node(t_fd_list **list, int fd);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);

@@ -25,7 +25,7 @@ char	*read_input_non_interactive(void)
 	char	*line;
 	size_t	len;
 
-	line = get_next_line(STDIN_FILENO);
+	line = ft_gnl(STDIN_FILENO);
 	if (!line)
 		return (NULL);
 
