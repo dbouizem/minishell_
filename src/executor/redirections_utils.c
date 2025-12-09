@@ -1,25 +1,5 @@
  #include "../includes/minishell.h"
 
-int	handle_heredoc_redirection(t_redir *redir)
-{
-	int	fd;
-
-	fd = open(redir->file, O_RDONLY);
-	if (fd == -1)
-	{
-		perror("heredoc");
-		return (1);
-	}
-	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		close(fd);
-		return (1);
-	}
-	close(fd);
-	return (0);
-}
-
 int	handle_file_error(char *filename)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);

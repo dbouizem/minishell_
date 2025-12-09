@@ -17,7 +17,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->env_list = env_array_to_list(envp);
 	if (!shell->env_list && envp && *envp)
 		shell_error("Failed to initialize environment list", 1);
-	// debug_env_list(shell->env_list);
+	//debug_env_list(shell->env_list);
 	env_list_to_array(shell);
 	term_name = ttyname(STDIN_FILENO);
 	if (term_name)

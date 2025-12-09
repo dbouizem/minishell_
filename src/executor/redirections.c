@@ -50,7 +50,7 @@ int	setup_redirections(t_cmd *cmd)
 		else if (redir->type == REDIR_HEREDOC)
 		{
 			if (handle_heredoc_redirection(redir) != 0)
-				return (1);
+				return (handle_heredoc_redirection(redir));
 		}
 		redir = redir->next;
 	}

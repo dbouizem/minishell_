@@ -6,12 +6,11 @@ static int	check_sep_syntax(t_cmd *cmds, t_shell *shell)
 
 	if (!cmds)
 		return (1);
-	current = cmds;
-	while (current && current->next)
-		current = current->next;
-	if (current && (!current->args || !current->args[0]))
-		return (pipe_syntax_error(shell), 0);
 
+	/* Commande unique : autoriser une ligne qui ne contient que des redirections */
+	if (!cmds || !cmds->next)
+		return (1);
+	/* Pipeline : chaque maillon doit avoir une commande (args[0]) */
 	current = cmds;
 	while (current)
 	{

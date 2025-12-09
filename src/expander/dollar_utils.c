@@ -10,7 +10,7 @@ char	*handle_special_chars(char *str, int *i, t_shell *shell)
 	if (str[*i] == '$')
 	{
 		(*i)++;
-		return (ft_itoa(getpid()));
+		return (ft_strdup("$"));
 	}
 	return (NULL);
 }
@@ -42,7 +42,7 @@ char	*handle_curly_brace_syntax(char *str, int *i, t_shell *shell)
 		if (!var_name)
 			return (NULL);
 		(*i)++;
-		if (ft_strcmp(var_name, "?") == 0 || ft_strcmp(var_name, "$") == 0)
+		if (ft_strcmp(var_name, "?") == 0)
 		{
 			free(var_name);
 			return (ft_itoa(shell->exit_status));

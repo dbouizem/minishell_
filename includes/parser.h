@@ -11,6 +11,20 @@ typedef enum e_redir_type
 	REDIR_APPEND,	// >>
 	REDIR_HEREDOC	// <<
 }	t_redir_type;
+/*
+typedef enum e_sep_type
+{
+	SEP_NONE = 0,
+	SEP_AND,		// &&
+	SEP_OR,			// ||
+	SEP_PIPE,		// |
+}	t_sep_type;
+typedef struct s_sep
+{
+	t_sep_type	type;
+	int			exit_status;
+	int			next_exit_status;
+}	t_sep;*/
 
 typedef struct s_redir
 {

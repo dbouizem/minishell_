@@ -17,6 +17,9 @@
 # include "../libft/libft.h"
 # include "colors.h"
 
+
+extern volatile sig_atomic_t g_signal;
+
 typedef struct s_env			t_env;
 typedef struct s_token			t_token;
 typedef struct s_redir			t_redir;

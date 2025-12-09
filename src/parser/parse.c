@@ -74,6 +74,11 @@ t_cmd	*parse(t_token *tokens, t_shell *shell)
 	head = process_tokens(tokens, shell);
 	if (!head)
 		return (NULL);
+	/*if (!check_double_separator(tokens, head, shell))
+		return (NULL);
+
+	if (!check_final_sep(tokens, head, shell))
+		return (NULL);*/
 	if (!check_parser_syntax(tokens, head, shell))
 		return (free_cmd(head), NULL);
 	return (head);

@@ -3,7 +3,10 @@
 /* Erreur variable environnement */
 void	env_error(char *key, char *message)
 {
-	fprintf(stderr, "minishell: env: %s: %s\n", key, message);
+	ft_putstr_fd("minishell: env: ", STDERR_FILENO);
+	ft_putstr_fd(key, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(message, STDERR_FILENO);
 }
 
 /* Vérification clé valide pour variable d'environnement */
