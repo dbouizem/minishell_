@@ -1,21 +1,32 @@
-NAME = minishell
+# PROJECT
+NAME		= minishell
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
-INCLUDES = -I./includes -I./libft
+# COMPILER & FLAGS
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror -g
+INCLUDES	= -I./includes -I./libft
 
-# --- Readline (Homebrew) Fix for macOS ---
-READLINE_DIR := $(shell brew --prefix readline)
-CFLAGS += -I$(READLINE_DIR)/include
-LDFLAGS += -L$(READLINE_DIR)/lib -lreadline
+# READLINE (cross-platform)
+UNAME_S := $(shell uname -s)
 
-RM = rm -rf
+ifeq ($(UNAME_S),Darwin)
+	READLINE_DIR := $(shell brew --prefix readline 2>/dev/null)
+	ifneq ($(READLINE_DIR),)
+		CFLAGS  += -I$(READLINE_DIR)/include
+		LDFLAGS += -L$(READLINE_DIR)/lib
+	endif
+	LDFLAGS += -lreadline
+else
+	LDFLAGS += -lreadline
+endif
 
-SRC_DIR = src
-OBJ_DIR = obj
-INC_DIR = includes
-LIBFT_DIR = libft
+# DIRECTORIES
+SRC_DIR		= src
+OBJ_DIR		= obj
+INC_DIR		= includes
+LIBFT_DIR	= libft
 
+# SOURCES
 SRC =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/core/input.c \
@@ -79,50 +90,55 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/debug/debug_fork.c
 
 
-EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)
+# OBJECTS & LIBRARY
+OBJ			= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+HEADERS		= $(wildcard $(INC_DIR)/*.h)
+LIBFT_LIB	= $(LIBFT_DIR)/libft.a
+LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
 
-$(NAME): $(OBJS) $(EXECUTOR_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(EXECUTOR_OBJS) -o $(NAME) $(LIBS)
+# COLORS - MINISHELL (Cyan/Blue)
+CYAN		= \033[0;36m
+BLUE		= \033[0;34m
+GREEN		= \033[0;32m
+RED			= \033[0;31m
+YELLOW		= \033[0;33m
+BOLD		= \033[1m
+RESET		= \033[0m
 
-OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+# COUNTERS (pour affichage progression)
+TOTAL_FILES := $(words $(SRC))
+COMPILED	:= 0
 
-LIBFT_LIB = $(LIBFT_DIR)/libft.a
-LIBFT_FLAGS = -L$(LIBFT_DIR) -lft
-
-# Colors
-BOLD = \033[1m
-CYAN = \033[0;36m
-GREEN = \033[0;32m
-RED = \033[0;31m
-BLUE = \033[0;34m
-YELLOW = \033[0;33m
-NC = \033[0m
-
+# RULES
 all: $(LIBFT_LIB) $(NAME)
 
 $(LIBFT_LIB):
-	@echo "$(BOLD)$(CYAN)🔧 Compilation de libft...$(NC)"
-	@make -C $(LIBFT_DIR)
-	@echo "$(GREEN)✅ Libft compilée avec succès$(NC)"
+	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
 
 $(NAME): $(OBJ) $(LIBFT_LIB)
-	@echo "$(BLUE)🔨 Building Minishell...$(NC)"
+	@echo "$(BOLD)$(CYAN)🔗 Linking minishell...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
-	@echo "$(GREEN)✅ Minishell built successfully!$(NC)"
+	@echo "$(BOLD)$(GREEN)✅ Minishell ready!$(RESET)\n"
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	@make -C $(LIBFT_DIR) clean
-	@$(RM) $(OBJ_DIR)
-	@echo "$(RED)🧹 Object files removed$(NC)"
+	@$(MAKE) -C $(LIBFT_DIR) clean --no-print-directory
+	@if [ -d "$(OBJ_DIR)" ]; then \
+		echo "$(BOLD)$(CYAN)🧹 Cleaning minishell objects...$(RESET)"; \
+		rm -rf $(OBJ_DIR); \
+		echo "$(GREEN)✓ Minishell cleaned$(RESET)"; \
+	fi
 
 fclean: clean
-	@make -C $(LIBFT_DIR) fclean
-	@$(RM) $(NAME)
-	@echo "$(RED)🧹 Executable removed$(NC)"
+	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory
+	@if [ -f "$(NAME)" ]; then \
+		echo "$(BOLD)$(CYAN)🗑️ Removing minishell...$(RESET)"; \
+		rm -f $(NAME); \
+		echo "$(GREEN)✓ Minishell removed$(RESET)"; \
+	fi
 
 re: fclean all
 
