@@ -16,6 +16,7 @@ int	main(int argc, char **argv, char **envp)
 	printf("%sType 'exit' to quit%s\n", CYAN, RESET);
 	while (1)
 	{
+		g_signal = 0;
 		if (shell.interactive)
 			input = read_input();
 		else
@@ -29,6 +30,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		process_input(input, &shell);
 		free(input);
+		g_signal = 0;
 	}
 	cleanup_shell(&shell);
 	printf("%sGoodbye!%s\n", RED, RESET);

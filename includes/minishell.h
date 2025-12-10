@@ -5,6 +5,8 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/rlconf.h>
+# include <readline/rltypedefs.h>
 # include <unistd.h>
 # include <termios.h>
 # include <errno.h>

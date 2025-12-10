@@ -24,19 +24,8 @@ static void skip_to_next_logical_operator(t_cmd **current)
 		return;
 
 	current_sep = (*current)->separator;
-
-	// Si c'est un pipe, skip tout le pipeline
-	if (current_sep == PIPE)
-	{
-		while (*current && (*current)->next && (*current)->separator == PIPE)
+	while (*current && (*current)->next && (*current)->separator == current_sep)
 			*current = (*current)->next;
-	}
-	else if (current_sep == AND || current_sep == OR)
-	{
-		while (*current && (*current)->next
-			&& (*current)->separator == current_sep)
-			*current = (*current)->next;
-	}
 }
 
 static int should_execute_next(int exit_status, int separator)
@@ -52,19 +41,21 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 {
 	int	saved_stdin;
 	int	saved_stdout;
+	int status;
 
 	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
 	{
 		shell->exit_status = 1;
 		return (1);
 	}
-	if (setup_redirections(cmd) == 130)
+	status = setup_redirections(cmd);
+	if (status == 130)
 	{
 		shell->exit_status = 130;
 		restore_redirections(saved_stdin, saved_stdout);
 		return (130);
 	}
-	if (setup_redirections(cmd) != 0)
+	if (status != 0)
 	{
 		shell->exit_status = 1;
 		restore_redirections(saved_stdin, saved_stdout);
@@ -98,19 +89,12 @@ static int execute_sequence(t_cmd *cmd, t_shell *shell)
 		}
 		if (!current->next)
 			break;
-		// Vérifier le séparateur ET l'exit status
+		//int statis = should_execute_next(exit_status, current->separator);
+		//printf("should execute next = %d\n", statis);
 		if (!should_execute_next(exit_status, current->separator))
 		{
-			// Skip jusqu'à la fin ou autre op
 			skip_to_next_logical_operator(&current);
-			// Si on a un autre opérateur logique après, continuer
-			if (current->next)
-			{
-				current = current->next;
-				continue;
-			}
-			else
-				break;
+			//printf("current command %s et current sep %d\n", current->args[0],current->separator);
 		}
 		current = current->next;
 	}
@@ -128,10 +112,6 @@ int	execute(t_cmd *cmd, t_shell *shell)
 	}
 	expand_commands(cmd, shell);
 	remove_quotes_from_command(cmd);
-	/*if (cmd->next)
-		exit_status = execute_pipeline(cmd, shell);
-	else
-		exit_status = execute_command(cmd, shell);*/
 	exit_status = execute_sequence(cmd, shell);
 	shell->exit_status = exit_status;
 	// Debug: afficher le statut de sortie final

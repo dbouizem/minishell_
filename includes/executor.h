@@ -38,6 +38,13 @@ int		save_redirections(int *saved_stdin, int *saved_stdout);
 int		restore_redirections(int saved_stdin, int saved_stdout);
 int		handle_heredoc_redirection(t_redir *redir);
 
+void setup_heredoc_signals(struct sigaction *old_int,
+		struct sigaction *old_quit);
+void heredoc_sigint_handler(int signo);
+void restore_signals(struct sigaction *old_int,
+		struct sigaction *old_quit);
+char	*remove_quote(char *str);
+
 void	handle_exec_error(char *cmd, t_shell *shell);
 void	handle_absolute_path_error(char *cmd, t_shell *shell);
 void	handle_command_not_found(char *cmd, t_shell *shell);

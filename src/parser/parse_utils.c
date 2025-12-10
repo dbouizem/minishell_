@@ -20,6 +20,7 @@ t_cmd	*create_cmd(void)
 		return (NULL);
 	cmd->args = NULL;
 	cmd->redirs = NULL;
+	cmd->separator = 0;
 	cmd->next = NULL;
 	return (cmd);
 }

@@ -28,7 +28,6 @@ char	*read_input_non_interactive(void)
 	line = ft_gnl(STDIN_FILENO);
 	if (!line)
 		return (NULL);
-
 	len = ft_strlen(line);
 	if (len > 0 && line[len - 1] == '\n')
 		line[len - 1] = '\0';

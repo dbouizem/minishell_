@@ -32,6 +32,7 @@ static int	handle_output_redirection(t_redir *redir, t_redir_type type)
 int	setup_redirections(t_cmd *cmd)
 {
 	t_redir	*redir;
+	int status;
 
 	redir = cmd->redirs;
 	while (redir)
@@ -49,8 +50,9 @@ int	setup_redirections(t_cmd *cmd)
 		}
 		else if (redir->type == REDIR_HEREDOC)
 		{
-			if (handle_heredoc_redirection(redir) != 0)
-				return (handle_heredoc_redirection(redir));
+			status = handle_heredoc_redirection(redir);
+			if (status != 0)
+				return (status);
 		}
 		redir = redir->next;
 	}

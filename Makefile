@@ -60,6 +60,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/redirections_utils.c \
 		$(SRC_DIR)/executor/exec_errors.c \
 		$(SRC_DIR)/executor/heredoc.c \
+		$(SRC_DIR)/executor/heredoc_utils.c \
 		$(SRC_DIR)/executor/child_executor.c \
 		\
 		$(SRC_DIR)/builtin/builtin.c \
