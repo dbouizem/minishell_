@@ -1,7 +1,8 @@
 #include "../includes/minishell.h"
 
-void	handle_sigint()
+void	handle_sigint(int signo)
 {
+	(void)signo;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -15,7 +16,7 @@ void	setup_child_signals(void)
 	signal(SIGQUIT, SIG_DFL);
 }
 
-void	setup_signals()
+void	setup_signals(void)
 {
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
@@ -23,7 +24,7 @@ void	setup_signals()
 	// SIGINT (Ctrl+C) - new prompt
 	sa_int.sa_handler = handle_sigint;
 	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = SA_RESTART;
+	sa_int.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);
 
 	// SIGQUIT (Ctrl+\) - ignore

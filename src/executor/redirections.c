@@ -32,7 +32,7 @@ static int	handle_output_redirection(t_redir *redir, t_redir_type type)
 int	setup_redirections(t_cmd *cmd)
 {
 	t_redir	*redir;
-	int status;
+	int		status;
 
 	redir = cmd->redirs;
 	while (redir)

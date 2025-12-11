@@ -19,8 +19,7 @@
 # include "../libft/libft.h"
 # include "colors.h"
 
-
-extern volatile sig_atomic_t g_signal;
+extern volatile	sig_atomic_t g_signal;
 
 typedef struct s_env			t_env;
 typedef struct s_token			t_token;
@@ -51,7 +50,8 @@ struct s_shell
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 
-void	setup_signals();
+void	setup_signals(void);
+void	setup_child_signals(void);
 
 char	*read_input(void);
 char	*read_input_non_interactive(void);

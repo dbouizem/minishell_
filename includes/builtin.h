@@ -21,9 +21,4 @@ void	print_unset_error(char *arg);
 void	print_env_error(char *arg);
 void	print_exit_error(char *arg, char *error_type);
 
-// char	*get_env_value(char *key, t_shell *shell);
-// int		set_env_value(char *key, char *value, t_shell *shell);
-// int		unset_env_value(char *key, t_shell *shell);
-// void	print_env(t_shell *shell);
-
 #endif

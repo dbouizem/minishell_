@@ -28,9 +28,6 @@ void	debug_fork_footer(void)
 }
  */
 
-
- #include "../../includes/minishell.h"
-
 void	debug_fork_header(int total_cmds)
 {
 	fprintf(stderr, "\n%s%s=== DEBUG fork_all_commands ===%s\n",

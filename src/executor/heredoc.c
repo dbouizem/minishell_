@@ -12,8 +12,10 @@ static int write_heredoc_content(int fd, char *delimiter)
 		delim_cpy = remove_quote(delimiter);
 		line = readline("heredoc> ");
 		if (g_signal == 1)
+		{
+			free(delim_cpy);
 			return (130);
-		//printf("delimiter is %s et line is %s\n", delim_cpy, line);
+		}
 		if (!line)
 		{
 			ft_putstr_fd("minishell: warning: heredoc delimited by ", 2);
@@ -34,9 +36,9 @@ static int write_heredoc_content(int fd, char *delimiter)
 			perror("minishell: heredoc");
 			return (free(delim_cpy), 1);
 		}
+		free(delim_cpy);
 		free(line);
 	}
-	free(delim_cpy);
 }
 
 int	handle_heredoc_redirection(t_redir *redir)
