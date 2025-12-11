@@ -9,10 +9,10 @@ void	handle_sigint()
 }
 
 // Restore yo Default
-void setup_child_signals(void)
+void	setup_child_signals(void)
 {
-    signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 void	setup_signals()

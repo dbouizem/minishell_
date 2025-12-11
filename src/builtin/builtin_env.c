@@ -18,8 +18,7 @@ int	builtin_env(char **args, t_shell *shell)
 {
 	if (args[1])
 	{
-		ft_putstr_fd("minishell: env: ", STDERR_FILENO);
-		ft_putstr_fd("does not take arguments\n", STDERR_FILENO);
+		print_env_error(args[1]);
 		return (1);
 	}
 	if (!shell || !shell->env)
