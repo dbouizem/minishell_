@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 /* Erreur variable environnement */
 void	env_error(char *key, char *message)

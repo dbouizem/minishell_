@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 int	handle_quotes_flags(char c, t_state *state)
 {

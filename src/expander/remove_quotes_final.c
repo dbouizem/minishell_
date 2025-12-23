@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static void	remove_quotes_from_redirections(t_cmd *current)
 {

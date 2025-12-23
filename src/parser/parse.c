@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static void	add_command_to_list(t_cmd **head, t_cmd **current, t_cmd *new_cmd)
 {

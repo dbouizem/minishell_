@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 char	*extract_var_name(char *str, int *i, t_shell *shell)
 {

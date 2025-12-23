@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static int	check_sep_syntax(t_cmd *cmds, t_shell *shell)
 {

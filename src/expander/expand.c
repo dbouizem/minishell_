@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	expand_args(t_cmd *cmd, t_shell *shell)
 {

@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 /* Erreur de quote non fermée */
 int	lexer_quote_error(char quote)

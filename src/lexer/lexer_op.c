@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void    get_ope_value(t_token_type type, char *value, int len)
 {

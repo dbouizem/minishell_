@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 	// "NONE",          // 0
 	// "REDIR_IN",      // 1  (était "INPUT")

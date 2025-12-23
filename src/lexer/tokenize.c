@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static void	process_char(char *input, int *i, t_token **head, t_token **current)
 {

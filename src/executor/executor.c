@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
 				int saved_in, int saved_out)

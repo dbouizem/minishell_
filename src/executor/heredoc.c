@@ -1,9 +1,9 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
-static int write_heredoc_content(int fd, char *delimiter)
+static int	write_heredoc_content(int fd, char *delimiter)
 {
-	char *line;
-	char *delim_cpy;
+	char	*line;
+	char	*delim_cpy;
 
 	while (1)
 	{

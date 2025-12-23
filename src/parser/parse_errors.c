@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 /* Erreur syntaxique pour redirections */
 void	parse_syntax_error(t_token **tokens, t_shell *shell)

@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static char	*handle_quoted_part(char *input, int *i, char quote_type)
 {

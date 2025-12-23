@@ -1,4 +1,5 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
+
 
 // Cas				Afficher		Quitter ?		Code sortie
 // exit				exit			Oui				Dernier status

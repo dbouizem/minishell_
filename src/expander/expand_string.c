@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
 			t_shell *shell)

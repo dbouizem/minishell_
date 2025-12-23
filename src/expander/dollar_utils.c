@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 char	*handle_special_chars(char *str, int *i, t_shell *shell)
 {
