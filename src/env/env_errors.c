@@ -1,6 +1,5 @@
 #include "../../includes/minishell.h"
 
-/* Erreur variable environnement */
 void	env_error(char *key, char *message)
 {
 	ft_putstr_fd("minishell: env: ", STDERR_FILENO);
@@ -9,7 +8,6 @@ void	env_error(char *key, char *message)
 	ft_putendl_fd(message, STDERR_FILENO);
 }
 
-/* Vérification clé valide pour variable d'environnement */
 int	is_valid_env_key(char *key)
 {
 	int	i;

@@ -18,17 +18,6 @@
 
 # include "../libft/libft.h"
 # include "colors.h"
-
-extern volatile	sig_atomic_t g_signal;
-
-typedef struct s_env			t_env;
-typedef struct s_token			t_token;
-typedef struct s_redir			t_redir;
-typedef struct s_cmd			t_cmd;
-typedef struct s_state			t_state;
-typedef struct s_shell			t_shell;
-typedef struct s_pipeline_data	t_pipeline_data;
-
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
@@ -37,7 +26,9 @@ typedef struct s_pipeline_data	t_pipeline_data;
 # include "env.h"
 # include "debug.h"
 
-struct s_shell
+extern volatile sig_atomic_t	g_signal;
+
+typedef struct s_shell
 {
 	char			**env;
 	t_env			*env_list;
@@ -45,7 +36,7 @@ struct s_shell
 	int				interactive;
 	struct termios	original_term;
 	int				num_pipes;
-};
+}	t_shell;
 
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);

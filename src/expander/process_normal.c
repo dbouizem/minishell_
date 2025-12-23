@@ -6,13 +6,10 @@ char	*extract_single_quoted_content(char *str, int *i)
 	char	*result;
 
 	start = *i;
-
 	while (str[*i] && str[*i] != '\'')
 		(*i)++;
-
 	if (*i == start)
 		return (NULL);
-
 	result = malloc(*i - start + 1);
 	if (!result)
 		return (NULL);

@@ -30,30 +30,21 @@ void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes)
 	int	input_fd;
 	int	output_fd;
 
-	if (cmd_index == 0)
-		input_fd = STDIN_FILENO;
-	else
+	input_fd = STDIN_FILENO;
+	if (cmd_index > 0)
 		input_fd = pipes[cmd_index - 1][0];
-
-	if (cmd_index == num_pipes)
-		output_fd = STDOUT_FILENO;
-	else
+	output_fd = STDOUT_FILENO;
+	if (cmd_index < num_pipes)
 		output_fd = pipes[cmd_index][1];
-	if (input_fd != STDIN_FILENO)
+	if (input_fd != STDIN_FILENO && dup2(input_fd, STDIN_FILENO) == -1)
 	{
-		if (dup2(input_fd, STDIN_FILENO) == -1)
-		{
-			perror("minishell: dup2 input");
-			exit(1);
-		}
+		perror("minishell: dup2 input");
+		exit(1);
 	}
-	if (output_fd != STDOUT_FILENO)
+	if (output_fd != STDOUT_FILENO && dup2(output_fd, STDOUT_FILENO) == -1)
 	{
-		if (dup2(output_fd, STDOUT_FILENO) == -1)
-		{
-			perror("minishell: dup2 output");
-			exit(1);
-		}
+		perror("minishell: dup2 output");
+		exit(1);
 	}
 }
 
@@ -81,38 +72,39 @@ void	cleanup_pipeline_resources(t_pipeline_data *data)
 	}
 }
 
+static int	init_pipeline_data(t_pipeline_data *data,
+		t_cmd *cmd, t_shell *shell)
+{
+	data->cmd = cmd;
+	data->shell = shell;
+	data->num_commands = count_commands(cmd);
+	data->num_pipes = data->num_commands - 1;
+	data->pipes = create_pipes(data->num_pipes);
+	if (!data->pipes)
+		return (handle_pipe_error());
+	data->pids = malloc(sizeof(pid_t) * data->num_commands);
+	if (!data->pids)
+	{
+		cleanup_pipeline_resources(data);
+		return (handle_malloc_error());
+	}
+	return (0);
+}
+
 int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 {
 	t_pipeline_data	data;
 	int				final_status;
+	int				status;
 
 	if (!cmd || !cmd->next)
 		return (execute_command(cmd, shell));
-
-	data.cmd = cmd;
-	data.shell = shell;
-	data.num_commands = count_commands(cmd);
-	data.num_pipes = data.num_commands - 1;
-	data.pipes = NULL;
-	data.pids = NULL;
-
-	data.pipes = create_pipes(data.num_pipes);
-	if (!data.pipes)
-		return (handle_pipe_error());
-
-	data.pids = malloc(sizeof(pid_t) * data.num_commands);
-	if (!data.pids)
-	{
-		cleanup_pipeline_resources(&data);
-		return (handle_malloc_error());
-	}
-
+	status = init_pipeline_data(&data, cmd, shell);
+	if (status != 0)
+		return (status);
 	fork_all_commands(&data);
-
 	close_all_pipes(data.pipes, data.num_pipes);
-
 	final_status = wait_all_children(data.pids, data.num_commands);
-
 	cleanup_pipeline_resources(&data);
 	return (final_status);
 }

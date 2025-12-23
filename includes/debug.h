@@ -1,7 +1,12 @@
 #ifndef DEBUG_H
 # define DEBUG_H
 
-# include "minishell.h"
+# include <sys/types.h>
+
+typedef struct s_cmd	t_cmd;
+typedef struct s_shell	t_shell;
+typedef struct s_token	t_token;
+typedef struct s_env	t_env;
 
 void	print_command(t_cmd *cmd, int cmd_num);
 void	print_pipeline(t_cmd *cmd);

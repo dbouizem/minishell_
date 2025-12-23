@@ -1,7 +1,7 @@
 #ifndef ENV_H
 # define ENV_H
 
-# include "minishell.h"
+typedef struct s_shell	t_shell;
 
 typedef struct s_env
 {

@@ -43,4 +43,3 @@ void	print_exit_error(char *arg, char *error_type)
 	else if (ft_strcmp(error_type, "too_many") == 0)
 		ft_putendl_fd("too many arguments", STDERR_FILENO);
 }
-

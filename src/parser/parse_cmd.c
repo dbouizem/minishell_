@@ -9,7 +9,9 @@ static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd, t_shell *shell)
 {
 	t_redir	*redir;
 
-	while (*tokens && !is_command_separator((*tokens)->type) && is_redir((*tokens)->type))
+	while (*tokens
+		&& !is_command_separator((*tokens)->type)
+		&& is_redir((*tokens)->type))
 	{
 		redir = parse_redirection(tokens, shell);
 		if (!redir)

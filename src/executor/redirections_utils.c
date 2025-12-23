@@ -22,3 +22,32 @@ int	handle_malloc_error(void)
 	perror("malloc");
 	return (1);
 }
+
+int	handle_input_redirection(t_redir *redir)
+{
+	int	fd;
+
+	fd = open(redir->file, O_RDONLY);
+	if (fd == -1)
+		return (handle_file_error(redir->file));
+	if (dup2(fd, STDIN_FILENO) == -1)
+		return (handle_dup2_error(fd));
+	close(fd);
+	return (0);
+}
+
+int	handle_output_redirection(t_redir *redir, t_redir_type type)
+{
+	int	fd;
+
+	if (type == REDIR_OUT)
+		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else
+		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
+		return (handle_file_error(redir->file));
+	if (dup2(fd, STDOUT_FILENO) == -1)
+		return (handle_dup2_error(fd));
+	close(fd);
+	return (0);
+}

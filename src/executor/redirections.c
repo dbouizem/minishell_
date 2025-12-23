@@ -1,31 +1,13 @@
 #include "../../includes/minishell.h"
 
-static int	handle_input_redirection(t_redir *redir)
+static int	handle_single_redirection(t_redir *redir)
 {
-	int	fd;
-
-	fd = open(redir->file, O_RDONLY);
-	if (fd == -1)
-		return (handle_file_error(redir->file));
-	if (dup2(fd, STDIN_FILENO) == -1)
-		return (handle_dup2_error(fd));
-	close(fd);
-	return (0);
-}
-
-static int	handle_output_redirection(t_redir *redir, t_redir_type type)
-{
-	int	fd;
-
-	if (type == REDIR_OUT)
-		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else
-		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (fd == -1)
-		return (handle_file_error(redir->file));
-	if (dup2(fd, STDOUT_FILENO) == -1)
-		return (handle_dup2_error(fd));
-	close(fd);
+	if (redir->type == REDIR_IN)
+		return (handle_input_redirection(redir));
+	if (redir->type == REDIR_OUT || redir->type == REDIR_APPEND)
+		return (handle_output_redirection(redir, redir->type));
+	if (redir->type == REDIR_HEREDOC)
+		return (handle_heredoc_redirection(redir));
 	return (0);
 }
 
@@ -37,23 +19,9 @@ int	setup_redirections(t_cmd *cmd)
 	redir = cmd->redirs;
 	while (redir)
 	{
-		if (redir->type == REDIR_IN)
-		{
-			if (handle_input_redirection(redir) != 0)
-				return (1);
-		}
-		else if (redir->type == REDIR_OUT
-			|| redir->type == REDIR_APPEND)
-		{
-			if (handle_output_redirection(redir, redir->type) != 0)
-				return (1);
-		}
-		else if (redir->type == REDIR_HEREDOC)
-		{
-			status = handle_heredoc_redirection(redir);
-			if (status != 0)
-				return (status);
-		}
+		status = handle_single_redirection(redir);
+		if (status != 0)
+			return (status);
 		redir = redir->next;
 	}
 	return (0);

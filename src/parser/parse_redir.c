@@ -13,14 +13,14 @@ static t_redir	*create_valid_redir(t_token **tokens, t_token_type token_type)
 	t_redir			*redir;
 	t_redir_type	redir_type;
 
-	if (token_type == INPUT)		// INPUT = 5 (token)
-		redir_type = REDIR_IN;		// REDIR_IN = 1 (redir)
-	else if (token_type == TRUNC)	// TRUNC = 6
-		redir_type = REDIR_OUT;		// REDIR_OUT = 2
-	else if (token_type == APPEND)	// APPEND = 8
-		redir_type = REDIR_APPEND;	// REDIR_APPEND = 3
-	else if (token_type == HEREDOC)	// HEREDOC = 7
-		redir_type = REDIR_HEREDOC;	// REDIR_HEREDOC = 4
+	if (token_type == INPUT)
+		redir_type = REDIR_IN;
+	else if (token_type == TRUNC)
+		redir_type = REDIR_OUT;
+	else if (token_type == APPEND)
+		redir_type = REDIR_APPEND;
+	else if (token_type == HEREDOC)
+		redir_type = REDIR_HEREDOC;
 	else
 	{
 		printf("minishell: internal parser error\n");
@@ -85,6 +85,5 @@ void	add_redir(t_redir **head, t_redir *new_redir)
 	current = *head;
 	while (current->next)
 		current = current->next;
-
 	current->next = new_redir;
 }

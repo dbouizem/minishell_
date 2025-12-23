@@ -1,7 +1,12 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-# include "minishell.h"
+# include <signal.h>
+# include <sys/types.h>
+
+typedef struct s_cmd	t_cmd;
+typedef struct s_shell	t_shell;
+typedef struct s_redir	t_redir;
 
 typedef struct s_pipeline_data
 {
@@ -17,7 +22,6 @@ int		execute(t_cmd *cmd, t_shell *shell);
 int		execute_command(t_cmd *cmd, t_shell *shell);
 void	execute_command_child(t_cmd *cmd, t_shell *shell);
 void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index);
-
 
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);
 int		count_commands(t_cmd *cmd);
@@ -56,6 +60,8 @@ int		handle_file_error(char *filename);
 int		handle_dup2_error(int fd);
 int		handle_malloc_error(void);
 int		handle_pipe_error(void);
+int		handle_input_redirection(t_redir *redir);
+int		handle_output_redirection(t_redir *redir, t_redir_type type);
 
 void	free_string_array(char **array);
 pid_t	fork_process(void);

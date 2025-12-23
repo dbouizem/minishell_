@@ -1,30 +1,18 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "minishell.h"
+# include "token.h"
+
+typedef struct s_shell	t_shell;
 
 typedef enum e_redir_type
 {
 	REDIR_NONE = 0,
-	REDIR_IN,		// <
-	REDIR_OUT,		// >
-	REDIR_APPEND,	// >>
-	REDIR_HEREDOC	// <<
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC
 }	t_redir_type;
-/*
-typedef enum e_sep_type
-{
-	SEP_NONE = 0,
-	SEP_AND,		// &&
-	SEP_OR,			// ||
-	SEP_PIPE,		// |
-}	t_sep_type;
-typedef struct s_sep
-{
-	t_sep_type	type;
-	int			exit_status;
-	int			next_exit_status;
-}	t_sep;*/
 
 typedef struct s_redir
 {
@@ -63,8 +51,9 @@ void		pipe_syntax_error(t_shell *shell);
 void		redir_syntax_error(t_shell *shell);
 int			parse_memory_error(char *context);
 
-int		is_command_separator(t_token_type type);
-int		is_separator(t_token *tokens);
-void	create_operator_token(t_token_type type, t_token **head, t_token **current, int *i);
+int			is_command_separator(t_token_type type);
+int			is_separator(t_token *tokens);
+void		create_operator_token(t_token_type type, t_token **head,
+				t_token **current, int *i);
 
 #endif

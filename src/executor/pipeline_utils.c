@@ -32,15 +32,10 @@ void	fork_all_commands(t_pipeline_data *data)
 	int		i;
 	t_cmd	*current_cmd;
 
-	// debug_fork_header(data->num_commands);
-
 	i = 0;
 	current_cmd = data->cmd;
-
 	while (i < data->num_pipes + 1 && current_cmd)
 	{
-		// debug_fork_command(i, current_cmd);
-
 		data->pids[i] = fork();
 		if (data->pids[i] == 0)
 		{
@@ -48,14 +43,10 @@ void	fork_all_commands(t_pipeline_data *data)
 			setup_child_pipes(data->pipes, i, data->num_pipes);
 			cleanup_child_pipes(data->pipes, data->num_pipes, i);
 			execute_command_child(current_cmd, data->shell);
-
 			exit(1);
 		}
 		else if (data->pids[i] > 0)
-		{
-			// debug_fork_parent(i, data->pids[i]);
 			current_cmd = current_cmd->next;
-		}
 		else
 		{
 			perror("minishell: fork");
@@ -63,7 +54,6 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		i++;
 	}
-	// debug_fork_footer();
 }
 
 void	close_all_pipes(int **pipes, int num_pipes)

@@ -1,7 +1,8 @@
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-# include "minishell.h"
+typedef struct s_cmd	t_cmd;
+typedef struct s_shell	t_shell;
 
 int		is_builtin(char *cmd);
 int		execute_builtin(t_cmd *cmd, t_shell *shell);

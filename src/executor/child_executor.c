@@ -15,9 +15,25 @@ void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index)
 	}
 }
 
+static void	execute_child_command(t_cmd *cmd, t_shell *shell)
+{
+	int	exit_status;
+
+	if (cmd->args && cmd->args[0])
+	{
+		if (is_builtin(cmd->args[0]))
+		{
+			exit_status = execute_builtin(cmd, shell);
+			exit(exit_status);
+		}
+		execute_external_no_fork(cmd, shell);
+		exit(127);
+	}
+	exit(0);
+}
+
 void	execute_command_child(t_cmd *cmd, t_shell *shell)
 {
-	int		exit_status;
 	t_cmd	cmd_copy;
 
 	if (!cmd)
@@ -27,18 +43,5 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	cmd_copy.next = NULL;
 	if (setup_redirections(&cmd_copy) != 0)
 		exit(1);
-	if (cmd_copy.args && cmd_copy.args[0])
-	{
-		if (is_builtin(cmd_copy.args[0]))
-		{
-			exit_status = execute_builtin(&cmd_copy, shell);
-			exit(exit_status);
-		}
-		else
-		{
-			execute_external_no_fork(&cmd_copy, shell);
-			exit(127);
-		}
-	}
-	exit(0);
+	execute_child_command(&cmd_copy, shell);
 }

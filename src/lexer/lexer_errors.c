@@ -10,7 +10,8 @@ int	lexer_quote_error(char quote)
 /* Erreur d'allocation mémoire */
 void	lexer_memory_error(char *context)
 {
-	printf("minishell: lexer error: memory allocation failed for %s\n", context);
+	printf("minishell: lexer error: %s %s\n",
+		"memory allocation failed for", context);
 }
 
 /* Erreur de syntaxe générale */
