@@ -64,6 +64,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 static int	execute_sequence(t_cmd *cmd, t_shell *shell)
 {
 	int		exit_status;
+	int		current_sep;
 	t_cmd	*current;
 
 	current = cmd;
@@ -73,6 +74,13 @@ static int	execute_sequence(t_cmd *cmd, t_shell *shell)
 		exit_status = execute_current(&current, shell);
 		if (!current->next)
 			break ;
+		if ((current->separator == AND && exit_status != 0)
+			|| (current->separator == OR && exit_status == 0))
+		{
+			current_sep = current->separator;
+			while (current->next && current->separator == current_sep)
+				current = current->next;
+		}
 		current = current->next;
 	}
 	return (exit_status);

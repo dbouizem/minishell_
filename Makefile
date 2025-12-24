@@ -22,12 +22,14 @@ endif
 
 # DIRECTORIES
 SRC_DIR		= src
+SRC_BONUS_DIR	= srcs_bonus
 OBJ_DIR		= obj
+OBJ_DIR_BONUS	= obj_bonus
 INC_DIR		= includes
 LIBFT_DIR	= libft
 
 # SOURCES
-SRC =	$(SRC_DIR)/main.c \
+SRC_BASE =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/core/input.c \
 		$(SRC_DIR)/core/shell.c \
@@ -94,9 +96,23 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/debug/debug_executor.c \
 		$(SRC_DIR)/debug/debug_lexer.c \
 		$(SRC_DIR)/debug/debug_fork.c
+SRC_BONUS_BASE =	$(filter-out \
+		$(SRC_DIR)/lexer/lexer_redir.c \
+		$(SRC_DIR)/parser/parse_cmd.c \
+		$(SRC_DIR)/parser/parse_utils.c \
+		$(SRC_DIR)/executor/executor.c, \
+		$(SRC_BASE))
+SRC_BONUS_ONLY =	$(SRC_BONUS_DIR)/lexer/lexer_redir_bonus.c \
+		$(SRC_BONUS_DIR)/parser/parse_cmd_bonus.c \
+		$(SRC_BONUS_DIR)/parser/parse_utils_bonus.c \
+		$(SRC_BONUS_DIR)/executor/executor_bonus.c
+SRC_BONUS =	$(SRC_BONUS_BASE) $(SRC_BONUS_ONLY)
+SRC =	$(SRC_BASE)
 
 # OBJECTS & LIBRARY
 OBJ			= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ_BONUS	= $(SRC_BONUS_BASE:$(SRC_DIR)/%.c=$(OBJ_DIR_BONUS)/%.o) \
+		$(SRC_BONUS_ONLY:$(SRC_BONUS_DIR)/%.c=$(OBJ_DIR_BONUS)/bonus/%.o)
 HEADERS		= $(wildcard $(INC_DIR)/*.h)
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
@@ -121,7 +137,20 @@ $(NAME): $(OBJ) $(LIBFT_LIB)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 	@echo "$(BOLD)$(GREEN)✅ Minishell ready!$(RESET)\n"
 
+bonus: $(LIBFT_LIB) $(OBJ_BONUS)
+	@echo "$(BOLD)$(CYAN)🔗 Linking minishell (bonus)...$(RESET)"
+	@$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
+	@echo "$(BOLD)$(GREEN)✅ Minishell bonus ready!$(RESET)\n"
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR_BONUS)/%.o: $(SRC_DIR)/%.c $(HEADERS)
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR_BONUS)/bonus/%.o: $(SRC_BONUS_DIR)/%.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
@@ -131,6 +160,11 @@ clean:
 		echo "$(BOLD)$(CYAN)🧹 Cleaning minishell objects...$(RESET)"; \
 		rm -rf $(OBJ_DIR); \
 		echo "$(GREEN)✓ Minishell cleaned$(RESET)"; \
+	fi
+	@if [ -d "$(OBJ_DIR_BONUS)" ]; then \
+		echo "$(BOLD)$(CYAN)🧹 Cleaning minishell bonus objects...$(RESET)"; \
+		rm -rf $(OBJ_DIR_BONUS); \
+		echo "$(GREEN)✓ Minishell bonus cleaned$(RESET)"; \
 	fi
 
 fclean: clean
@@ -143,4 +177,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re

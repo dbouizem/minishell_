@@ -4,6 +4,10 @@ int	is_separator(t_token *tokens)
 {
 	if (tokens->type == PIPE)
 		return (1);
+	if (tokens->type == AND)
+		return (1);
+	if (tokens->type == OR)
+		return (1);
 	return (0);
 }
 

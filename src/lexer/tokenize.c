@@ -10,6 +10,20 @@ static void	process_char(char *input, int *i, t_token **head, t_token **current)
 		handle_word(input, i, head, current);
 }
 
+static int	has_invalid_token(t_token *tokens)
+{
+	while (tokens)
+	{
+		if (tokens->type == INVALID)
+		{
+			lexer_syntax_error(tokens->value);
+			return (1);
+		}
+		tokens = tokens->next;
+	}
+	return (0);
+}
+
 t_token	*tokenize(char *input)
 {
 	t_token	*head;
@@ -25,5 +39,10 @@ t_token	*tokenize(char *input)
 	i = 0;
 	while (input[i])
 		process_char(input, &i, &head, &current);
+	if (has_invalid_token(head))
+	{
+		free_tokens(head);
+		return (NULL);
+	}
 	return (head);
 }

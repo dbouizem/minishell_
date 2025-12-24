@@ -2,7 +2,7 @@
 
 int	is_command_separator(t_token_type type)
 {
-	return (type == PIPE);
+	return (type == PIPE || type == AND || type == OR);
 }
 
 static int	handle_initial_redirs(t_token **tokens, t_cmd *cmd, t_shell *shell)

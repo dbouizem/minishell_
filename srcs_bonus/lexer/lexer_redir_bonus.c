@@ -59,41 +59,22 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 	(*i)++;
 }
 
-static void	create_invalid_token(char *input, int *i, t_token **head,
-		t_token **current)
-{
-	t_token	*token;
-	char	*value;
-	int		len;
-
-	len = 1;
-	if ((input[*i] == '|' && input[*i + 1] == '|')
-		|| (input[*i] == '&' && input[*i + 1] == '&'))
-		len = 2;
-	value = extract_substring(input, *i, *i + len);
-	if (!value)
-		return ;
-	token = create_token(INVALID, value);
-	if (token)
-		add_token(head, current, token);
-	else
-		free(value);
-	*i += len;
-}
-
 void	handle_pipe_or_redir(char *input, int *i,
 		t_token **head, t_token **current)
 {
 	if (input[*i] == '|')
 	{
 		if (input[*i + 1] == '|')
-			create_invalid_token(input, i, head, current);
+			create_operator_token(OR, head, current, i);
 		else
 			create_pipe_token(head, current, i);
 	}
 	else if (input[*i] == '&')
 	{
-		create_invalid_token(input, i, head, current);
+		if (input[*i + 1] == '&')
+			create_operator_token(AND, head, current, i);
+		else
+			create_operator_token(INVALID, head, current, i);
 	}
 	else
 		create_redir_token(input, i, head, current);
