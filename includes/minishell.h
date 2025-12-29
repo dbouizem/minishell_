@@ -46,7 +46,6 @@ void	setup_child_signals(void);
 
 char	*read_input(void);
 char	*read_input_non_interactive(void);
-void	display_welcome(void);
 int		process_input(char *input, t_shell *shell);
 
 void	shell_error(char *message, int exit_code);

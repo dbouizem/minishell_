@@ -23,32 +23,61 @@ static void	set_path_error(int is_dir, int *path_error)
 		*path_error = PATH_ERR_PERM;
 }
 
-char	*search_in_paths(char **paths, char *cmd, int *path_error)
+static char	*build_full_path(const char *path, size_t start, size_t len,
+		char *cmd)
 {
+	char	*dir;
 	char	*full_path;
-	int		i;
 
+	if (len == 0)
+		dir = ft_strdup(".");
+	else
+		dir = ft_substr(path, start, len);
+	if (!dir)
+		return (NULL);
+	full_path = ft_strjoin3(dir, "/", cmd);
+	free(dir);
+	return (full_path);
+}
+
+char	*search_in_paths(const char *path, char *cmd, int *path_error)
+{
+	size_t	i;
+	size_t	start;
+	char	*full_path;
+
+	if (!path)
+		return (NULL);
 	i = 0;
-	while (paths[i])
+	start = 0;
+	while (1)
 	{
-		full_path = ft_strjoin3(paths[i], "/", cmd);
-		if (!full_path)
-			return (NULL);
+		if (path[i] == ':' || path[i] == '\0')
+		{
+			full_path = build_full_path(path, start, i - start, cmd);
+			if (!full_path)
+				return (NULL);
 		if (access(full_path, F_OK) == 0)
 		{
 			if (is_directory(full_path))
 			{
 				set_path_error(1, path_error);
 				free(full_path);
-				return (NULL);
 			}
-			if (access(full_path, X_OK) == 0)
+			else if (access(full_path, X_OK) == 0)
 				return (full_path);
-			set_path_error(0, path_error);
-			free(full_path);
-			return (NULL);
+			else
+			{
+				set_path_error(0, path_error);
+				free(full_path);
+			}
 		}
-		free(full_path);
+		else
+			free(full_path);
+		if (path[i] == '\0')
+			break ;
+		start = i + 1;
+		}
 		i++;
 	}
 	return (NULL);
@@ -57,17 +86,14 @@ char	*search_in_paths(char **paths, char *cmd, int *path_error)
 char	*find_command_path(char *cmd, t_shell *shell, int *path_error)
 {
 	char	*full_path;
-	char	**paths;
+	char	*path;
 
 	if (ft_strchr(cmd, '/'))
 		return (handle_absolute_path(cmd));
-	if (!get_env_value("PATH", shell))
+	path = get_env_value("PATH", shell);
+	if (!path)
 		return (NULL);
-	paths = ft_split(get_env_value("PATH", shell), ':');
-	if (!paths)
-		return (NULL);
-	full_path = search_in_paths(paths, cmd, path_error);
-	free_string_array(paths);
+	full_path = search_in_paths(path, cmd, path_error);
 	return (full_path);
 }
 

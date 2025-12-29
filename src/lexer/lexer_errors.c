@@ -3,24 +3,33 @@
 /* Erreur de quote non fermée */
 int	lexer_quote_error(char quote)
 {
-	printf("minishell: syntax error: unclosed quote `%c'\n", quote);
+	ft_putstr_fd("minishell: syntax error: unclosed quote `",
+		STDERR_FILENO);
+	ft_putchar_fd(quote, STDERR_FILENO);
+	ft_putendl_fd("'", STDERR_FILENO);
 	return (1);
 }
 
 /* Erreur d'allocation mémoire */
 void	lexer_memory_error(char *context)
 {
-	printf("minishell: lexer error: %s %s\n",
-		"memory allocation failed for", context);
+	ft_putstr_fd("minishell: lexer error: memory allocation failed for ",
+		STDERR_FILENO);
+	ft_putendl_fd(context, STDERR_FILENO);
 }
 
 /* Erreur de syntaxe générale */
 void	lexer_syntax_error(char *token)
 {
 	if (token)
-		printf("minishell: syntax error near unexpected token `%s'\n", token);
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `",
+			STDERR_FILENO);
+		ft_putstr_fd(token, STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
+	}
 	else
-		printf("minishell: syntax error\n");
+		ft_putendl_fd("minishell: syntax error", STDERR_FILENO);
 }
 
 /* Vérification quotes avec gestion erreur améliorée */

@@ -2,8 +2,6 @@
 
 void	init_shell(t_shell *shell, char **envp)
 {
-	char	*term_name;
-
 	ft_memset(shell, 0, sizeof(t_shell));
 	shell->exit_status = 0;
 	shell->env = NULL;
@@ -16,29 +14,11 @@ void	init_shell(t_shell *shell, char **envp)
 		rl_catch_sigwinch = 0;
 		if (tcgetattr(STDIN_FILENO, &shell->original_term) == -1)
 			shell_error("tcgetattr", 1);
-#ifdef ECHOCTL
-		{
-			struct termios	term;
-
-			term = shell->original_term;
-			term.c_lflag &= ~ECHOCTL;
-			if (tcsetattr(STDIN_FILENO, TCSANOW, &term) == -1)
-				shell_error("tcsetattr", 1);
-		}
-#endif
 	}
 	shell->env_list = env_array_to_list(envp);
 	if (!shell->env_list && envp && *envp)
 		shell_error("Failed to initialize environment list", 1);
 	env_list_to_array(shell);
-	term_name = ttyname(STDIN_FILENO);
-#ifdef MS_BANNER
-	if (term_name)
-		printf("%sTerminal: %s%s\n", CYAN, term_name, RESET);
-	printf("%s✓ Minishell initialized successfully%s\n", GREEN, RESET);
-#else
-	(void)term_name;
-#endif
 }
 
 void	cleanup_shell(t_shell *shell)

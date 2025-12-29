@@ -108,18 +108,7 @@ static int	wait_child_process(pid_t pid, int *status)
 
 static int	is_echoctl_enabled(void)
 {
-	int	echoctl;
-
-	echoctl = 0;
-#ifdef ECHOCTL
-	{
-		struct termios	term;
-
-		if (tcgetattr(STDIN_FILENO, &term) == 0)
-			echoctl = ((term.c_lflag & ECHOCTL) != 0);
-	}
-#endif
-	return (echoctl);
+	return (0);
 }
 
 static void	print_sigint_message(int echoctl)

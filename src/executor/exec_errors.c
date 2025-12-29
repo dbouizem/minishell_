@@ -12,16 +12,29 @@ void	handle_absolute_path_error(char *cmd, t_shell *shell)
 {
 	struct stat	path_stat;
 
-	if (stat(cmd, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-		print_error_is_directory(cmd, shell, 126);
-	else if (access(cmd, F_OK) != 0)
-		print_error_no_such_file(cmd, shell, 127);
-	else if (access(cmd, X_OK) != 0)
+	if (stat(cmd, &path_stat) == 0)
+	{
+		if (S_ISDIR(path_stat.st_mode))
+			print_error_is_directory(cmd, shell, 126);
+		else if (access(cmd, X_OK) != 0)
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			ft_putstr_fd(cmd, STDERR_FILENO);
+			ft_putendl_fd(": Permission denied", STDERR_FILENO);
+			shell->exit_status = 126;
+		}
+		return ;
+	}
+	if (errno == EACCES)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd, STDERR_FILENO);
 		ft_putendl_fd(": Permission denied", STDERR_FILENO);
 		shell->exit_status = 126;
+	}
+	else
+	{
+		print_error_no_such_file(cmd, shell, 127);
 	}
 }
 

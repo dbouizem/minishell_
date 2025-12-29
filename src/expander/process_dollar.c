@@ -70,7 +70,7 @@ char	*process_dollar(char *str, int *i, t_shell *shell)
 	if (str[*i + 1] == '$')
 	{
 		(*i) += 2;
-		return (ft_itoa(getpid()));
+		return (ft_strdup("$$"));
 	}
 	var_name = extract_var_name(str, i, shell);
 	if (!var_name)

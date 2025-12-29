@@ -47,7 +47,7 @@ int	setup_redirections(t_cmd *cmd, t_shell *shell)
 	redir = cmd->redirs;
 	while (redir)
 	{
-		if (redir->type == REDIR_HEREDOC)
+		if (redir->type == REDIR_HEREDOC && redir->fd == -1)
 		{
 			status = handle_heredoc_redirection(redir, shell);
 			if (status != 0)

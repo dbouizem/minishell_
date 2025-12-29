@@ -23,7 +23,7 @@ static t_redir	*create_valid_redir(t_token **tokens, t_token_type token_type)
 		redir_type = REDIR_HEREDOC;
 	else
 	{
-		printf("minishell: internal parser error\n");
+		ft_putendl_fd("minishell: internal parser error", STDERR_FILENO);
 		return (NULL);
 	}
 	file = ft_strdup((*tokens)->value);
@@ -40,17 +40,23 @@ static void	handle_syntax_error(t_token **tokens, t_shell *shell)
 {
 	if (*tokens && is_redir((*tokens)->type))
 	{
-		printf("minishell: syntax error near unexpected token `%c'\n",
-			(*tokens)->value[0]);
+		ft_putstr_fd("minishell: syntax error near unexpected token `",
+			STDERR_FILENO);
+		ft_putchar_fd((*tokens)->value[0], STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else if (*tokens)
 	{
-		printf("minishell: syntax error near unexpected token `%s'\n",
-			(*tokens)->value);
+		ft_putstr_fd("minishell: syntax error near unexpected token `",
+			STDERR_FILENO);
+		ft_putstr_fd((*tokens)->value, STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token `newline'\n");
+		ft_putendl_fd(
+			"minishell: syntax error near unexpected token `newline'",
+			STDERR_FILENO);
 	}
 	shell->exit_status = 2;
 }

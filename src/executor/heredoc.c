@@ -56,6 +56,36 @@ static char	*append_char(char *line, size_t *len, size_t *cap, char c)
 	return (line);
 }
 
+static int	open_heredoc_tmp(char *path, size_t size)
+{
+	static int	counter;
+	int			fd;
+	int			attempts;
+	char		*num;
+
+	attempts = 0;
+	while (attempts < 10000)
+	{
+		num = ft_itoa(counter++);
+		if (!num)
+		{
+			errno = ENOMEM;
+			return (-1);
+		}
+		ft_strlcpy(path, "/tmp/.minishell_heredoc_", size);
+		ft_strlcat(path, num, size);
+		free(num);
+		fd = open(path, O_CREAT | O_EXCL | O_WRONLY, 0600);
+		if (fd >= 0)
+			return (fd);
+		if (errno != EEXIST)
+			return (-1);
+		attempts++;
+	}
+	errno = EEXIST;
+	return (-1);
+}
+
 static int	setup_heredoc_term(t_shell *shell, struct termios *saved)
 {
 	struct termios	term;
@@ -69,9 +99,6 @@ static int	setup_heredoc_term(t_shell *shell, struct termios *saved)
 	term.c_lflag &= ~(ICANON | ECHO);
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
-#ifdef ECHOCTL
-	term.c_lflag &= ~ECHOCTL;
-#endif
 	if (tcsetattr(STDIN_FILENO, TCSANOW, &term) == -1)
 		return (0);
 	return (1);
@@ -256,21 +283,29 @@ static int	write_heredoc_content(int fd, char *delimiter, int expand,
 
 static int	finalize_heredoc_fd(int fd, char *tmp_filename, t_redir *redir)
 {
-	if (lseek(fd, 0, SEEK_SET) == -1)
+	int	read_fd;
+
+	if (close(fd) == -1)
 	{
 		perror("minishell: heredoc");
-		close(fd);
+		unlink(tmp_filename);
+		return (1);
+	}
+	read_fd = open(tmp_filename, O_RDONLY);
+	if (read_fd == -1)
+	{
+		handle_file_error(tmp_filename);
 		unlink(tmp_filename);
 		return (1);
 	}
 	unlink(tmp_filename);
-	redir->fd = fd;
+	redir->fd = read_fd;
 	return (0);
 }
 
 int	handle_heredoc_redirection(t_redir *redir, t_shell *shell)
 {
-	char				tmp_filename[29];
+	char				tmp_filename[64];
 	int					fd;
 	int					status;
 	struct sigaction	old_int;
@@ -279,8 +314,7 @@ int	handle_heredoc_redirection(t_redir *redir, t_shell *shell)
 	int					term_changed;
 	int					expand;
 
-	ft_strlcpy(tmp_filename, "/tmp/heredocXXXXXX", 29);
-	fd = mkstemp(tmp_filename);
+	fd = open_heredoc_tmp(tmp_filename, sizeof(tmp_filename));
 	if (fd == -1)
 		return (handle_file_error("heredoc"));
 	if (redir->fd != -1)

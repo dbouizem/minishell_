@@ -2,15 +2,6 @@
 
 volatile sig_atomic_t	g_signal = 0;
 
-static void	print_startup(void)
-{
-#ifdef MS_BANNER
-	display_welcome();
-	printf("%s=== Minishell Started ===%s\n", GREEN, RESET);
-	printf("%sType 'exit' to quit%s\n", CYAN, RESET);
-#endif
-}
-
 static char	*get_input(t_shell *shell)
 {
 	if (shell->interactive)
@@ -51,12 +42,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	init_shell(&shell, envp);
 	setup_signals();
-	print_startup();
 	while (shell_cycle(&shell))
 		;
 	cleanup_shell(&shell);
-#ifdef MS_BANNER
-	printf("%sGoodbye!%s\n", RED, RESET);
-#endif
 	return (shell.exit_status);
 }

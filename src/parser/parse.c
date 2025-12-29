@@ -31,8 +31,10 @@ static int	check_final_sep(t_token *tokens, t_cmd *head, t_shell *shell)
 
 	if (tokens && is_separator(tokens) && !tokens->next)
 	{
-		printf("minishell: syntax error near unexpected token ");
-		printf("%s\n", op_name[tokens->type]);
+		ft_putstr_fd("minishell: syntax error near unexpected token ",
+			STDERR_FILENO);
+		ft_putstr_fd((char *)op_name[tokens->type], STDERR_FILENO);
+		ft_putchar_fd('\n', STDERR_FILENO);
 		shell->exit_status = 2;
 		free_cmd(head);
 		return (0);

@@ -4,36 +4,45 @@ void	parse_syntax_error(t_token **tokens, t_shell *shell)
 {
 	if (*tokens && is_redir((*tokens)->type))
 	{
-		printf("minishell: syntax error near unexpected token `%c'\n",
-			(*tokens)->value[0]);
+		ft_putstr_fd("minishell: syntax error near unexpected token `",
+			STDERR_FILENO);
+		ft_putchar_fd((*tokens)->value[0], STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else if (*tokens)
 	{
-		printf("minishell: syntax error near unexpected token `%s'\n",
-			(*tokens)->value);
+		ft_putstr_fd("minishell: syntax error near unexpected token `",
+			STDERR_FILENO);
+		ft_putstr_fd((*tokens)->value, STDERR_FILENO);
+		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token `newline'\n");
+		ft_putendl_fd(
+			"minishell: syntax error near unexpected token `newline'",
+			STDERR_FILENO);
 	}
 	shell->exit_status = 2;
 }
 
 void	pipe_syntax_error(t_shell *shell)
 {
-	printf("minishell: syntax error near unexpected token `|'\n");
+	ft_putendl_fd("minishell: syntax error near unexpected token `|'",
+		STDERR_FILENO);
 	shell->exit_status = 2;
 }
 
 void	redir_syntax_error(t_shell *shell)
 {
-	printf("minishell: syntax error near unexpected token `newline'\n");
+	ft_putendl_fd("minishell: syntax error near unexpected token `newline'",
+		STDERR_FILENO);
 	shell->exit_status = 2;
 }
 
 int	parse_memory_error(char *context)
 {
-	printf("minishell: parse error: %s %s\n",
-		"memory allocation failed for", context);
+	ft_putstr_fd("minishell: parse error: memory allocation failed for ",
+		STDERR_FILENO);
+	ft_putendl_fd(context, STDERR_FILENO);
 	return (0);
 }
