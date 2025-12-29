@@ -26,21 +26,21 @@ void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index);
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);
 int		count_commands(t_cmd *cmd);
 void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes);
-void	fork_all_commands(t_pipeline_data *data);
-int		wait_all_children(pid_t *pids, int num_commands);
+int		fork_all_commands(t_pipeline_data *data);
+int		wait_all_children(pid_t *pids, int num_commands, t_shell *shell);
 void	close_all_pipes(int **pipes, int num_pipes);
 int		**cleanup_partial_pipes(int **pipes, int count);
 void	cleanup_pipeline_resources(t_pipeline_data *data);
 
 int		execute_external(t_cmd *cmd, t_shell *shell);
 void	execute_external_no_fork(t_cmd *cmd, t_shell *shell);
-char	*find_command_path(char *cmd, t_shell *shell);
+char	*find_command_path(char *cmd, t_shell *shell, int *path_error);
 char	*handle_absolute_path(char *cmd);
 
-int		setup_redirections(t_cmd *cmd);
+int		setup_redirections(t_cmd *cmd, t_shell *shell);
 int		save_redirections(int *saved_stdin, int *saved_stdout);
 int		restore_redirections(int saved_stdin, int saved_stdout);
-int		handle_heredoc_redirection(t_redir *redir);
+int		handle_heredoc_redirection(t_redir *redir, t_shell *shell);
 
 void	setup_heredoc_signals(struct sigaction *old_int,
 			struct sigaction *old_quit);

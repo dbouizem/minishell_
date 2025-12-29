@@ -8,6 +8,8 @@ void	free_redirs(t_redir *redirs)
 	{
 		tmp = redirs;
 		redirs = redirs->next;
+		if (tmp->fd != -1)
+			close(tmp->fd);
 		if (tmp->file)
 			free(tmp->file);
 		free(tmp);

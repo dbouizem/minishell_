@@ -10,7 +10,7 @@ char	*handle_special_chars(char *str, int *i, t_shell *shell)
 	if (str[*i] == '$')
 	{
 		(*i)++;
-		return (ft_strdup("$"));
+		return (ft_itoa(getpid()));
 	}
 	return (NULL);
 }

@@ -33,6 +33,7 @@ t_redir	*create_redir(t_redir_type type, char *file)
 	}
 	redir->type = type;
 	redir->file = file;
+	redir->fd = -1;
 	redir->next = NULL;
 	return (redir);
 }

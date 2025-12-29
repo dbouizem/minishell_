@@ -25,7 +25,9 @@ int	builtin_exit(char **args, t_shell *shell)
 	long long	exit_code;
 	int			overflow;
 
-	write(STDERR_FILENO, "exit\n", 5);
+	if (shell && shell->interactive
+		&& isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+		write(STDERR_FILENO, "exit\n", 5);
 	if (!args[1])
 		exit(shell->exit_status);
 	if (!is_numeric_arg(args[1]))

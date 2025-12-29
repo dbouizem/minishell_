@@ -20,14 +20,21 @@ int	**cleanup_partial_pipes(int **pipes, int count)
 	i = 0;
 	while (i < count)
 	{
-		free(pipes[i]);
+		if (pipes[i])
+		{
+			if (pipes[i][0] >= 0)
+				close(pipes[i][0]);
+			if (pipes[i][1] >= 0)
+				close(pipes[i][1]);
+			free(pipes[i]);
+		}
 		i++;
 	}
 	free(pipes);
 	return (NULL);
 }
 
-void	fork_all_commands(t_pipeline_data *data)
+int	fork_all_commands(t_pipeline_data *data)
 {
 	int		i;
 	t_cmd	*current_cmd;
@@ -54,6 +61,7 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		i++;
 	}
+	return (i);
 }
 
 void	close_all_pipes(int **pipes, int num_pipes)
@@ -69,22 +77,146 @@ void	close_all_pipes(int **pipes, int num_pipes)
 	}
 }
 
-int	wait_all_children(pid_t *pids, int num_commands)
+static void	set_wait_signals(struct sigaction *old_int,
+		struct sigaction *old_quit)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = SIG_IGN;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, old_int);
+	sigaction(SIGQUIT, &sa, old_quit);
+}
+
+static void	restore_wait_signals(struct sigaction *old_int,
+		struct sigaction *old_quit)
+{
+	sigaction(SIGINT, old_int, NULL);
+	sigaction(SIGQUIT, old_quit, NULL);
+}
+
+static int	wait_child_process(pid_t pid, int *status)
+{
+	int	ret;
+
+	ret = waitpid(pid, status, 0);
+	while (ret == -1 && errno == EINTR)
+		ret = waitpid(pid, status, 0);
+	return (ret);
+}
+
+static int	is_echoctl_enabled(void)
+{
+	int	echoctl;
+
+	echoctl = 0;
+#ifdef ECHOCTL
+	{
+		struct termios	term;
+
+		if (tcgetattr(STDIN_FILENO, &term) == 0)
+			echoctl = ((term.c_lflag & ECHOCTL) != 0);
+	}
+#endif
+	return (echoctl);
+}
+
+static void	print_sigint_message(int echoctl)
+{
+	if (echoctl)
+		ft_putstr_fd("\n", STDERR_FILENO);
+	else
+		ft_putstr_fd("^C\n", STDERR_FILENO);
+}
+
+static void	print_sigquit_message(int status, int echoctl)
+{
+	if (!echoctl)
+		ft_putstr_fd("^\\", STDERR_FILENO);
+#ifdef WCOREDUMP
+	if (WCOREDUMP(status))
+		ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
+	else
+		ft_putstr_fd("Quit\n", STDERR_FILENO);
+#else
+	ft_putstr_fd("Quit\n", STDERR_FILENO);
+#endif
+}
+
+static void	report_signal_status(int sig, int status, t_shell *shell,
+		int *printed_int, int *printed_quit)
+{
+	int	echoctl;
+
+	if (!shell || !shell->interactive)
+		return ;
+	echoctl = is_echoctl_enabled();
+	if (sig == SIGINT && !(*printed_int))
+	{
+		print_sigint_message(echoctl);
+		*printed_int = 1;
+	}
+	else if (sig == SIGQUIT && !(*printed_quit))
+	{
+		print_sigquit_message(status, echoctl);
+		*printed_quit = 1;
+	}
+}
+
+static int	update_wait_status(int status, t_shell *shell,
+		int *printed_int, int *printed_quit)
+{
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+	{
+		report_signal_status(WTERMSIG(status), status, shell,
+			printed_int, printed_quit);
+		return (128 + WTERMSIG(status));
+	}
+	return (1);
+}
+
+static int	wait_children_loop(pid_t *pids, int num_commands, t_shell *shell)
 {
 	int	i;
 	int	status;
 	int	last_status;
+	int	ret;
+	int	printed_int;
+	int	printed_quit;
 
-	last_status = 0;
 	i = 0;
+	last_status = 0;
+	printed_int = 0;
+	printed_quit = 0;
 	while (i < num_commands)
 	{
-		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status))
-			last_status = WEXITSTATUS(status);
-		else
+		if (pids[i] <= 0)
+		{
+			i++;
+			continue ;
+		}
+		ret = wait_child_process(pids[i], &status);
+		if (ret == -1)
 			last_status = 1;
+		else
+			last_status = update_wait_status(status, shell,
+					&printed_int, &printed_quit);
 		i++;
 	}
+	return (last_status);
+}
+
+int	wait_all_children(pid_t *pids, int num_commands, t_shell *shell)
+{
+	int					last_status;
+	struct sigaction	old_int;
+	struct sigaction	old_quit;
+
+	set_wait_signals(&old_int, &old_quit);
+	last_status = wait_children_loop(pids, num_commands, shell);
+	restore_wait_signals(&old_int, &old_quit);
 	return (last_status);
 }

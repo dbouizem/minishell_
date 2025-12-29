@@ -45,7 +45,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 		shell->exit_status = 1;
 		return (1);
 	}
-	status = setup_redirections(cmd);
+	status = setup_redirections(cmd, shell);
 	if (status == 130)
 	{
 		shell->exit_status = 130;

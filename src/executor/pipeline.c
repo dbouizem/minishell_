@@ -14,6 +14,8 @@ static int	**create_pipes(int num_pipes)
 		pipes[i] = malloc(sizeof(int) * 2);
 		if (!pipes[i])
 			return (cleanup_partial_pipes(pipes, i));
+		pipes[i][0] = -1;
+		pipes[i][1] = -1;
 		if (pipe(pipes[i]) == -1)
 		{
 			perror("pipe");
@@ -88,6 +90,16 @@ static int	init_pipeline_data(t_pipeline_data *data,
 		cleanup_pipeline_resources(data);
 		return (handle_malloc_error());
 	}
+	{
+		int	i;
+
+		i = 0;
+		while (i < data->num_commands)
+		{
+			data->pids[i] = -1;
+			i++;
+		}
+	}
 	return (0);
 }
 
@@ -96,15 +108,21 @@ int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 	t_pipeline_data	data;
 	int				final_status;
 	int				status;
+	int				num_forked;
 
 	if (!cmd || !cmd->next)
 		return (execute_command(cmd, shell));
 	status = init_pipeline_data(&data, cmd, shell);
 	if (status != 0)
 		return (status);
-	fork_all_commands(&data);
+	num_forked = fork_all_commands(&data);
 	close_all_pipes(data.pipes, data.num_pipes);
-	final_status = wait_all_children(data.pids, data.num_commands);
+	if (num_forked > 0)
+		final_status = wait_all_children(data.pids, num_forked, shell);
+	else
+		final_status = 1;
+	if (num_forked < data.num_commands)
+		final_status = 1;
 	cleanup_pipeline_resources(&data);
 	return (final_status);
 }

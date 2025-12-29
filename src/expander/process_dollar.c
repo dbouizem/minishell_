@@ -15,9 +15,11 @@ char	*extract_var_name(char *str, int *i, t_shell *shell)
 
 char	*process_special_var_name(char *var_name)
 {
-	if (ft_isdigit(var_name[0]) || var_name[0] == '-'
-		|| ft_strcmp(var_name, "$$") == 0)
-		return (var_name);
+	if (ft_isdigit(var_name[0]) || var_name[0] == '-')
+	{
+		free(var_name);
+		return (ft_strdup(""));
+	}
 	if (var_name[0] == '\0')
 	{
 		free(var_name);
@@ -59,6 +61,16 @@ char	*process_dollar(char *str, int *i, t_shell *shell)
 	{
 		(*i)++;
 		return (ft_strdup("$"));
+	}
+	if (str[*i + 1] == '?')
+	{
+		(*i) += 2;
+		return (ft_itoa(shell->exit_status));
+	}
+	if (str[*i + 1] == '$')
+	{
+		(*i) += 2;
+		return (ft_itoa(getpid()));
 	}
 	var_name = extract_var_name(str, i, shell);
 	if (!var_name)

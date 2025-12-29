@@ -25,11 +25,8 @@ void	restore_signals(struct sigaction *old_int,
 void	heredoc_sigint_handler(int signo)
 {
 	(void)signo;
-	g_signal = 1;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_done = 1;
+	g_signal = SIGINT;
+	write(STDOUT_FILENO, "^C\n", 3);
 }
 
 void	setup_heredoc_signals(struct sigaction *old_int,
