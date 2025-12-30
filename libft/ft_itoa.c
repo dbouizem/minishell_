@@ -6,13 +6,9 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 01:28:25 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/04/24 01:10:25 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/30 08:29:49 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-** ft_itoa - convertit un entier en chaîne de caractères.
-*/
 
 #include "libft.h"
 
@@ -63,17 +59,3 @@ char	*ft_itoa(int n)
 	ft_putnbr(num, result, len);
 	return (result);
 }
-/*
-int	main(void)
-{
-	int		n = 1999;
-	char	*rslt = ft_itoa(n);
-	if (rslt)
-	{
-		printf("result: %s",rslt);
-		free(rslt);
-	}
-	else
-		printf("ERROR !!!");
-	return (0);
-}*/

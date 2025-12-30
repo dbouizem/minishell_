@@ -24,7 +24,6 @@
 # include "executor.h"
 # include "builtin.h"
 # include "env.h"
-# include "debug.h"
 
 extern volatile sig_atomic_t	g_signal;
 

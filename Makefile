@@ -1,7 +1,7 @@
 NAME		= minishell
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror
 INCLUDES	= -I./includes -I./libft
 
 UNAME_S := $(shell uname -s)
@@ -96,13 +96,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/env/env_array.c \
 		$(SRC_DIR)/env/env_list.c \
 		$(SRC_DIR)/env/env_utils.c \
-		$(SRC_DIR)/env/env_errors.c \
-		\
-		$(SRC_DIR)/debug/debug_env.c \
-		$(SRC_DIR)/debug/debug_parse.c \
-		$(SRC_DIR)/debug/debug_executor.c \
-		$(SRC_DIR)/debug/debug_lexer.c \
-		$(SRC_DIR)/debug/debug_fork.c
+		$(SRC_DIR)/env/env_errors.c
 
 SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/lexer/lexer_redir.c \

@@ -19,12 +19,12 @@
 # include <unistd.h>
 # include <ctype.h>
 # include <stdarg.h>
-# include <stdio.h>//Test
-# include <limits.h>//Test
-# include <stdint.h>//pour utiliser uintmax_t/intmax_t/uintptr_t
-# include <stddef.h>//ptrdiff_t
+# include <stdio.h>
+# include <limits.h>
+# include <stdint.h>
+# include <stddef.h>
 
-// [ft_printf]
+
 # define DIGITS "0123456789"
 # define HEXLOW "0123456789abcdef"
 # define HEXUPP "0123456789ABCDEF"
@@ -36,7 +36,7 @@ typedef struct s_printf
 	va_list		args;
 }		t_printf;
 
-/*Functions*/
+
 int					ft_printf(const char *formant, ...);
 
 void				parse_format(const char **format, t_printf *data);
@@ -48,7 +48,7 @@ void				ft_print_int(int n, t_printf *data);
 void				ft_print_u_int(unsigned int n, t_printf *data);
 void				ft_print_hex(unsigned int n, int uppercase, t_printf *data);
 
-// [GET_NEXT_LINE]
+
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1024
 # endif
@@ -75,16 +75,16 @@ void				remove_fd_node(t_fd_list **list, int fd);
 void				*ft_memcpy(void *dest, const void *src, size_t n);
 char				*ft_strdup(const char *s);
 
-// [LIBFT]
+
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }			t_list;
 
-/*
-** Part 1
-*/
+
+
+
 
 int					ft_isalpha(int c);
 int					ft_isdigit(int c);
@@ -117,9 +117,9 @@ int					ft_strncmp(const char *s1, const char *s2, size_t n);
 int					ft_memcmp(const void *s1, const void *s2, size_t n);
 int					ft_atoi(const char *str);
 
-/*
-** Part 2
-*/
+
+
+
 
 void				ft_striteri(char *s, void (*f)(unsigned int, char*));
 void				ft_putstr_fd(char *s, int fd);
@@ -136,9 +136,9 @@ char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char				**ft_split(char const *s, char c);
 long long			ft_atoll(const char *str, int *overflow);
 
-/*
-** Bonus
-*/
+
+
+
 
 t_list				*ft_lstnew(void *content);
 t_list				*ft_lstlast(t_list *lst);

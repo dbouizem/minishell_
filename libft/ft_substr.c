@@ -6,16 +6,9 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 01:37:46 by dbouizem          #+#    #+#             */
-/*   Updated: 2024/12/22 07:12:50 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/30 08:32:36 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-** ft_substr - extraire une sous-chaîne d'une chaîne donnée (s).
-**
-** Compilation: gcc -Wall -Wextra -Werror ft_substr.c ft_strdup.c
-** ft_strlen.c ft_calloc.c ft_memmove.c ft_memcpy.c ft_memset.c
-*/
 
 #include "libft.h"
 
@@ -38,22 +31,3 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	dst[len] = '\0';
 	return (dst);
 }
-/*
-int	main(void)
-{
-	char	*result;
-
-	result = ft_substr("Hello World!", 6, 5);
-	if (result)
-	{
-		printf("Sous-chaîne extraite : %s\n", result);
-		free(result);
-	}
-	result = ft_substr("Hello World!", 12, 5);
-	if (result)
-	{
-		printf("Sous-chaîne extraite : %s\n", result);
-		free(result);
-	}
-	return (0);
-}*/

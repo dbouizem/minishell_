@@ -6,13 +6,9 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 00:08:41 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/11/04 15:36:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/30 08:29:10 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-** ft_atoi - convertit la chaîne ASCII en entier.
-*/
 
 #include "libft.h"
 
@@ -35,14 +31,3 @@ int	ft_atoi(const char *str)
 		result = (result * 10) + (*str++ - '0');
 	return (result * sign);
 }
-/*
-int main()
-{
-	printf("Result: %d\n", ft_atoi("-42"));
-	printf("Result: %d\n", ft_atoi("+4193 with words"));
-	printf("Result: %d\n", ft_atoi("words 42"));
-	printf("Result: %d\n", ft_atoi("  123"));
-	printf("Result: %d\n", ft_atoi("0"));
-	printf("Result: %d\n", ft_atoi(NULL));
-	return 0;
-}*/

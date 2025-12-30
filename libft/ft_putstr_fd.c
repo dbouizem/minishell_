@@ -6,14 +6,9 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 04:21:04 by dbouizem          #+#    #+#             */
-/*   Updated: 2024/12/22 07:20:57 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/30 08:30:59 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-** ft_putstr_fd - ecrit une chaîne de caractères sur un descripteur
-** de fichier spécifié.
-*/
 
 #include "libft.h"
 
@@ -27,9 +22,3 @@ void	ft_putstr_fd(char *s, int fd)
 		s++;
 	}
 }
-/*int	main()
-{
-	char *str = "Test";
-	ft_putstr_fd(str, 1);
-	return (0);
-}*/

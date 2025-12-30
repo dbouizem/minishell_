@@ -6,16 +6,9 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 04:25:38 by dbouizem          #+#    #+#             */
-/*   Updated: 2024/12/24 18:10:08 by dbouizem         ###   ########.fr       */
+/*   Updated: 2025/12/30 08:31:07 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-** ft_split - découper une chaîne de caractères en un tableau de sous-chaînes.
-**
-** Compilation: gcc -Wall -Wextra -Werror ft_split.c ft_calloc.c
-** ft_substr.c ft_memset.c ft_strlen.c ft_strdup.c ft_memmove.c ft_memcpy.c
-*/
 
 #include "libft.h"
 
@@ -90,24 +83,3 @@ char	**ft_split(char const *s, char c)
 		return (NULL);
 	return (array);
 }
-/*
-int	main()
-{
-	char	**result;
-	size_t	i;
-
-	result = ft_split("ggloirem miod non, mi.", 'i');
-	if (!result)
-	{
-		printf("NULL\n");
-		return (1);
-	}
-	i = 0;
-	while (result[i])
-	{
-		printf("word %zu: %s\n",i , result[i]);
-		free(result[i]);
-		i++;
-	}
-	free(result);
-}*/
