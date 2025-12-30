@@ -29,11 +29,7 @@ static char	*check_path_entry(t_path_search *search, size_t start,
 	if (access(full_path, F_OK) != 0)
 		return (free(full_path), NULL);
 	if (stat(full_path, &st) == 0 && S_ISDIR(st.st_mode))
-	{
-		if (search->path_error && *search->path_error == PATH_ERR_NONE)
-			*search->path_error = PATH_ERR_ISDIR;
 		return (free(full_path), NULL);
-	}
 	if (access(full_path, X_OK) == 0)
 		return (full_path);
 	if (search->path_error && *search->path_error == PATH_ERR_NONE)

@@ -560,6 +560,40 @@ $PATH
 EOF
 ```
 
+## Tests de regression (bugs corriges)
+```bash
+# 1) Pipe seul
+printf '|\n' | ./minishell > /tmp/ms_out 2> /tmp/ms_err
+cat /tmp/ms_err
+# Attendu: minishell: syntax error near unexpected token |
+
+# 2) Dossier dans PATH -> command not found
+rm -rf /tmp/msdir
+mkdir -p /tmp/msdir/hello
+PATH=/tmp/msdir ./minishell
+# Dans minishell:
+# hello
+# echo $?
+# Attendu: minishell: hello: command not found + 127
+
+# 3) PATH non-exec puis exec
+mkdir -p /tmp/ms_test
+printf '#!/bin/sh\necho BAD\n' > /tmp/ms_test/ls
+chmod 644 /tmp/ms_test/ls
+PATH=/tmp/ms_test:/bin ./minishell
+# Dans minishell:
+# ls
+# echo $?
+# Attendu: sortie normale + 0
+
+# 4) PATH seulement non-exec
+PATH=/tmp/ms_test ./minishell
+# Dans minishell:
+# ls
+# echo $?
+# Attendu: Permission denied + 126
+```
+
 ## Log des codes retour
 ```bash
 # Sauvegarder les codes retour

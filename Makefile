@@ -1,12 +1,9 @@
-# PROJECT
 NAME		= minishell
 
-# COMPILER & FLAGS
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -g
 INCLUDES	= -I./includes -I./libft
 
-# READLINE (cross-platform)
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Darwin)
@@ -20,7 +17,6 @@ else
 	LDFLAGS += -lreadline
 endif
 
-# DIRECTORIES
 SRC_DIR		= src
 SRC_BONUS_DIR	= srcs_bonus
 OBJ_DIR		= obj
@@ -28,7 +24,6 @@ OBJ_DIR_BONUS	= obj_bonus
 INC_DIR		= includes
 LIBFT_DIR	= libft
 
-# SOURCES
 SRC_BASE =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/core/input.c \
@@ -108,6 +103,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/debug/debug_executor.c \
 		$(SRC_DIR)/debug/debug_lexer.c \
 		$(SRC_DIR)/debug/debug_fork.c
+
 SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/lexer/lexer_redir.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
@@ -115,23 +111,26 @@ SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/parser/parse_utils.c \
 		$(SRC_DIR)/executor/executor.c, \
 		$(SRC_BASE))
-SRC_BONUS_ONLY =	$(SRC_BONUS_DIR)/lexer/lexer_redir_bonus.c \
+
+SRC_BONUS_ONLY =\
+		$(SRC_BONUS_DIR)/lexer/lexer_redir_bonus.c \
 		$(SRC_BONUS_DIR)/lexer/lexer_checks_bonus.c \
 		$(SRC_BONUS_DIR)/parser/parse_cmd_bonus.c \
 		$(SRC_BONUS_DIR)/parser/parse_utils_bonus.c \
 		$(SRC_BONUS_DIR)/executor/executor_bonus.c
+
 SRC_BONUS =	$(SRC_BONUS_BASE) $(SRC_BONUS_ONLY)
 SRC =	$(SRC_BASE)
 
-# OBJECTS & LIBRARY
 OBJ			= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
 OBJ_BONUS	= $(SRC_BONUS_BASE:$(SRC_DIR)/%.c=$(OBJ_DIR_BONUS)/%.o) \
 		$(SRC_BONUS_ONLY:$(SRC_BONUS_DIR)/%.c=$(OBJ_DIR_BONUS)/bonus/%.o)
+
 HEADERS		= $(wildcard $(INC_DIR)/*.h)
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
 
-# COLORS
 BOLD   = \033[1m
 CYAN   = \033[0;36m
 GREEN  = \033[0;32m
@@ -140,7 +139,6 @@ BLUE   = \033[0;34m
 YELLOW = \033[0;33m
 RESET  = \033[0m
 
-# RULES
 all: $(LIBFT_LIB) $(NAME)
 
 $(LIBFT_LIB):

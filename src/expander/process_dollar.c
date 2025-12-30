@@ -63,11 +63,6 @@ char	*handle_special_dollar_cases(char *str, int *i, t_shell *shell)
 		(*i) += 2;
 		return (ft_itoa(shell->exit_status));
 	}
-	if (str[*i + 1] == '$')
-	{
-		(*i) += 2;
-		return (ft_strdup("$$"));
-	}
 	return (NULL);
 }
 
