@@ -3,10 +3,15 @@
 
 # include <signal.h>
 # include <sys/types.h>
+# include <termios.h>
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_shell	t_shell;
 typedef struct s_redir	t_redir;
+
+# define PATH_ERR_NONE 0
+# define PATH_ERR_PERM 1
+# define PATH_ERR_ISDIR 2
 
 typedef struct s_pipeline_data
 {
@@ -18,29 +23,79 @@ typedef struct s_pipeline_data
 	int		num_commands;
 }	t_pipeline_data;
 
+typedef struct s_path_search
+{
+	const char	*path;
+	char		*cmd;
+	int			*path_error;
+}	t_path_search;
+
+typedef struct s_heredoc_params
+{
+	int		fd;
+	char	*delimiter;
+	int		expand;
+	t_shell	*shell;
+	int		manual_echo;
+}	t_heredoc_params;
+
+typedef struct s_heredoc_state
+{
+	int		interactive;
+	int		manual_echo;
+	size_t	len;
+	size_t	cap;
+	char	*line;
+	ssize_t	last_read;
+}	t_heredoc_state;
+
+typedef struct s_heredoc_ctx
+{
+	char				tmp_filename[64];
+	int					fd;
+	int					status;
+	int					expand;
+	int					term_changed;
+	struct sigaction	old_int;
+	struct sigaction	old_quit;
+	struct termios		saved_term;
+	t_heredoc_params	params;
+}	t_heredoc_ctx;
+
 int		execute(t_cmd *cmd, t_shell *shell);
 int		execute_command(t_cmd *cmd, t_shell *shell);
 void	execute_command_child(t_cmd *cmd, t_shell *shell);
 void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index);
 
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);
-int		count_commands(t_cmd *cmd);
-void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes);
+int		prepare_pipeline_heredocs(t_cmd *cmd, t_shell *shell);
+void	close_pipeline_heredocs(t_cmd *cmd);
+int		**create_pipes(int num_pipes);
 int		fork_all_commands(t_pipeline_data *data);
 int		wait_all_children(pid_t *pids, int num_commands, t_shell *shell);
 void	close_all_pipes(int **pipes, int num_pipes);
-int		**cleanup_partial_pipes(int **pipes, int count);
 void	cleanup_pipeline_resources(t_pipeline_data *data);
 
 int		execute_external(t_cmd *cmd, t_shell *shell);
 void	execute_external_no_fork(t_cmd *cmd, t_shell *shell);
-char	*find_command_path(char *cmd, t_shell *shell, int *path_error);
+char	*search_in_paths(const char *path, char *cmd, int *path_error);
 char	*handle_absolute_path(char *cmd);
 
 int		setup_redirections(t_cmd *cmd, t_shell *shell);
 int		save_redirections(int *saved_stdin, int *saved_stdout);
 int		restore_redirections(int saved_stdin, int saved_stdout);
 int		handle_heredoc_redirection(t_redir *redir, t_shell *shell);
+void	reset_heredoc_fd(t_redir *redir);
+int		abort_heredoc(int fd, char *tmp_filename, int status);
+int		finalize_heredoc_fd(int fd, char *tmp_filename, t_redir *redir);
+int		open_heredoc_tmp(char *path, size_t size);
+int		setup_heredoc_term(t_shell *shell, struct termios *saved);
+void	restore_heredoc_term(t_shell *shell, struct termios *saved);
+char	*read_heredoc_line(t_shell *shell, int manual_echo);
+char	*expand_heredoc_line(char *line, t_shell *shell);
+int		write_heredoc_content(t_heredoc_params *params);
+char	*heredoc_append_char(char *line, size_t *len, size_t *cap, char c);
+char	*heredoc_finalize_line(char *line, size_t len, ssize_t n);
 
 void	setup_heredoc_signals(struct sigaction *old_int,
 			struct sigaction *old_quit);
@@ -66,5 +121,7 @@ int		handle_output_redirection(t_redir *redir, t_redir_type type);
 void	free_string_array(char **array);
 pid_t	fork_process(void);
 void	wait_for_child(pid_t pid, int *status, t_shell *shell);
+void	report_signal_status(int sig, int status, t_shell *shell,
+			int *printed);
 
 #endif

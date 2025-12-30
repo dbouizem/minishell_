@@ -39,7 +39,7 @@ static int	handle_single_redirection(t_redir *redir)
 	return (0);
 }
 
-int	setup_redirections(t_cmd *cmd, t_shell *shell)
+static int	prepare_heredocs(t_cmd *cmd, t_shell *shell)
 {
 	t_redir	*redir;
 	int		status;
@@ -51,12 +51,23 @@ int	setup_redirections(t_cmd *cmd, t_shell *shell)
 		{
 			status = handle_heredoc_redirection(redir, shell);
 			if (status != 0)
-			{
-				close_heredoc_fds(cmd->redirs);
 				return (status);
-			}
 		}
 		redir = redir->next;
+	}
+	return (0);
+}
+
+int	setup_redirections(t_cmd *cmd, t_shell *shell)
+{
+	t_redir	*redir;
+	int		status;
+
+	status = prepare_heredocs(cmd, shell);
+	if (status != 0)
+	{
+		close_heredoc_fds(cmd->redirs);
+		return (status);
 	}
 	redir = cmd->redirs;
 	while (redir)
@@ -70,40 +81,4 @@ int	setup_redirections(t_cmd *cmd, t_shell *shell)
 		redir = redir->next;
 	}
 	return (0);
-}
-
-int	save_redirections(int *saved_stdin, int *saved_stdout)
-{
-	*saved_stdin = dup(STDIN_FILENO);
-	*saved_stdout = dup(STDOUT_FILENO);
-	if (*saved_stdin == -1 || *saved_stdout == -1)
-	{
-		perror("minishell: dup");
-		if (*saved_stdin != -1)
-			close(*saved_stdin);
-		if (*saved_stdout != -1)
-			close(*saved_stdout);
-		return (1);
-	}
-	return (0);
-}
-
-int	restore_redirections(int saved_stdin, int saved_stdout)
-{
-	int	ret;
-
-	ret = 0;
-	if (dup2(saved_stdin, STDIN_FILENO) == -1)
-	{
-		perror("minishell: dup2 stdin");
-		ret = 1;
-	}
-	if (dup2(saved_stdout, STDOUT_FILENO) == -1)
-	{
-		perror("minishell: dup2 stdout");
-		ret = 1;
-	}
-	close(saved_stdin);
-	close(saved_stdout);
-	return (ret);
 }

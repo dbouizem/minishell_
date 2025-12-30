@@ -1,5 +1,10 @@
 #include "../../includes/minishell.h"
 
+int	is_command_separator(t_token_type type)
+{
+	return (type == PIPE);
+}
+
 int	is_separator(t_token *tokens)
 {
 	if (tokens->type == PIPE)

@@ -51,12 +51,8 @@ char	*get_var_value(char *var_name, t_shell *shell)
 	return (ft_strdup(""));
 }
 
-char	*process_dollar(char *str, int *i, t_shell *shell)
+char	*handle_special_dollar_cases(char *str, int *i, t_shell *shell)
 {
-	char	*var_name;
-	char	*var_value;
-	char	*result;
-
 	if (!str[*i + 1] || ft_strchr(" \'\"\0", str[*i + 1]))
 	{
 		(*i)++;
@@ -72,6 +68,19 @@ char	*process_dollar(char *str, int *i, t_shell *shell)
 		(*i) += 2;
 		return (ft_strdup("$$"));
 	}
+	return (NULL);
+}
+
+char	*process_dollar(char *str, int *i, t_shell *shell)
+{
+	char	*var_name;
+	char	*var_value;
+	char	*result;
+	char	*special_case_result;
+
+	special_case_result = handle_special_dollar_cases(str, i, shell);
+	if (special_case_result)
+		return (special_case_result);
 	var_name = extract_var_name(str, i, shell);
 	if (!var_name)
 		return (ft_strdup(""));

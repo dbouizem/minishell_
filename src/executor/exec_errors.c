@@ -23,9 +23,8 @@ void	handle_absolute_path_error(char *cmd, t_shell *shell)
 			ft_putendl_fd(": Permission denied", STDERR_FILENO);
 			shell->exit_status = 126;
 		}
-		return ;
 	}
-	if (errno == EACCES)
+	else if (errno == EACCES)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd, STDERR_FILENO);
@@ -33,9 +32,7 @@ void	handle_absolute_path_error(char *cmd, t_shell *shell)
 		shell->exit_status = 126;
 	}
 	else
-	{
 		print_error_no_such_file(cmd, shell, 127);
-	}
 }
 
 void	handle_command_not_found(char *cmd, t_shell *shell)
