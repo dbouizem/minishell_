@@ -4,7 +4,6 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 INCLUDES = -I./includes -I./libft
 
-# --- Readline (Homebrew) Fix for macOS ---
 READLINE_DIR := $(shell brew --prefix readline)
 CFLAGS += -I$(READLINE_DIR)/include
 LDFLAGS += -L$(READLINE_DIR)/lib -lreadline
@@ -83,23 +82,19 @@ SRC =	$(SRC_DIR)/main.c \
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-# Bonus files (only specific to bonus features)
 BONUS_DIR = src_bonus
 
-# Files replaced by bonus versions (to exclude from mandatory build)
 REPLACED_SRC = $(SRC_DIR)/lexer/lexer_redir.c \
 			   $(SRC_DIR)/parser/parse.c \
 			   $(SRC_DIR)/parser/parse_cmd.c \
 			   $(SRC_DIR)/executor/executor.c
 
-# Bonus source files
 BONUS_SRC =	src_bonus/lexer/lexer_op_bonus.c \
 			src_bonus/lexer/lexer_redir_bonus.c \
 			src_bonus/parser/parse_bonus.c \
 			src_bonus/parser/parse_cmd_bonus.c \
 			src_bonus/executor/executor_bonus.c
 
-# For bonus, exclude replaced files from mandatory and add bonus files
 SRC_FOR_BONUS = $(filter-out $(REPLACED_SRC), $(SRC))
 OBJ_FOR_BONUS = $(SRC_FOR_BONUS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 BONUS_OBJ = $(BONUS_SRC:src_bonus/%.c=$(OBJ_DIR)/%.o)
