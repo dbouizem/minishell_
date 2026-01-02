@@ -42,33 +42,6 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	}
 	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
 }
-/*
-static int execute_sequence(t_cmd *cmd, t_shell *shell)
-{
-	int		exit_status;
-	t_cmd	*current;
-	t_cmd	*pipe_start;
-
-	current = cmd;
-	exit_status = 0;
-	while (current)
-	{
-		if (current->next)
-		{
-			pipe_start = current;
-			while (current->next)
-				current = current->next;
-			exit_status = execute_pipeline(pipe_start, shell);
-		}
-		else
-			exit_status = execute_command(current, shell);
-		shell->exit_status = exit_status;
-		if (!current->next)
-			break;
-		current = current->next;
-	}
-	return (exit_status);
-}*/
 
 static int execute_sequence(t_cmd *cmd, t_shell *shell)
 {
