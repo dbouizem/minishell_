@@ -136,6 +136,11 @@ bonus: $(LIBFT_LIB) $(OBJ_FOR_BONUS) $(BONUS_OBJ)
 	@$(CC) $(CFLAGS) $(OBJ_FOR_BONUS) $(BONUS_OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 	@echo "$(GREEN)✅ Minishell BONUS built successfully!$(NC)"
 
+bclean :
+	@$(RM) $(BONUS_OBJ)
+	@echo "$(YELLOW)🧹 Bonus object files removed$(NC)"
+	@$(MAKE) --no-print-directory $(NAME)
+
 clean:
 	@make -C $(LIBFT_DIR) clean
 	@$(RM) $(OBJ_DIR)
@@ -148,4 +153,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all bonus clean fclean re
+.PHONY: all bonus clean fclean re bclean
