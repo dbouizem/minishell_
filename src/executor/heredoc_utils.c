@@ -26,7 +26,6 @@ void setup_heredoc_signals(struct sigaction *old_int,
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, old_int);
-
 	sa.sa_handler = SIG_IGN;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -35,21 +34,19 @@ void setup_heredoc_signals(struct sigaction *old_int,
 
 char	*remove_quote(char *str)
 {
+	char	quote;
 	int		i;
 	int		j;
-	char	quote;
 	char	*res;
 
 	if (!str)
 		return (NULL);
-	res = malloc(sizeof(char) * (strlen(str) + 1));
+	res = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!res)
 		return (NULL);
-
 	i = 0;
 	j = 0;
 	quote = 0;
-
 	while (str[i])
 	{
 		if ((str[i] == '\'' || str[i] == '\"'))

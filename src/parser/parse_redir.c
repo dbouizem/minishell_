@@ -85,6 +85,5 @@ void	add_redir(t_redir **head, t_redir *new_redir)
 	current = *head;
 	while (current->next)
 		current = current->next;
-
 	current->next = new_redir;
 }

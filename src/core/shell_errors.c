@@ -1,6 +1,5 @@
 #include "../../includes/minishell.h"
 
-/* Erreur fatale du shell */
 void	shell_error(char *message, int exit_code)
 {
 	ft_putstr_fd("minishell: error: ", STDERR_FILENO);
@@ -8,7 +7,6 @@ void	shell_error(char *message, int exit_code)
 	exit(exit_code);
 }
 
-/* Erreur de traitement */
 void	process_error(char *context, t_shell *shell)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -17,7 +15,6 @@ void	process_error(char *context, t_shell *shell)
 		shell->exit_status = 1;
 }
 
-/* Vérification allocation mémoire */
 void	*check_malloc(void *ptr, char *context)
 {
 	if (!ptr)

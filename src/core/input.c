@@ -14,7 +14,6 @@ char	*read_input(void)
 	}
 	if (*input)
 		add_history(input);
-
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	return (input);

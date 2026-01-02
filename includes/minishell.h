@@ -36,6 +36,7 @@ typedef struct s_pipeline_data	t_pipeline_data;
 # include "executor.h"
 # include "builtin.h"
 # include "env.h"
+# include "bonus.h"
 # include "debug.h"
 
 struct s_shell
@@ -51,7 +52,8 @@ struct s_shell
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 
-void	setup_signals();
+void	setup_signals(void);
+void	setup_child_signals(void);
 
 char	*read_input(void);
 char	*read_input_non_interactive(void);

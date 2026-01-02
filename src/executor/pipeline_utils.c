@@ -20,7 +20,12 @@ int	**cleanup_partial_pipes(int **pipes, int count)
 	i = 0;
 	while (i < count)
 	{
-		free(pipes[i]);
+		if (pipes[i])
+		{
+			close(pipes[i][0]);
+			close(pipes[i][1]);
+			free(pipes[i]);
+		}
 		i++;
 	}
 	free(pipes);
@@ -32,30 +37,20 @@ void	fork_all_commands(t_pipeline_data *data)
 	int		i;
 	t_cmd	*current_cmd;
 
-	// debug_fork_header(data->num_commands);
-
 	i = 0;
 	current_cmd = data->cmd;
-
 	while (i < data->num_pipes + 1 && current_cmd)
 	{
-		// debug_fork_command(i, current_cmd);
-
 		data->pids[i] = fork();
 		if (data->pids[i] == 0)
 		{
-			//setup_child_signals();
 			setup_child_pipes(data->pipes, i, data->num_pipes);
 			cleanup_child_pipes(data->pipes, data->num_pipes, i);
 			execute_command_child(current_cmd, data->shell);
-
 			exit(1);
 		}
 		else if (data->pids[i] > 0)
-		{
-			// debug_fork_parent(i, data->pids[i]);
 			current_cmd = current_cmd->next;
-		}
 		else
 		{
 			perror("minishell: fork");
@@ -63,7 +58,6 @@ void	fork_all_commands(t_pipeline_data *data)
 		}
 		i++;
 	}
-	// debug_fork_footer();
 }
 
 void	close_all_pipes(int **pipes, int num_pipes)
@@ -84,16 +78,33 @@ int	wait_all_children(pid_t *pids, int num_commands)
 	int	i;
 	int	status;
 	int	last_status;
+	int	sig;
 
 	last_status = 0;
 	i = 0;
 	while (i < num_commands)
 	{
 		waitpid(pids[i], &status, 0);
-		if (WIFEXITED(status))
-			last_status = WEXITSTATUS(status);
-		else
-			last_status = 1;
+		if (i == num_commands - 1)
+		{
+			if (WIFSIGNALED(status))
+			{
+				sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					last_status = 130;
+				else if (sig == SIGQUIT)
+				{
+					last_status = 131;
+					write(STDERR_FILENO, "Quit (core dumped)\n", 19);
+				}
+				else
+					last_status = 128 + sig;
+			}
+			else if (WIFEXITED(status))
+				last_status = WEXITSTATUS(status);
+			else
+				last_status = 1;
+		}
 		i++;
 	}
 	return (last_status);

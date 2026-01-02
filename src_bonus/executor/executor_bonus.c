@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
 				int saved_in, int saved_out)
@@ -20,7 +20,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 {
 	int	saved_stdin;
 	int	saved_stdout;
-	int status;
+	int	status;
 
 	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
 	{
@@ -42,48 +42,55 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	}
 	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
 }
-/*
-static int execute_sequence(t_cmd *cmd, t_shell *shell)
+
+static int	should_execute_next(t_cmd *cmd, int last_exit_status)
+{
+	if (!cmd || !cmd->separator)
+		return (0);
+	if (cmd->separator == AND)
+		return (last_exit_status == 0);
+	if (cmd->separator == OR)
+		return (last_exit_status != 0);
+	if (cmd->separator == PIPE)
+		return (1);
+	return (0);
+}
+
+static t_cmd	*get_pipeline_end(t_cmd *start)
+{
+	t_cmd	*current;
+
+	current = start;
+	while (current && current->next && current->separator == PIPE)
+		current = current->next;
+	return (current);
+}
+
+static int	execute_sequence(t_cmd *cmd, t_shell *shell)
 {
 	int		exit_status;
 	t_cmd	*current;
-	t_cmd	*pipe_start;
+	t_cmd	*pipeline_end;
 
 	current = cmd;
 	exit_status = 0;
 	while (current)
 	{
-		if (current->next)
+		if (current->separator == PIPE && current->next)
 		{
-			pipe_start = current;
-			while (current->next)
-				current = current->next;
-			exit_status = execute_pipeline(pipe_start, shell);
+			pipeline_end = get_pipeline_end(current);
+			exit_status = execute_pipeline(current, shell);
+			shell->exit_status = exit_status;
+			current = pipeline_end;
 		}
 		else
+		{
 			exit_status = execute_command(current, shell);
-		shell->exit_status = exit_status;
-		if (!current->next)
-			break;
+			shell->exit_status = exit_status;
+		}
+		if (!should_execute_next(current, exit_status))
+			break ;
 		current = current->next;
-	}
-	return (exit_status);
-}*/
-
-static int execute_sequence(t_cmd *cmd, t_shell *shell)
-{
-	int		exit_status;
-	
-	exit_status = 0;
-	if (!cmd->next)
-	{
-		exit_status = execute_command(cmd, shell);
-		shell->exit_status = exit_status;
-	}
-	else
-	{
-		exit_status = execute_pipeline(cmd, shell);
-		shell->exit_status = exit_status;
 	}
 	return (exit_status);
 }

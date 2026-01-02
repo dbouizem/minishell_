@@ -42,8 +42,8 @@ int	builtin_unset(char **args, t_shell *shell)
 			has_error = 1;
 		}
 		else
-			unset_env_value(args[i], shell);// Supprime même si variable n'existe pas (pas d'erreur)
+			unset_env_value(args[i], shell);
 		i++;
 	}
-	return (has_error);  // 0 = tout OK, 1 = au moins une erreur
+	return (has_error);
 }

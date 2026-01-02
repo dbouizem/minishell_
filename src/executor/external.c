@@ -66,6 +66,7 @@ void	execute_external_no_fork(t_cmd *cmd, t_shell *shell)
 {
 	char	*cmd_path;
 
+	setup_child_signals();
 	if (!cmd || !cmd->args || !cmd->args[0])
 		exit(1);
 	cmd_path = find_command_path(cmd->args[0], shell);

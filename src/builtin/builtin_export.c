@@ -58,8 +58,8 @@ static int	export_without_equal(char *arg, t_shell *shell)
 	if (get_env_value(arg, shell) == NULL)
 	{
 		if (set_env_value(arg, "", shell) == 1)
-			return (0);// 0 = ok
-		return (1);// 1 = erreur
+			return (0);
+		return (1);
 	}
 	return (0);
 }
@@ -81,7 +81,6 @@ static int	export_with_equal(char *arg, t_shell *shell)
 		return (1);
 	ret = set_env_value(name, equal_pos + 1, shell);
 	free(name);
-	// set_env_value retourne 1 en succès
 	if (ret == 1)
 		return (0);
 	return (1);

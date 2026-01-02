@@ -1,16 +1,5 @@
 #include "../includes/minishell.h"
 
-int		is_separator(t_token *tokens)
-{
-	if (tokens->type == PIPE)
-		return(1);
-	if (tokens->type == AND)
-		return(1);
-	if (tokens->type == OR)
-		return(1);
-	return (0);
-}
-
 t_cmd	*create_cmd(void)
 {
 	t_cmd	*cmd;
@@ -20,7 +9,6 @@ t_cmd	*create_cmd(void)
 		return (NULL);
 	cmd->args = NULL;
 	cmd->redirs = NULL;
-	cmd->separator = 0;
 	cmd->next = NULL;
 	return (cmd);
 }
@@ -39,4 +27,11 @@ t_redir	*create_redir(t_redir_type type, char *file)
 	redir->file = file;
 	redir->next = NULL;
 	return (redir);
+}
+
+int	is_separator(t_token *token)
+{
+	if (!token)
+		return (0);
+	return (is_command_separator(token->type));
 }

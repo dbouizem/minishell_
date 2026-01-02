@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
 INCLUDES = -I./includes -I./libft
 
 # --- Readline (Homebrew) Fix for macOS ---
@@ -29,7 +29,6 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
 		$(SRC_DIR)/lexer/lexer_handlers.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
-		$(SRC_DIR)/lexer/lexer_op.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
 		$(SRC_DIR)/lexer/lexer_errors.c \
 		\
@@ -80,16 +79,30 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/debug/debug_env.c \
 		$(SRC_DIR)/debug/debug_parse.c \
 		$(SRC_DIR)/debug/debug_executor.c \
-		$(SRC_DIR)/debug/debug_lexer.c \
-		$(SRC_DIR)/debug/debug_fork.c
-
-
-EXECUTOR_OBJS = $(EXECUTOR_SRCS:.c=.o)
-
-$(NAME): $(OBJS) $(EXECUTOR_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(EXECUTOR_OBJS) -o $(NAME) $(LIBS)
+		$(SRC_DIR)/debug/debug_lexer.c
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
+# Bonus files (only specific to bonus features)
+BONUS_DIR = src_bonus
+
+# Files replaced by bonus versions (to exclude from mandatory build)
+REPLACED_SRC = $(SRC_DIR)/lexer/lexer_redir.c \
+			   $(SRC_DIR)/parser/parse.c \
+			   $(SRC_DIR)/parser/parse_cmd.c \
+			   $(SRC_DIR)/executor/executor.c
+
+# Bonus source files
+BONUS_SRC =	src_bonus/lexer/lexer_op_bonus.c \
+			src_bonus/lexer/lexer_redir_bonus.c \
+			src_bonus/parser/parse_bonus.c \
+			src_bonus/parser/parse_cmd_bonus.c \
+			src_bonus/executor/executor_bonus.c
+
+# For bonus, exclude replaced files from mandatory and add bonus files
+SRC_FOR_BONUS = $(filter-out $(REPLACED_SRC), $(SRC))
+OBJ_FOR_BONUS = $(SRC_FOR_BONUS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+BONUS_OBJ = $(BONUS_SRC:src_bonus/%.c=$(OBJ_DIR)/%.o)
 
 LIBFT_LIB = $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS = -L$(LIBFT_DIR) -lft
@@ -119,6 +132,15 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+$(OBJ_DIR)/%.o: src_bonus/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+bonus: $(LIBFT_LIB) $(OBJ_FOR_BONUS) $(BONUS_OBJ)
+	@echo "$(BOLD)$(YELLOW)🎁 Building Minishell with BONUS features...$(NC)"
+	@$(CC) $(CFLAGS) $(OBJ_FOR_BONUS) $(BONUS_OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
+	@echo "$(GREEN)✅ Minishell BONUS built successfully!$(NC)"
+
 clean:
 	@make -C $(LIBFT_DIR) clean
 	@$(RM) $(OBJ_DIR)
@@ -131,4 +153,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re

@@ -1,6 +1,5 @@
 #include "../includes/minishell.h"
 
-/* Gestion des erreurs d'exécution */
 void	handle_exec_error(char *cmd, t_shell *shell)
 {
 	if (ft_strchr(cmd, '/'))
@@ -9,7 +8,6 @@ void	handle_exec_error(char *cmd, t_shell *shell)
 		handle_command_not_found(cmd, shell);
 }
 
-/* Erreurs pour les chemins absolus */
 void	handle_absolute_path_error(char *cmd, t_shell *shell)
 {
 	struct stat	path_stat;
@@ -27,7 +25,6 @@ void	handle_absolute_path_error(char *cmd, t_shell *shell)
 	}
 }
 
-/* Commande non trouvée */
 void	handle_command_not_found(char *cmd, t_shell *shell)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -36,7 +33,6 @@ void	handle_command_not_found(char *cmd, t_shell *shell)
 	shell->exit_status = 127;
 }
 
-/* Erreur "Is a directory" */
 void	print_error_is_directory(char *cmd, t_shell *shell, int status)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -45,7 +41,6 @@ void	print_error_is_directory(char *cmd, t_shell *shell, int status)
 	shell->exit_status = status;
 }
 
-/* Erreur "No such file or directory" */
 void	print_error_no_such_file(char *cmd, t_shell *shell, int status)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);

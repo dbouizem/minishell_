@@ -37,11 +37,8 @@ int	setup_redirections(t_cmd *cmd)
 	redir = cmd->redirs;
 	while (redir)
 	{
-		if (redir->type == REDIR_IN)
-		{
-			if (handle_input_redirection(redir) != 0)
-				return (1);
-		}
+		if (redir->type == REDIR_IN && handle_input_redirection(redir) != 0)
+			return (1);
 		else if (redir->type == REDIR_OUT
 			|| redir->type == REDIR_APPEND)
 		{

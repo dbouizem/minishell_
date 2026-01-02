@@ -6,11 +6,8 @@ static int	check_sep_syntax(t_cmd *cmds, t_shell *shell)
 
 	if (!cmds)
 		return (1);
-
-	/* Commande unique : autoriser une ligne qui ne contient que des redirections */
 	if (!cmds || !cmds->next)
 		return (1);
-	/* Pipeline : chaque maillon doit avoir une commande (args[0]) */
 	current = cmds;
 	while (current)
 	{

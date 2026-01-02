@@ -14,32 +14,6 @@ static void	add_command_to_list(t_cmd **head, t_cmd **current, t_cmd *new_cmd)
 	}
 }
 
-static void	skip_sep_token(t_token **tokens, t_cmd *cmd)
-{
-	if (*tokens && is_separator(*tokens))
-	{
-		cmd->separator = (*tokens)->type;
-		*tokens = (*tokens)->next;
-	}
-	else
-		cmd->separator = 0;
-}
-
-static int	check_final_sep(t_token *tokens, t_cmd *head, t_shell *shell)
-{
-	const char	*op_name[] = {"", "", "", "", "|", "&&", "||"};
-
-	if (tokens && is_separator(tokens) && !tokens->next)
-	{
-		printf("minishell: syntax error near unexpected token ");
-		printf("%s\n", op_name[tokens->type]);
-		shell->exit_status = 2;
-		free_cmd(head);
-		return (0);
-	}
-	return (1);
-}
-
 static t_cmd	*process_tokens(t_token *tokens, t_shell *shell)
 {
 	t_cmd	*head;
@@ -58,9 +32,6 @@ static t_cmd	*process_tokens(t_token *tokens, t_shell *shell)
 			return (NULL);
 		}
 		add_command_to_list(&head, &current, new_cmd);
-		if (!check_final_sep(tokens, head, shell))
-			return (NULL);
-		skip_sep_token(&tokens, current);
 	}
 	return (head);
 }

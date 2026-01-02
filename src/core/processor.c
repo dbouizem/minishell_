@@ -32,13 +32,15 @@ int	process_input(char *input, t_shell *shell)
 		return (0);
 	}
 	cmds = parse(tokens, shell);
+	free_tokens(tokens);
 	if (!cmds)
+		return (0);
+	if (g_signal == 1)
 	{
-		free_tokens(tokens);
+		free_cmd(cmds);
+		shell->exit_status = 130;
 		return (0);
 	}
 	execute(cmds, shell);
-	free_cmd(cmds);
-	free_tokens(tokens);
-	return (0);
+	return (free_cmd(cmds), 0);
 }

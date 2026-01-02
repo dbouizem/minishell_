@@ -1,4 +1,7 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
+
+void	create_operator_token(t_token_type type, t_token **head,
+		t_token **current, int *i);
 
 t_token_type	get_redir_type(char *input, int i)
 {
@@ -65,20 +68,19 @@ void	handle_pipe_or_redir(char *input, int *i,
 	if (input[*i] == '|')
 	{
 		if (input[*i + 1] == '|')
-		{
-			ft_putendl_fd("minishell: syntax error near unexpected token `||'", 2);
-			return ;
-		}
-		create_pipe_token(head, current, i);
+			create_operator_token(OR, head, current, i);
+		else
+			create_pipe_token(head, current, i);
 	}
 	else if (input[*i] == '&')
 	{
 		if (input[*i + 1] == '&')
-			ft_putendl_fd("minishell: syntax error near unexpected token `&&'", 2);
+			create_operator_token(AND, head, current, i);
 		else
+		{
 			ft_putendl_fd("minishell: syntax error near unexpected token `&'", 2);
-		(*i)++;
-		return ;
+			(*i)++;
+		}
 	}
 	else
 		create_redir_token(input, i, head, current);

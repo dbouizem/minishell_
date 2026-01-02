@@ -9,14 +9,12 @@ typedef enum e_token_type
 	WORD,
 	AND,
 	OR,
-	//VAR,
 	PIPE,
 	INPUT,
 	TRUNC,
 	HEREDOC,
 	APPEND,
 	INVALID,
-	END
 }	t_token_type;
 
 typedef struct	s_token
@@ -37,6 +35,7 @@ int				is_whitespace(char c);
 int				is_special_char(char c);
 int				is_quote(char c);
 int				is_redir(t_token_type type);
+int				is_forbidden_char(char c);
 
 void			handle_spaces(char *input, int *i,
 					t_token **head, t_token **current);

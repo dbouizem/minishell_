@@ -1,0 +1,12 @@
+Fichiers bonus:
+
+* INCLUDES:
+- includes/token.h
+- includes/parser.h
+
+* SRCS:
+- lexer/lexer_redir.c
+- parser/parse.c
+- parser/parse_cmd.c
+- parser/parse_utils.c
+- executor/executor.c

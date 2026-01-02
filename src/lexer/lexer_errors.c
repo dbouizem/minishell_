@@ -1,19 +1,16 @@
 #include "../includes/minishell.h"
 
-/* Erreur de quote non fermée */
 int	lexer_quote_error(char quote)
 {
 	printf("minishell: syntax error: unclosed quote `%c'\n", quote);
 	return (1);
 }
 
-/* Erreur d'allocation mémoire */
 void	lexer_memory_error(char *context)
 {
 	printf("minishell: lexer error: memory allocation failed for %s\n", context);
 }
 
-/* Erreur de syntaxe générale */
 void	lexer_syntax_error(char *token)
 {
 	if (token)
@@ -22,7 +19,6 @@ void	lexer_syntax_error(char *token)
 		printf("minishell: syntax error\n");
 }
 
-/* Vérification quotes avec gestion erreur améliorée */
 int	has_quote_error(char *input)
 {
 	int		i;
