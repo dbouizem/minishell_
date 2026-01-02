@@ -1,54 +1,86 @@
 #include "../includes/minishell.h"
 
-static void skip_to_next_logical_operator(t_cmd **current)
+static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
+				int saved_in, int saved_out)
 {
-	int current_sep;
+	int	exit_status;
 
-	if (!*current || !(*current)->next)
-		return;
-
-	current_sep = (*current)->separator;
-	while (*current && (*current)->next && (*current)->separator == current_sep)
-			*current = (*current)->next;
+	if (!cmd->args || !cmd->args[0])
+		exit_status = 0;
+	else if (is_builtin(cmd->args[0]))
+		exit_status = execute_builtin(cmd, shell);
+	else
+		exit_status = execute_external(cmd, shell);
+	shell->exit_status = exit_status;
+	restore_redirections(saved_in, saved_out);
+	return (exit_status);
 }
 
-static int should_execute_next(int exit_status, int separator)
+int	execute_command(t_cmd *cmd, t_shell *shell)
 {
-	if (separator == AND)  // &&
-		return (exit_status == 0);
-	if (separator == OR)   // ||
-		return (exit_status != 0);
-	return (1);  // PIPE ou rien
+	int	saved_stdin;
+	int	saved_stdout;
+	int	status;
+
+	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
+	{
+		shell->exit_status = 1;
+		return (1);
+	}
+	status = setup_redirections(cmd);
+	if (status == 130)
+	{
+		shell->exit_status = 130;
+		restore_redirections(saved_stdin, saved_stdout);
+		return (130);
+	}
+	if (status != 0)
+	{
+		shell->exit_status = 1;
+		restore_redirections(saved_stdin, saved_stdout);
+		return (1);
+	}
+	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
 }
 
-static int execute_sequence_bonus(t_cmd *cmd, t_shell *shell)
+static int	should_execute_next(t_cmd *cmd, int last_exit_status)
 {
-	int		exit_status;
+	if (!cmd || !cmd->separator)
+		return (0);
+	if (cmd->separator == AND)
+		return (last_exit_status == 0);
+	if (cmd->separator == OR)
+		return (last_exit_status != 0);
+	if (cmd->separator == PIPE)
+		return (1);
+	return (0);
+}
+
+static void	expand_all_wildcards(t_cmd *cmd)
+{
 	t_cmd	*current;
-	t_cmd	*pipe_start;
 
 	current = cmd;
-	exit_status = 0;
 	while (current)
 	{
-		if (current->next && current->separator == PIPE)
-		{
-			pipe_start = current;
-			while (current->next && current->separator == PIPE)
-				current = current->next;
-			exit_status = execute_pipeline(pipe_start, shell);
-			shell->exit_status = exit_status;
-		}
-		else
-		{
-			exit_status = execute_command(current, shell);
-			shell->exit_status = exit_status;
-		}
-		if (!current->next)
-			break;
-		if (!should_execute_next(exit_status, current->separator))
-			skip_to_next_logical_operator(&current);
+		process_wildcards(current);
 		current = current->next;
 	}
+}
+
+int	execute(t_cmd *cmd, t_shell *shell)
+{
+	int	exit_status;
+
+	if (!cmd)
+	{
+		shell->exit_status = 1;
+		return (1);
+	}
+	expand_commands(cmd, shell);
+	remove_quotes_from_command(cmd);
+	expand_all_wildcards(cmd);
+	exit_status = execute_sequence(cmd, shell);
+	shell->exit_status = exit_status;
 	return (exit_status);
 }

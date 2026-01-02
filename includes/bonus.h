@@ -10,5 +10,6 @@ int		is_separator(t_token *token);
 int		is_command_separator(t_token_type type);
 int		execute(t_cmd *cmd, t_shell *shell);
 int		execute_command(t_cmd *cmd, t_shell *shell);
+int		execute_sequence(t_cmd *cmd, t_shell *shell);
 
 #endif
