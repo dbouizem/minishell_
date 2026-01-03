@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g
 INCLUDES = -I./includes -I./libft
 
 READLINE_DIR := $(shell brew --prefix readline)
