@@ -3,7 +3,6 @@
 void	handle_sigint(int signo)
 {
 	(void)signo;
-
 	g_signal = 1;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
@@ -11,9 +10,9 @@ void	handle_sigint(int signo)
 	rl_redisplay();
 }
 
-void setup_child_signals(void)
+void	setup_child_signals(void)
 {
-	struct sigaction sa;
+	struct sigaction	sa;
 
 	sa.sa_handler = SIG_DFL;
 	sigemptyset(&sa.sa_mask);

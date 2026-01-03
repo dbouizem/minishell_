@@ -1,5 +1,17 @@
 #include "../includes/minishell.h"
 
+static void	mess_error(char *str)
+{
+	if (str == NULL)
+		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+	else
+	{
+		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+		ft_putstr_fd(str, STDERR_FILENO);
+		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+	}
+}
+
 static int	is_numeric_arg(char *str)
 {
 	int	i;
@@ -30,20 +42,19 @@ int	builtin_exit(char **args, t_shell *shell)
 		exit(shell->exit_status);
 	if (!is_numeric_arg(args[1]))
 	{
-		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-		ft_putstr_fd(args[1], STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+		mess_error(args[1]);
 		cleanup_shell(shell);
 		exit(2);
 	}
 	if (args[2])
-		return (ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO), 1);
+	{
+		mess_error(NULL);
+		return (1);
+	}
 	exit_code = ft_atoll(args[1], &overflow);
 	if (overflow)
 	{
-		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-		ft_putstr_fd(args[1], STDERR_FILENO);
-		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+		mess_error(args[1]);
 		exit(2);
 	}
 	cleanup_shell(shell);

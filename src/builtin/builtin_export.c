@@ -1,11 +1,11 @@
 #include "../includes/minishell.h"
 
-static void	print_export_error(char *arg)
+/*static void	print_export_error(char *arg)
 {
 	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
-}
+}*/
 
 static void	print_exported_vars(t_shell *shell)
 {
@@ -52,7 +52,9 @@ static int	export_without_equal(char *arg, t_shell *shell)
 {
 	if (is_invalid_identifier(arg, '\0'))
 	{
-		print_export_error(arg);
+		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+		ft_putstr_fd(arg, STDERR_FILENO);
+		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (1);
 	}
 	if (get_env_value(arg, shell) == NULL)
@@ -73,7 +75,9 @@ static int	export_with_equal(char *arg, t_shell *shell)
 	equal_pos = ft_strchr(arg, '=');
 	if (is_invalid_identifier(arg, '='))
 	{
-		print_export_error(arg);
+		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+		ft_putstr_fd(arg, STDERR_FILENO);
+		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (1);
 	}
 	name = ft_substr(arg, 0, equal_pos - arg);

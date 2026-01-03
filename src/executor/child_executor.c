@@ -32,7 +32,6 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	cmd_copy.args = cmd->args;
 	cmd_copy.redirs = cmd->redirs;
 	cmd_copy.next = NULL;
-	//cmd_copy.separator = 0;
 	if (setup_redirections(&cmd_copy) != 0)
 		cleanup_and_exit(shell, 1);
 	if (cmd_copy.args && cmd_copy.args[0])

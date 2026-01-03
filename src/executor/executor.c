@@ -43,10 +43,10 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
 }
 
-static int execute_sequence(t_cmd *cmd, t_shell *shell)
+int	execute_sequence(t_cmd *cmd, t_shell *shell)
 {
 	int		exit_status;
-	
+
 	exit_status = 0;
 	if (!cmd->next)
 	{
