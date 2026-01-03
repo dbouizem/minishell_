@@ -1,4 +1,4 @@
- #include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 int	handle_file_error(char *filename)
 {

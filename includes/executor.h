@@ -18,7 +18,6 @@ int		execute_command(t_cmd *cmd, t_shell *shell);
 void	execute_command_child(t_cmd *cmd, t_shell *shell);
 void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index);
 
-
 int		execute_pipeline(t_cmd *cmd, t_shell *shell);
 int		count_commands(t_cmd *cmd);
 void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes);
@@ -39,11 +38,9 @@ int		restore_redirections(int saved_stdin, int saved_stdout);
 int		handle_heredoc_redirection(t_redir *redir);
 
 void	setup_heredoc_signals(struct sigaction *old_int,
-		struct sigaction *old_quit);
+			struct sigaction *old_quit);
 void	heredoc_sigint_handler(int signo);
-void	restore_signals(struct sigaction *old_int,
-		struct sigaction *old_quit);
-char	*remove_quote(char *str);
+void	restore_signals(struct sigaction *old_int, struct sigaction *old_quit);
 
 void	handle_exec_error(char *cmd, t_shell *shell);
 void	handle_absolute_path_error(char *cmd, t_shell *shell);

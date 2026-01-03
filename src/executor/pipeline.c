@@ -77,7 +77,8 @@ void	cleanup_pipeline_resources(t_pipeline_data *data)
 	}
 }
 
-static void	init_pipeline_data(t_pipeline_data *data, t_cmd *cmd, t_shell *shell)
+static void	init_pipeline_data(t_pipeline_data *data,
+	t_cmd *cmd, t_shell *shell)
 {
 	data->cmd = cmd;
 	data->shell = shell;

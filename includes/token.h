@@ -17,13 +17,12 @@ typedef enum e_token_type
 	INVALID,
 }	t_token_type;
 
-typedef struct	s_token
+typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
 	struct s_token	*next;
 }	t_token;
-
 
 t_token			*tokenize(char *input);
 t_token			*create_token(t_token_type type, char *value);

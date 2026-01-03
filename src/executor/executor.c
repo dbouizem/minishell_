@@ -20,7 +20,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 {
 	int	saved_stdin;
 	int	saved_stdout;
-	int status;
+	int	status;
 
 	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
 	{

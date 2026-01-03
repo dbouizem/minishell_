@@ -36,7 +36,7 @@ void	wait_for_child(pid_t pid, int *status, t_shell *shell)
 	{
 		perror("waitpid");
 		shell->exit_status = 1;
-		return;
+		return ;
 	}
 	if (WIFSIGNALED(*status))
 	{
@@ -56,7 +56,6 @@ void	wait_for_child(pid_t pid, int *status, t_shell *shell)
 	else
 		shell->exit_status = 1;
 }
-
 
 void	handle_execve_error(char *cmd_path)
 {

@@ -10,7 +10,7 @@ typedef struct s_wildcard
 	struct s_wildcard	*next;
 }	t_wildcard;
 
-int         has_wildcard(char *str);
+int			has_wildcard(char *str);
 t_wildcard	*expand_wildcard(char *pattern);
 void		process_wildcards(t_cmd *cmd);
 int			match_pattern(const char *pattern, const char *str);

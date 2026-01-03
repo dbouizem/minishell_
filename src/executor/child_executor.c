@@ -37,15 +37,13 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	if (cmd_copy.args && cmd_copy.args[0])
 	{
 		if (is_builtin(cmd_copy.args[0]))
-		{
 			exit_status = execute_builtin(&cmd_copy, shell);
-			cleanup_and_exit(shell, exit_status);
-		}
 		else
 		{
+			exit_status = 127;
 			execute_external_no_fork(&cmd_copy, shell);
-			cleanup_and_exit(shell, 127);
 		}
+		cleanup_and_exit(shell, exit_status);
 	}
 	cleanup_and_exit(shell, 0);
 }

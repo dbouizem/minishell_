@@ -73,12 +73,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/env/env_array.c \
 		$(SRC_DIR)/env/env_list.c \
 		$(SRC_DIR)/env/env_utils.c \
-		$(SRC_DIR)/env/env_errors.c \
-		\
-		$(SRC_DIR)/debug/debug_env.c \
-		$(SRC_DIR)/debug/debug_parse.c \
-		$(SRC_DIR)/debug/debug_executor.c \
-		$(SRC_DIR)/debug/debug_lexer.c
+		$(SRC_DIR)/env/env_errors.c
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

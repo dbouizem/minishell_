@@ -15,9 +15,4 @@ int		builtin_env(char **args, t_shell *shell);
 int		builtin_export(char **args, t_shell *shell);
 int		builtin_unset(char **args, t_shell *shell);
 
-// char	*get_env_value(char *key, t_shell *shell);
-// int		set_env_value(char *key, char *value, t_shell *shell);
-// int		unset_env_value(char *key, t_shell *shell);
-// void	print_env(t_shell *shell);
-
 #endif

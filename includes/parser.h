@@ -6,10 +6,10 @@
 typedef enum e_redir_type
 {
 	REDIR_NONE = 0,
-	REDIR_IN,		// <
-	REDIR_OUT,		// >
-	REDIR_APPEND,	// >>
-	REDIR_HEREDOC	// <<
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC
 }	t_redir_type;
 
 typedef struct s_redir

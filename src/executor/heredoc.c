@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-static int write_heredoc_content(int fd, char *delimiter)
+static int	write_heredoc_content(int fd, char *delimiter)
 {
 	char	*line;
 	char	*delim_cpy;
@@ -38,12 +38,13 @@ static int write_heredoc_content(int fd, char *delimiter)
 
 int	handle_heredoc_redirection(t_redir *redir)
 {
-	char				tmp_filename[] = "/tmp/minishell_heredocXXXXXX";
+	char				*tmp_filename;
 	int					fd;
 	int					status;
 	struct sigaction	old_int;
 	struct sigaction	old_quit;
 
+	tmp_filename = "/tmp/minishell_heredocXXXXXX";
 	fd = mkstemp(tmp_filename);
 	if (fd == -1)
 		return (handle_file_error("heredoc"));

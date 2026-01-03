@@ -1,5 +1,11 @@
 #include "../includes/minishell.h"
 
+static void	mess_error(char *str)
+{
+	ft_putstr_fd("minishell: syntax error near unexpected token", 2);
+	ft_putendl_fd(str, 2);
+}
+
 t_token_type	get_redir_type(char *input, int i)
 {
 	if (input[i] == '<')
@@ -66,7 +72,7 @@ void	handle_pipe_or_redir(char *input, int *i,
 	{
 		if (input[*i + 1] == '|')
 		{
-			ft_putendl_fd("minishell: syntax error near unexpected token `||'", 2);
+			mess_error("||");
 			return ;
 		}
 		create_pipe_token(head, current, i);
@@ -74,9 +80,9 @@ void	handle_pipe_or_redir(char *input, int *i,
 	else if (input[*i] == '&')
 	{
 		if (input[*i + 1] == '&')
-			ft_putendl_fd("minishell: syntax error near unexpected token `&&'", 2);
+			mess_error("&&");
 		else
-			ft_putendl_fd("minishell: syntax error near unexpected token `&'", 2);
+			mess_error("&");
 		(*i)++;
 		return ;
 	}

@@ -1,8 +1,5 @@
 #include "../../includes/minishell.h"
 
-void	create_operator_token(t_token_type type, t_token **head,
-		t_token **current, int *i);
-
 t_token_type	get_redir_type(char *input, int i)
 {
 	if (input[i] == '<')
@@ -78,7 +75,8 @@ void	handle_pipe_or_redir(char *input, int *i,
 			create_operator_token(AND, head, current, i);
 		else
 		{
-			ft_putendl_fd("minishell: syntax error near unexpected token `&'", 2);
+			ft_putstr_fd("minishell: syntax error near ", 2);
+			ft_putendl_fd("unexpected token `&'", 2);
 			(*i)++;
 		}
 	}

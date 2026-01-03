@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 00:50:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 15:35:38 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/03 13:43:42 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,5 @@ char				*ft_strncpy(char *dst, const char *src, size_t n);
 char				*ft_strjoin3(char const *s1, char const *s2,
 						char const *s3);
 void				ft_free_tab(char **tab);
-
 
 #endif
