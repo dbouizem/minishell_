@@ -1,4 +1,5 @@
 #include "../../includes/minishell.h"
+#include "../../includes/minishell_bonus.h"
 
 t_token_type	get_redir_type(char *input, int i)
 {

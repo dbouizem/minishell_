@@ -39,7 +39,6 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/lexer/lexer_word_utils.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
 		$(SRC_DIR)/lexer/lexer_errors.c \
-		$(SRC_DIR)/lexer/lexer_op.c \
 		\
 		$(SRC_DIR)/parser/parse.c \
 		$(SRC_DIR)/parser/parse_cmd.c \
@@ -107,11 +106,12 @@ SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_BASE))
 
 SRC_BONUS_ONLY =\
-		$(SRC_BONUS_DIR)/lexer/lexer_redir_bonus.c \
-		$(SRC_BONUS_DIR)/lexer/lexer_checks_bonus.c \
-		$(SRC_BONUS_DIR)/parser/parse_cmd_bonus.c \
-		$(SRC_BONUS_DIR)/parser/parse_utils_bonus.c \
-		$(SRC_BONUS_DIR)/executor/executor_bonus.c
+	$(SRC_BONUS_DIR)/lexer/lexer_redir_bonus.c \
+	$(SRC_BONUS_DIR)/lexer/lexer_checks_bonus.c \
+	$(SRC_BONUS_DIR)/lexer/lexer_op_bonus.c \
+	$(SRC_BONUS_DIR)/parser/parse_cmd_bonus.c \
+	$(SRC_BONUS_DIR)/parser/parse_utils_bonus.c \
+	$(SRC_BONUS_DIR)/executor/executor_bonus.c
 
 SRC_BONUS =	$(SRC_BONUS_BASE) $(SRC_BONUS_ONLY)
 SRC =	$(SRC_BASE)

@@ -54,7 +54,5 @@ int			parse_memory_error(char *context);
 
 int			is_command_separator(t_token_type type);
 int			is_separator(t_token *tokens);
-void		create_operator_token(t_token_type type, t_token **head,
-				t_token **current, int *i);
 
 #endif
