@@ -1,0 +1,18 @@
+## 🧠 A Verifier
+- L'utilisation du point virgule (;) lors d'une commande.
+- L'expansion + reconnaissance de la variable dans une chaine.
+
+## 🧪 Tableau de tests
+
+| Catégorie | Input (USER=john) | Résultat attendu |
+|-----------|-------------------|------------------|
+| **Exit status** | ❌ `ls ; echo $?` | `0` |
+| **Exit status erreur** | ❌ `lss ; echo $?` | `127` |
+| **Collée texte** | ❌ `echo ABC$USERDEF` | `ABCjohnDEF` |
+| **Redir expansion** | ❌ `export F=out ; echo hi > $F` | Crée fichier `out` |
+| **Heredoc délimiteur** | ❌ `<< $EOF` | Tout afficher comme un cat |
+| **Argument vide** | ❌ `EMPTY="" ; echo "$EMPTY"` | `""` (argument vide) |
+| **PATH vide** | ❌ `unset PATH ; ls` | `command not found` + `$?=127` |
+| **Restaurer stdout** | ❌ `echo hello ; ls` | `ls` s'affiche normalement |
+| **Redir multiple** | `echo a > f1 > f2` | Les fichier `f1` et `f2` contient `a` |
+| **Multi heredoc** | `cat << A << B` | Seul le dernier est utilisé (verifier l'affichage)|
