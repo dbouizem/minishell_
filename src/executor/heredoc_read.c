@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_read.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/08 19:05:00 by dbouizem          #+#    #+#             */
+/*   Updated: 2025/12/08 19:05:00 by dbouizem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
 static int	handle_backspace(char ch, t_heredoc_state *state)
@@ -81,14 +93,19 @@ char	*read_heredoc_line(t_shell *shell, int manual_echo)
 	t_heredoc_state	state;
 	char			*line;
 
-	state.interactive = (shell && shell->interactive);
+	if (!shell || !shell->interactive)
+	{
+		line = ft_gnl(STDIN_FILENO);
+		if (line && line[0] && line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+		return (line);
+	}
+	state.interactive = 1;
 	state.manual_echo = manual_echo;
 	state.len = 0;
 	state.cap = 0;
 	state.line = NULL;
-	state.last_read = 0;
-	if (state.interactive)
-		write(STDOUT_FILENO, "heredoc> ", 9);
+	write(STDOUT_FILENO, "heredoc> ", 9);
 	line = read_heredoc_loop(&state);
 	if (!line)
 		return (NULL);

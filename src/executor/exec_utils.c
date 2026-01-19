@@ -28,7 +28,7 @@ pid_t	fork_process(void)
 	return (pid);
 }
 
-void	handle_execve_error(char *cmd_path)
+void	handle_execve_error(char *cmd_path, t_shell *shell)
 {
 	int	err;
 
@@ -39,12 +39,18 @@ void	handle_execve_error(char *cmd_path)
 	ft_putendl_fd(strerror(err), STDERR_FILENO);
 	free(cmd_path);
 	if (err == ENOENT)
-		exit(127);
-	exit(126);
+		exit_child(127, shell);
+	exit_child(126, shell);
 }
 
 int	handle_pipe_error(void)
 {
 	perror("pipe");
 	return (1);
+}
+
+void	exit_child(int status, t_shell *shell)
+{
+	cleanup_shell_child(shell);
+	exit(status);
 }

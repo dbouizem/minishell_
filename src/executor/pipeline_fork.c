@@ -1,6 +1,7 @@
 #include "../../includes/minishell.h"
 
-static void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes)
+static void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes,
+		t_shell *shell)
 {
 	int	input_fd;
 	int	output_fd;
@@ -14,22 +15,39 @@ static void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes)
 	if (input_fd != STDIN_FILENO && dup2(input_fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: dup2 input");
-		exit(1);
+		exit_child(1, shell);
 	}
+	if (input_fd != STDIN_FILENO)
+		close(input_fd);
 	if (output_fd != STDOUT_FILENO && dup2(output_fd, STDOUT_FILENO) == -1)
 	{
 		perror("minishell: dup2 output");
-		exit(1);
+		exit_child(1, shell);
 	}
+	if (output_fd != STDOUT_FILENO)
+		close(output_fd);
 }
 
 static void	exec_child_command(t_pipeline_data *data, t_cmd *cmd, int index)
 {
+	ft_gnl_clear();
 	setup_child_signals();
-	setup_child_pipes(data->pipes, index, data->num_pipes);
+	setup_child_pipes(data->pipes, index, data->num_pipes, data->shell);
 	cleanup_child_pipes(data->pipes, data->num_pipes, index);
+	if (data->pipes)
+	{
+		while (data->num_pipes > 0)
+			free(data->pipes[--data->num_pipes]);
+		free(data->pipes);
+		data->pipes = NULL;
+	}
+	if (data->pids)
+	{
+		free(data->pids);
+		data->pids = NULL;
+	}
 	execute_command_child(cmd, data->shell);
-	exit(1);
+	exit_child(1, data->shell);
 }
 
 static int	fork_command(t_pipeline_data *data, t_cmd *cmd, int index)

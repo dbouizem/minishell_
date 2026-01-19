@@ -60,6 +60,28 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 	(*i)++;
 }
 
+static void	create_paren_token(char c, t_token **head,
+		t_token **current, int *i)
+{
+	char	*value;
+	t_token	*token;
+
+	value = malloc(2);
+	if (!value)
+		return ;
+	value[0] = c;
+	value[1] = '\0';
+	if (c == '(')
+		token = create_token(PAREN_OPEN, value);
+	else
+		token = create_token(PAREN_CLOSE, value);
+	if (token)
+		add_token(head, current, token);
+	else
+		free(value);
+	(*i)++;
+}
+
 void	handle_pipe_or_redir(char *input, int *i,
 		t_token **head, t_token **current)
 {
@@ -77,6 +99,8 @@ void	handle_pipe_or_redir(char *input, int *i,
 		else
 			create_operator_token(INVALID, head, current, i);
 	}
+	else if (input[*i] == '(' || input[*i] == ')')
+		create_paren_token(input[*i], head, current, i);
 	else
 		create_redir_token(input, i, head, current);
 }

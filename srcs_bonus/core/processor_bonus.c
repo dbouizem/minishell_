@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processor.c                                       :+:      :+:    :+:   */
+/*   processor_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 18:42:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 18:42:00 by dbouizem         ###   ########.fr       */
+/*   Created: 2025/12/08 18:18:00 by dbouizem          #+#    #+#             */
+/*   Updated: 2025/12/08 18:18:00 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include "../../includes/minishell_bonus.h"
 
 static int	is_only_whitespace(char *str)
 {
@@ -41,29 +42,33 @@ static int	prepare_tokens(char *input, t_shell *shell, t_token **tokens)
 	return (1);
 }
 
-static void	cleanup_parsed(t_cmd *cmds, t_token *tokens, t_shell *shell)
+static void	cleanup_bonus_ast(t_ast *ast, t_token *tokens, t_shell *shell)
 {
-	if (cmds)
-		free_cmd(cmds);
-	shell->current_cmds = NULL;
+	if (ast)
+		free_ast_bonus(ast);
+	shell->current_ast = NULL;
+	shell->free_ast = NULL;
 	free_tokens(tokens);
 	shell->current_tokens = NULL;
 }
 
-static int	execute_parsed(t_token *tokens, t_shell *shell)
+static int	execute_bonus_ast(t_token *tokens, t_shell *shell)
 {
-	t_cmd	*cmds;
+	t_ast	*ast;
 
 	shell->current_tokens = tokens;
-	cmds = parse(tokens, shell);
-	if (!cmds)
+	ast = parse_ast_bonus(tokens, shell);
+	if (!ast)
 	{
-		cleanup_parsed(NULL, tokens, shell);
+		free_tokens(tokens);
+		shell->current_tokens = NULL;
 		return (0);
 	}
-	shell->current_cmds = cmds;
-	execute(cmds, shell);
-	cleanup_parsed(cmds, tokens, shell);
+	shell->current_ast = ast;
+	shell->free_ast = free_ast_bonus;
+	shell->current_cmds = NULL;
+	execute_ast_bonus(ast, shell);
+	cleanup_bonus_ast(ast, tokens, shell);
 	return (0);
 }
 
@@ -73,5 +78,5 @@ int	process_input(char *input, t_shell *shell)
 
 	if (!prepare_tokens(input, shell, &tokens))
 		return (0);
-	return (execute_parsed(tokens, shell));
+	return (execute_bonus_ast(tokens, shell));
 }

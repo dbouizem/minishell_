@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 00:50:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/23 23:41:08 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/19 09:13:24 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # include <stdint.h>
 # include <stddef.h>
 
-
 # define DIGITS "0123456789"
 # define HEXLOW "0123456789abcdef"
 # define HEXUPP "0123456789ABCDEF"
@@ -36,7 +35,6 @@ typedef struct s_printf
 	va_list		args;
 }		t_printf;
 
-
 int					ft_printf(const char *formant, ...);
 
 void				parse_format(const char **format, t_printf *data);
@@ -47,7 +45,6 @@ void				ft_print_ptr(void *ptr, t_printf *data);
 void				ft_print_int(int n, t_printf *data);
 void				ft_print_u_int(unsigned int n, t_printf *data);
 void				ft_print_hex(unsigned int n, int uppercase, t_printf *data);
-
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1024
@@ -68,6 +65,7 @@ typedef struct s_fd_list
 }	t_fd_list;
 
 char				*ft_gnl(int fd);
+void				ft_gnl_clear(void);
 
 t_fd_list			*get_fd_node(t_fd_list **list, int fd);
 size_t				ft_strlcpy(char *dst, const char *src, size_t size);
@@ -75,16 +73,11 @@ void				remove_fd_node(t_fd_list **list, int fd);
 void				*ft_memcpy(void *dest, const void *src, size_t n);
 char				*ft_strdup(const char *s);
 
-
 typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
 }			t_list;
-
-
-
-
 
 int					ft_isalpha(int c);
 int					ft_isdigit(int c);
@@ -117,10 +110,6 @@ int					ft_strncmp(const char *s1, const char *s2, size_t n);
 int					ft_memcmp(const void *s1, const void *s2, size_t n);
 int					ft_atoi(const char *str);
 
-
-
-
-
 void				ft_striteri(char *s, void (*f)(unsigned int, char*));
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putchar_fd(char c, int fd);
@@ -135,10 +124,6 @@ char				*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
 char				**ft_split(char const *s, char c);
 long long			ft_atoll(const char *str, int *overflow);
-
-
-
-
 
 t_list				*ft_lstnew(void *content);
 t_list				*ft_lstlast(t_list *lst);

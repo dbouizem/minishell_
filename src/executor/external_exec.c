@@ -31,10 +31,11 @@ static int	handle_missing_cmd(char *cmd, int path_error, t_shell *shell)
 
 static void	exec_child(char *cmd_path, t_cmd *cmd, t_shell *shell)
 {
+	ft_gnl_clear();
 	setup_child_signals();
 	env_list_to_array(shell);
 	execve(cmd_path, cmd->args, shell->env);
-	handle_execve_error(cmd_path);
+	handle_execve_error(cmd_path, shell);
 }
 
 int	execute_external(t_cmd *cmd, t_shell *shell)
@@ -67,9 +68,9 @@ void	execute_external_no_fork(t_cmd *cmd, t_shell *shell)
 	char	*cmd_path;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
-		exit(1);
+		exit_child(1, shell);
 	cmd_path = get_cmd_path(cmd->args[0], shell, &path_error);
 	if (!cmd_path)
-		exit(handle_missing_cmd(cmd->args[0], path_error, shell));
+		exit_child(handle_missing_cmd(cmd->args[0], path_error, shell), shell);
 	exec_child(cmd_path, cmd, shell);
 }

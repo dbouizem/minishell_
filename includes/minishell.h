@@ -26,12 +26,19 @@
 # include "env.h"
 
 extern volatile sig_atomic_t	g_signal;
+struct s_ast;
 
 typedef struct s_shell
 {
 	char			**env;
 	t_env			*env_list;
+	t_token			*current_tokens;
+	t_cmd			*current_cmds;
+	struct s_ast	*current_ast;
+	void			(*free_ast)(struct s_ast *ast);
+	char			*current_input;
 	int				exit_status;
+	int				should_exit;
 	int				interactive;
 	struct termios	original_term;
 	int				num_pipes;
@@ -39,6 +46,7 @@ typedef struct s_shell
 
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
+void	cleanup_shell_child(t_shell *shell);
 
 void	setup_signals(void);
 void	setup_child_signals(void);

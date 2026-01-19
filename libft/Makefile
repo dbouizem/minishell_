@@ -47,6 +47,7 @@ SRCS =	ft_isalpha.c \
 		ft_split.c \
 		ft_strncpy.c \
 		ft_gnl.c \
+		ft_gnl_clear.c \
 		ft_printf.c \
 		parse_format.c \
 		ft_print_char.c \

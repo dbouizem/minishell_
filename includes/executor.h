@@ -110,7 +110,8 @@ void	handle_command_not_found(char *cmd, t_shell *shell);
 void	print_error_is_directory(char *cmd, t_shell *shell, int status);
 void	print_error_no_such_file(char *cmd, t_shell *shell, int status);
 
-void	handle_execve_error(char *cmd_path);
+void	handle_execve_error(char *cmd_path, t_shell *shell);
+void	exit_child(int status, t_shell *shell);
 int		handle_file_error(char *filename);
 int		handle_dup2_error(int fd);
 int		handle_malloc_error(void);

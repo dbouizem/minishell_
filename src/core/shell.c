@@ -41,5 +41,58 @@ void	cleanup_shell(t_shell *shell)
 		free_env_list(shell->env_list);
 		shell->env_list = NULL;
 	}
+	ft_gnl_clear();
+	rl_clear_history();
+}
+
+static void	cleanup_shell_runtime(t_shell *shell)
+{
+	if (shell->current_tokens)
+	{
+		free_tokens(shell->current_tokens);
+		shell->current_tokens = NULL;
+	}
+	if (shell->current_input)
+	{
+		free(shell->current_input);
+		shell->current_input = NULL;
+	}
+	if (shell->free_ast && shell->current_ast)
+	{
+		shell->free_ast(shell->current_ast);
+		shell->current_ast = NULL;
+	}
+	else if (shell->current_cmds)
+	{
+		free_cmd(shell->current_cmds);
+		shell->current_cmds = NULL;
+	}
+}
+
+static void	cleanup_shell_env(t_shell *shell)
+{
+	int	i;
+
+	if (shell->env)
+	{
+		i = 0;
+		while (shell->env[i])
+			free(shell->env[i++]);
+		free(shell->env);
+		shell->env = NULL;
+	}
+	if (shell->env_list)
+	{
+		free_env_list(shell->env_list);
+		shell->env_list = NULL;
+	}
+}
+
+void	cleanup_shell_child(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	cleanup_shell_runtime(shell);
+	cleanup_shell_env(shell);
 	rl_clear_history();
 }

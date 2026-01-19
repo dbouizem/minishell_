@@ -24,12 +24,12 @@ static void	execute_child_command(t_cmd *cmd, t_shell *shell)
 		if (is_builtin(cmd->args[0]))
 		{
 			exit_status = execute_builtin(cmd, shell);
-			exit(exit_status);
+			exit_child(exit_status, shell);
 		}
 		execute_external_no_fork(cmd, shell);
-		exit(127);
+		exit_child(127, shell);
 	}
-	exit(0);
+	exit_child(0, shell);
 }
 
 void	execute_command_child(t_cmd *cmd, t_shell *shell)
@@ -38,12 +38,12 @@ void	execute_command_child(t_cmd *cmd, t_shell *shell)
 	int		status;
 
 	if (!cmd)
-		exit(1);
+		exit_child(1, shell);
 	cmd_copy.args = cmd->args;
 	cmd_copy.redirs = cmd->redirs;
 	cmd_copy.next = NULL;
 	status = setup_redirections(&cmd_copy, shell);
 	if (status != 0)
-		exit(status);
+		exit_child(status, shell);
 	execute_child_command(&cmd_copy, shell);
 }
