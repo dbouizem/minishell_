@@ -12,8 +12,10 @@
 5. [Phase 5 — Exécution](#-phase-5--exécution)
 6. [Phase 6 — Builtins](#-phase-6--builtins)
 7. [Phase 7 — Signaux & Heredoc](#-phase-7--signaux--heredoc)
-8. [Checklist Finale](#-checklist-finale)
-9. [Commandes Utiles](#-commandes-utiles)
+8. [Phase 8 — Opérateurs logiques et parenthèses (Bonus)](#-phase-8--opérateurs-logiques-et-parenthèses-bonus)
+9. [Phase 9 — Wildcards `*` (Bonus)](#-phase-9--wildcards--bonus)
+10. [Checklist Finale](#-checklist-finale)
+11. [Commandes Utiles](#-commandes-utiles)
 
 ========================================================================================
 
@@ -343,6 +345,171 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 
 ========================================================================================
 
+# 🟪 **PHASE 8 — Opérateurs logiques et parenthèses (Bonus)**
+
+Cette phase consiste à implémenter les opérateurs de contrôle `&&` (ET) et `||` (OU),
+ainsi que les parenthèses `()` pour grouper les commandes et modifier la priorité
+d'évaluation, **sans créer de sous-shells**.
+
+## ✔ Objectifs
+
+- Implémenter les opérateurs logiques `&&` et `||` avec la bonne **priorité** (priorité naturelle de gauche à droite, modifiable par les parenthèses).
+- Implémenter les **parenthèses `()`** pour grouper des commandes.
+- **Pas de sous-shells** : l'exécution doit se faire dans le processus courant du shell.
+- Gérer les **erreurs de syntaxe** (`&&`, `||` mal placés, parenthèses non fermées) avec un message d'erreur clair et **sans crash**.
+- Maintenir le **code de retour `$?`** correct après chaque exécution.
+- Assurer la **stabilité** : pas de segfault, pas de leaks mémoire supplémentaires.
+- Le comportement doit **coller à celui de Bash** pour les mêmes commandes.
+
+## 🧠 Idée globale
+
+→ Étendre l'arbre de syntaxe abstraite (AST) pour y ajouter des **nœuds de type `AND_OR`** et `PAREN`.
+→ Le `parser` doit gérer ces nouveaux opérateurs et structures.
+→ L'`exécuteur` doit évaluer les branches gauche/droite en fonction du résultat (`0` pour vrai, autre pour faux) de la branche précédente.
+→ Les parenthèses sont traitées comme un regroupement qui force l'évaluation de leur contenu en priorité, mais sans `fork()` dédié.
+
+## 🧪 Tableau de tests (Comportement vs Bash)
+
+| Test | Commande / Action | Résultat attendu (identique à Bash) | Vérification clé |
+|------|-------------------|--------------------------------------|------------------|
+| **1. Base `&&` (succès)** | `/bin/true && echo OK` | `OK` | L'exécution continue. |
+| **2. Base `&&` (échec)** | `/bin/false && echo KO` | *(rien)* | L'exécution s'arrête. |
+| **3. Base `||` (échec)** | `/bin/false \|\| echo OK` | `OK` | L'exécution continue. |
+| **4. Base `||` (succès)** | `/bin/true \|\| echo KO` | *(rien)* | L'exécution s'arrête. |
+| **5. Priorité naturelle (1)** | `/bin/false && echo A \|\| echo B` | `B` | `&&` a priorité sur `\|\|`. |
+| **6. Priorité naturelle (2)** | `/bin/true && echo A \|\| echo B` | `A` | `\|\|` n'est pas exécuté. |
+| **7. Parenthèse simple (1)** | `/bin/true && (echo A \|\| echo B)` | `A` | Le contenu des `()` est évalué en bloc. |
+| **8. Parenthèse simple (2)** | `/bin/false && (echo A \|\| echo B)` | *(rien)* | Le `&&` bloque. |
+| **9. Parenthèse simple (3)** | `/bin/false \|\| (echo A && echo B)` | `A B` | Le `\|\|` déclenche l'exécution du bloc. |
+| **10. Parenthèses imbriquées (1)** | `/bin/true && ( /bin/false \|\| (echo X && echo Y) )` | `X Y` | Priorité respectée sur plusieurs niveaux. |
+| **11. Parenthèses imbriquées (2)** | `/bin/false \|\| ( /bin/true && (echo 1 && echo 2) )` | `1 2` | |
+| **12. Commande réelle (1)** | `ls /doesnotexist && echo OK \|\| echo FAIL` | `FAIL` | Code retour de `ls` déclenche le bon chemin. |
+| **13. Commande réelle (2)** | `(ls /doesnotexist \|\| echo RECOVER) && echo END` | `RECOVER END` | Le groupe `()` réussit, donc `&&` s'exécute. |
+| **14. Avec pipe (succès)** | `echo hello \| grep hello && echo FOUND` | `hello FOUND` | Interaction correcte pipe + logique. |
+| **15. Avec pipe (échec)** | `echo hello \| grep bye \|\| echo NOT_FOUND` | `NOT_FOUND` | |
+| **16. Code retour `$?` (1)** | `/bin/false \|\| echo OK ; echo $?` | `OK 0` | `$?` reflète la dernière commande (`echo`). |
+| **17. Code retour `$?` (2)** | `/bin/true && /bin/false ; echo $?` | `1` | `$?` reflète l'échec de `/bin/false`. |
+| **18. Erreur syntaxe : `&&` en début** | `&& echo test` | `syntax error` (pas de crash) | Détection d'opérateur mal placé. |
+| **19. Erreur syntaxe : `\|\|` en fin** | `echo test \|\|` | `syntax error` (pas de crash) | Détection de commande manquante. |
+| **20. Erreur syntaxe : Parenthèse ouvrante seule** | `( echo test` | `syntax error` (pas de crash) | Détection de parenthèse non fermée. |
+| **21. Erreur syntaxe : Parenthèse fermante seule** | `echo test )` | `syntax error` (pas de crash) | Détection de parenthèse fermante sans ouvrante. |
+| **22. Erreur syntaxe : Parenthèses vides** | `()` | `syntax error` (pas de crash) | Détection de groupe vide. |
+| **23. Environnement vide** | `env -i ./minishell` puis `echo test && echo ok` | `test ok` | Fonctionne sans env. |
+| **24. Mode non-interactif** | `echo "true && echo bonus" \| ./minishell` | `bonus` | Fonctionne en pipe. |
+| **25. Valgrind (complexe)** | `valgrind ./minishell` puis tests ci-dessus et `exit` | Pas de nouveaux leaks (hors readline) | Stabilité mémoire. |
+
+---
+
+## 📝 Notes pour l'implémentation et la soutenance
+
+*   **Priorité** : Dans `A && B || C`, l'évaluation est `(A && B) || C`. Les parenthèses permettent de forcer `A && (B || C)`.
+*   **Pas de sous-shell** : C'est le point délicat du bonus. Il ne faut pas `fork()` pour les parenthèses, mais simplement évaluer récursivement leur contenu dans le contexte d'exécution courant.
+*   **Gestion d'erreur** : En cas d'erreur de syntaxe, afficher un message sur `stderr` (ex: `minishell: syntax error near unexpected token '&&'`), ne pas exécuter la ligne, et mettre `$?` à `2` (comme Bash).
+*   **Tests** : Durant la soutenance, exécuter ces tests en **parallèle avec Bash** pour prouver l'identité des comportements.
+
+========================================================================================
+
+# 🟩 **PHASE 9 — Wildcards `*` (Bonus)**
+
+Cette phase consiste à implémenter l'expansion des wildcards `*` (uniquement pour le
+répertoire courant), avec un comportement identique à Bash. Les fichiers cachés
+(commençant par `.`) ne doivent apparaître que si explicitement demandés par `.*`.
+
+## ✔ Objectifs
+
+- Implémenter l'expansion `*` uniquement pour le **répertoire courant**.
+- Respecter le **comportement de Bash** :
+  - Expansion en **ordre lexicographique**
+  - Exclusion des **fichiers cachés** sauf pour le pattern `.*`
+  - En **cas d'absence de match**, le pattern est **conservé tel quel**
+  - **Pas d'expansion** dans les quotes (`"*"`, `'*'`)
+  - **Pas d'expansion** après expansion de variable (`echo $VAR` où `VAR="*"`)
+- Gérer **plusieurs wildcards dans une même commande** (`echo *.txt a*`)
+- **Intégration transparente** avec les autres fonctionnalités (pipes, redirections, opérateurs logiques)
+- **Pas de crash** sur les cas limites (dossier vide, permissions)
+- **Pas de memory leaks** supplémentaires
+
+## 🧠 Idée globale
+
+→ Ajouter une étape d'**expansion de wildcards** après le parsing et avant l'exécution.
+→ Pour chaque **argument non-quoté**, vérifier s'il contient `*`.
+→ Si oui, scanner le **répertoire courant** et matcher les noms de fichiers.
+→ **Remplacer** l'argument par la liste des matches (ou le pattern original si aucun match).
+→ Gérer le cas spécial `.*` qui inclut les fichiers cachés.
+→ Attention à **l'ordre** : variable expansion → field splitting → wildcard expansion.
+
+## 🧪 Préparation de l'environnement de test
+
+```bash
+# Créer un dossier de test propre
+mkdir test_wildcard && cd test_wildcard
+touch a b c
+touch a.txt b.txt c.txt
+touch abc abcd
+touch .hidden .hidden2
+mkdir dir1 dir2
+```
+
+## 🧪 Tableau de tests (Comportement vs Bash)
+
+| Test | Commande / Action | Résultat attendu (identique à Bash) | Vérification clé |
+|------|-------------------|--------------------------------------|------------------|
+| **1. Wildcard simple** | `echo *` | `a abc abcd a.txt b b.txt c c.txt dir1 dir2` (ordre lexicographique) | Exclusion fichiers cachés, ordre correct |
+| **2. Avec préfixe (1)** | `echo a*` | `a abc abcd a.txt` | Match avec préfixe |
+| **3. Avec préfixe (2)** | `echo ab*` | `abc abcd` | |
+| **4. Avec préfixe (3)** | `echo b*` | `b b.txt` | |
+| **5. Avec suffixe (1)** | `echo *.txt` | `a.txt b.txt c.txt` | Match avec suffixe |
+| **6. Avec suffixe (2)** | `echo *.c` | `*.c` | **Aucun match → pattern conservé** |
+| **7. Wildcard milieu** | `echo a*d` | `abcd` | |
+| **8. Plusieurs wildcards** | `echo *.txt a*` | `a.txt b.txt c.txt a abc abcd a.txt` | Expansion indépendante par argument |
+| **9. Commande réelle (1)** | `ls *` | Liste tous les fichiers visibles + dossiers | Intégration avec `ls` |
+| **10. Commande réelle (2)** | `ls a*` | `a abc abcd a.txt` | |
+| **11. Fichiers cachés (1)** | `echo .*` | `.hidden .hidden2` | Pattern spécial pour fichiers cachés |
+| **12. Fichiers cachés (2)** | `echo .*txt` | `.*txt` | Aucun match → pattern conservé |
+| **13. Quotes doubles** | `echo "*"` | `*` | **Pas d'expansion dans les quotes** |
+| **14. Quotes simples** | `echo '*.txt'` | `*.txt` | |
+| **15. Mix quotes** | `echo "*txt"` | `*txt` | |
+| **16. Variable (1)** | `export X=* ; echo $X` | `*` | **Pas d'expansion après variable** |
+| **17. Variable (2)** | `export X="*.txt" ; echo $X` | `*.txt` | |
+| **18. Avec opérateurs logiques (1)** | `ls *.txt && echo OK` | Liste des `.txt` puis `OK` | Intégration avec `&&` |
+| **19. Avec opérateurs logiques (2)** | `ls *.c \|\| echo FAIL` | `FAIL` | Intégration avec `\|\|` |
+| **20. Cas limite : suppression** | `echo * ; rm * ; echo *` | Liste → (rien) → `*` | Comportement après vidage du dossier |
+| **21. Dossier vide** | (dans dossier vide) `echo *` | `*` | Aucun match → pattern conservé |
+| **22. Environnement vide** | `env -i ./minishell` puis `echo *` | Liste des fichiers (sans env) | Fonctionne sans variables d'env |
+| **23. Mode non-interactif** | `echo "echo *.txt" \| ./minishell` | `a.txt b.txt c.txt` | Fonctionne en pipe |
+| **24. Valgrind** | `valgrind ./minishell` puis tests wildcards | Pas de nouveaux leaks | Stabilité mémoire |
+
+## 🚫 **Tests INTERDITS (selon le sujet)**
+
+Ces fonctionnalités **NE DOIVENT PAS** être implémentées (résultat attendu : le pattern est affiché tel quel) :
+
+| Test | Commande | Résultat attendu |
+|------|----------|------------------|
+| **Wildcard récursif** | `echo dir1/*` | `dir1/*` |
+| **Double wildcard** | `echo **/*` | `**/*` |
+| **Wildcard `?`** | `echo a?c` | `a?c` |
+| **Classes de caractères** | `echo [ab]*` | `[ab]*` |
+
+## 📝 Notes pour l'implémentation et la soutenance
+
+*   **Ordre d'expansion** : Suivre l'ordre POSIX : 1) Expansion des variables (`$VAR`), 2) Field splitting, 3) Expansion des wildcards.
+*   **Fichiers cachés** : Seul le pattern `.*` doit les inclure. Pour `*`, ils doivent être exclus.
+*   **Pattern conservé** : Si aucun fichier ne correspond au pattern, **ne pas supprimer l'argument** mais le laisser tel quel (comportement Bash).
+*   **Performance** : Pour le répertoire courant uniquement, pas besoin de récursion. Un simple `opendir()`/`readdir()` suffit.
+*   **Tests en live** : Pendant la soutenance, créer le dossier de test et exécuter les commandes **côte à côte avec Bash** pour prouver l'identité des résultats.
+*   **Intégration** : Vérifier que les wildcards fonctionnent bien avec toutes les autres fonctionnalités (redirections, pipes, opérateurs logiques).
+
+## 🎯 Points clés pour les correcteurs
+
+✔️ **Même comportement que Bash** pour tous les tests ci-dessus
+✔️ **Pas d'expansion dans les quotes** (différence majeure avec le comportement sans quotes)
+✔️ **Exclusion correcte des fichiers cachés** (sauf pour `.*`)
+✔️ **Pattern conservé si aucun match** (pas de suppression silencieuse)
+✔️ **Intégration transparente** avec le reste du shell
+✔️ **Pas de crash, pas de leaks** sur les cas limites
+
+========================================================================================
+
 # ✅ **CHECKLIST FINALE**
 
 ## Avant de soumettre
@@ -616,6 +783,7 @@ cat minishell.log
 - https://harm-smits.github.io/42docs/projects/minishell
 - https://www.tutorialspoint.com/compiler_design/compiler_design_lexical_analysis.htm
 - https://www.geeksforgeeks.org/c/pipe-system-call/
+- https://frederic-lang.developpez.com/tutoriels/linux/prog-shell/?page=les-variables
 
 
 
@@ -628,12 +796,12 @@ cat minishell.log
 
 ## Erreurs courantes à éviter
 - ❌ Ne pas fermer les file descriptors → processus bloqués
-Oublier de restaurer stdin/stdout
+- ❌ Oublier de restaurer stdin/stdout après une redirection
 - ❌ Fuites dans les boucles (readline, parsing)
 - ❌ Double free sur les redirections/arguments
 - ❌ Mauvaise gestion des signaux (modifier structures au lieu de variable globale)
 - ❌ Ne pas gérer `PATH` vide ou corrompu
-- ❌ Exécuter builtins en enfant alors qu'ils doivent modifier le parent
+- ❌ Builtins en enfant alors qu'ils doivent modifier le parent (sauf en pipeline)
 
 ========================================================================================
 
@@ -650,6 +818,8 @@ Oublier de restaurer stdin/stdout
 8. ✅ **Phase 5 suite** : Redirections
 9. ✅ **Phase 7** : Signaux
 10. ✅ **Phase 7 suite** : Heredoc
+11. ✅ **Phase 8 suite** : Opérateurs logiques et parenthèses (Bonus)
+12. ✅ **Phase 8 suite** : wildcards (Bonus)
 
 ## Après chaque phase
 - [ ] Tests unitaires
@@ -658,5 +828,3 @@ Oublier de restaurer stdin/stdout
 - [ ] Documenter les cas limites
 
 ========================================================================================
-
-**Bonne chance pour votre minishell ! 🚀**

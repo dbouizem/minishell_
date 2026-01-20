@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/08 18:40:00 by dbouizem          #+#    #+#             */
+/*   Updated: 2026/01/20 05:30:27 by dbouizem         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -18,6 +30,7 @@
 
 # include "../libft/libft.h"
 # include "colors.h"
+# include "signals.h"
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
@@ -25,8 +38,7 @@
 # include "builtin.h"
 # include "env.h"
 
-extern volatile sig_atomic_t	g_signal;
-struct s_ast;
+typedef struct s_ast		t_ast;
 
 typedef struct s_shell
 {
@@ -34,8 +46,8 @@ typedef struct s_shell
 	t_env			*env_list;
 	t_token			*current_tokens;
 	t_cmd			*current_cmds;
-	struct s_ast	*current_ast;
-	void			(*free_ast)(struct s_ast *ast);
+	t_ast			*current_ast;
+	void			(*free_ast)(t_ast *ast);
 	char			*current_input;
 	int				exit_status;
 	int				should_exit;
@@ -55,7 +67,7 @@ char	*read_input(void);
 char	*read_input_non_interactive(void);
 int		process_input(char *input, t_shell *shell);
 
-void	shell_error(char *message, int exit_code);
+void	shell_error(t_shell *shell, char *message, int exit_code);
 void	process_error(char *context, t_shell *shell);
 void	*check_malloc(void *ptr, char *context);
 

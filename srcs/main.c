@@ -35,7 +35,7 @@ static int	finish_cycle(t_shell *shell, char *input)
 	if (!input)
 	{
 		if (shell->interactive)
-			printf("exit\n");
+			ft_putendl_fd("exit", STDOUT_FILENO);
 		return (0);
 	}
 	process_input(input, shell);

@@ -14,9 +14,7 @@
 # define MINISHELL_BONUS_H
 
 # include "token.h"
-
-typedef struct s_cmd	t_cmd;
-typedef struct s_shell	t_shell;
+# include "expander.h"
 
 typedef enum e_ast_type
 {
@@ -25,13 +23,23 @@ typedef enum e_ast_type
 	AST_OR
 }	t_ast_type;
 
-typedef struct s_ast
+struct s_ast
 {
 	t_ast_type		type;
 	t_cmd			*pipeline;
 	struct s_ast	*left;
 	struct s_ast	*right;
-}	t_ast;
+};
+
+typedef struct s_wild_build
+{
+	t_state	state;
+	char	*pattern;
+	char	*mask;
+	int		i;
+	int		j;
+	int		has_wc;
+}	t_wild_build;
 
 void	create_operator_token(t_token_type type, t_token **head,
 			t_token **current, int *i);
@@ -44,5 +52,16 @@ t_ast	*create_ast_node_bonus(t_ast_type type, t_cmd *pipeline,
 void	skip_spaces_bonus(t_token **tokens);
 int		execute_ast_bonus(t_ast *ast, t_shell *shell);
 void	free_ast_bonus(t_ast *ast);
+int		build_pattern_mask_bonus(const char *arg, char **pattern,
+			char **mask, int *has_wc);
+int		wildcard_match_bonus(const char *pattern, const char *mask,
+			const char *name);
+int		append_arg_bonus(char ***dst, int *count, char *value);
+int		append_array_bonus(char ***dst, int *count,
+			char **arr, int arr_count);
+int		append_literal_bonus(char ***dst, int *count,
+			char *pattern, char *mask);
+void	sort_strings_bonus(char **arr, int count);
+void	expand_wildcards(t_cmd *cmd);
 
 #endif

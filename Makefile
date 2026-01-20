@@ -112,6 +112,9 @@ SRC_BONUS_ONLY =\
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus.c \
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus_pipeline.c \
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus_logical.c \
+	$(SRC_BONUS_DIR)/expander/wildcard_pattern_bonus.c \
+	$(SRC_BONUS_DIR)/expander/wildcard_expand_bonus.c \
+	$(SRC_BONUS_DIR)/expander/wildcard_utils_bonus.c \
 	$(SRC_BONUS_DIR)/executor/executor_bonus.c \
 	$(SRC_BONUS_DIR)/executor/exec_ast_bonus.c
 
@@ -178,7 +181,7 @@ clean:
 fclean: clean
 	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory
 	@if [ -f "$(NAME)" ]; then \
-		echo "$(BOLD)$(CYAN)🗑️ Removing minishell...$(RESET)"; \
+		echo "$(BOLD)$(CYAN)🗑️  Removing minishell...$(RESET)"; \
 		rm -f $(NAME); \
 		echo "$(GREEN)✓ Minishell removed$(RESET)"; \
 	fi

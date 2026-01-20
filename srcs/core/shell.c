@@ -13,11 +13,14 @@ void	init_shell(t_shell *shell, char **envp)
 		rl_catch_signals = 0;
 		rl_catch_sigwinch = 0;
 		if (tcgetattr(STDIN_FILENO, &shell->original_term) == -1)
-			shell_error("tcgetattr", 1);
+		{
+			shell->interactive = 0;
+			shell_error(shell, "tcgetattr", 1);
+		}
 	}
 	shell->env_list = env_array_to_list(envp);
 	if (!shell->env_list && envp && *envp)
-		shell_error("Failed to initialize environment list", 1);
+		shell_error(shell, "Failed to initialize environment list", 1);
 	env_list_to_array(shell);
 }
 

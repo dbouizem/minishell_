@@ -1,4 +1,5 @@
 #include "../../includes/minishell.h"
+#include "../../includes/minishell_bonus.h"
 
 static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
 				int saved_in, int saved_out)
@@ -41,10 +42,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	int	status;
 
 	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
-	{
-		shell->exit_status = 1;
-		return (1);
-	}
+		return (shell->exit_status = 1, 1);
 	status = setup_redirections(cmd, shell);
 	if (status == 130)
 	{
@@ -96,6 +94,7 @@ int	execute(t_cmd *cmd, t_shell *shell)
 		return (1);
 	}
 	expand_commands(cmd, shell);
+	expand_wildcards(cmd);
 	remove_quotes_from_command(cmd);
 	exit_status = execute_sequence(cmd, shell);
 	shell->exit_status = exit_status;

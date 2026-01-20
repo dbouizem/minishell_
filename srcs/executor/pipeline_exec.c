@@ -71,7 +71,10 @@ int	execute_pipeline(t_cmd *cmd, t_shell *shell)
 	if (status != 0)
 		return (status);
 	if (init_pipeline_data(&data, cmd, shell) != 0)
+	{
+		close_pipeline_heredocs(cmd);
 		return (1);
+	}
 	num_forked = fork_all_commands(&data);
 	close_all_pipes(data.pipes, data.num_pipes);
 	close_pipeline_heredocs(cmd);

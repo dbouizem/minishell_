@@ -27,6 +27,7 @@ static int	execute_pipeline_node(t_cmd *pipeline, t_shell *shell)
 	if (!pipeline)
 		return (set_exit_status(shell, 1));
 	expand_commands(pipeline, shell);
+	expand_wildcards(pipeline);
 	remove_quotes_from_command(pipeline);
 	status = execute_pipeline(pipeline, shell);
 	return (set_exit_status(shell, status));

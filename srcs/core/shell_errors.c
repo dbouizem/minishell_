@@ -1,9 +1,11 @@
 #include "../../includes/minishell.h"
 
-void	shell_error(char *message, int exit_code)
+void	shell_error(t_shell *shell, char *message, int exit_code)
 {
 	ft_putstr_fd("minishell: error: ", STDERR_FILENO);
 	ft_putendl_fd(message, STDERR_FILENO);
+	if (shell)
+		cleanup_shell(shell);
 	exit(exit_code);
 }
 
