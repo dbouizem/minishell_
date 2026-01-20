@@ -24,7 +24,11 @@ static char	*handle_normal_part(char *input, int *i)
 	start = *i;
 	while (input[*i] && !is_whitespace(input[*i])
 		&& !is_special_char(input[*i]) && !is_quote(input[*i]))
+	{
+		if (is_forbidden_char(input[*i]))
+			break ;
 		(*i)++;
+	}
 	part = extract_substring(input, start, *i);
 	return (part);
 }
@@ -50,7 +54,7 @@ char	*extract_word_without_quotes(char *input, int *i)
 	if (!result)
 		return (NULL);
 	while (input[*i] && !is_whitespace(input[*i])
-		&& !is_special_char(input[*i]))
+		&& !is_special_char(input[*i]) && !is_forbidden_char(input[*i]))
 	{
 		part = process_word_part(input, i);
 		if (!part)

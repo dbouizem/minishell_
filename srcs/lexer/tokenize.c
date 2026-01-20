@@ -10,6 +10,20 @@ static void	process_char(char *input, int *i, t_token **head, t_token **current)
 		handle_word(input, i, head, current);
 }
 
+static void	report_forbidden_char(char c)
+{
+	char	token[2];
+
+	if (ft_isprint((unsigned char)c))
+	{
+		token[0] = c;
+		token[1] = '\0';
+		lexer_syntax_error(token);
+	}
+	else
+		lexer_syntax_error(NULL);
+}
+
 static int	has_invalid_token(t_token *tokens)
 {
 	while (tokens)
@@ -38,11 +52,16 @@ t_token	*tokenize(char *input)
 	current = NULL;
 	i = 0;
 	while (input[i])
-		process_char(input, &i, &head, &current);
-	if (has_invalid_token(head))
 	{
-		free_tokens(head);
-		return (NULL);
+		if (is_forbidden_char(input[i]))
+		{
+			report_forbidden_char(input[i]);
+			free_tokens(head);
+			return (NULL);
+		}
+		process_char(input, &i, &head, &current);
 	}
+	if (has_invalid_token(head))
+		return (free_tokens(head), NULL);
 	return (head);
 }

@@ -19,6 +19,8 @@
 
 ========================================================================================
 
+Voici ta Phase 1 mise à jour avec la section sur les heredocs et SIGSEGV, parfaitement intégrée dans le même style :
+
 # 🟦 **PHASE 1 — Fondations**
 
 Cette phase consiste à mettre en place l'ossature minimale d'un shell fonctionnel.
@@ -62,6 +64,75 @@ Cette phase consiste à mettre en place l'ossature minimale d'un shell fonctionn
 - `env -i bash` charge encore `/etc/profile` et peut recréer `PATH`, `LESSOPEN`, etc.
 - Pour une comparaison pure : `env -i bash --noprofile --norc`
 - Minishell peut n'initialiser que `PWD`, `SHLVL=1` et `_` : suffisant pour le sujet.
+
+---
+
+## ⚠️ **Test spécial — Heredoc & SIGSEGV (cas limite)**
+
+Ce test montre que le comportement de minishell face à un **SIGSEGV volontaire** pendant un heredoc est **identique à celui de bash** et n'est **pas un bug**.
+
+### 🎯 Objectif
+Comparer minishell et bash lorsqu'ils sont **tués volontairement par SIGSEGV** pendant un heredoc.
+
+### 🔹 Test 1 — minishell
+**Terminal A**
+```bash
+./minishell
+cat << EOF
+```
+(minishell attend l'entrée du heredoc)
+
+**Terminal B**
+```bash
+pgrep minishell
+kill -SEGV <PID>
+```
+
+**Résultat attendu**
+```
+segmentation fault (core dumped) ./minishell
+```
+➡️ minishell est tué immédiatement, retour au shell parent
+
+### 🔹 Test 2 — bash (référence)
+**Terminal A**
+```bash
+cat << EOF
+```
+(bash attend l'entrée du heredoc)
+
+**Terminal B**
+```bash
+pgrep bash
+kill -SEGV <PID>
+```
+
+**Résultat attendu**
+```
+segmentation fault (core dumped) bash
+```
+➡️ bash est tué immédiatement, retour au shell parent
+
+### 🔹 Comparaison
+| Point comparé | minishell | bash |
+|---------------|-----------|------|
+| heredoc lancé | ✅ | ✅ |
+| SIGSEGV pendant heredoc | ✅ | ✅ |
+| message de fin de job | ✅ | ✅ |
+| cleanup possible | ❌ | ❌ |
+
+**Conclusion** : Comportement **identique** entre minishell et bash sur ce cas.
+
+### 🧠 Pourquoi ce n'est PAS un bug
+- Le crash est **forcé volontairement**
+- Le sujet **ne demande pas** de gérer SIGSEGV
+- Même bash ne peut pas nettoyer dans ce cas
+- SIGSEGV est un **signal fatal immédiat** → pas de cleanup garanti
+- Le message est affiché par le **shell parent**, pas par minishell lui-même
+
+### ⚠️ Note sur le terminal
+- Dans une implémentation de heredoc **ligne par ligne** (sans mode raw), le terminal **n'est généralement pas modifié**
+- Le terminal reste donc fonctionnel après SIGSEGV (comportement normal)
 
 ========================================================================================
 
@@ -113,6 +184,10 @@ Cette phase transforme la ligne d'entrée en une liste de **tokens** exploitable
 | **Pipes multiples** | `ls \| cat \| wc` | `WORD:'ls'` / `PIPE` / `WORD:'cat'` / `PIPE` / `WORD:'wc'` |
 | **Quotes + opérateurs** | `echo "x \| y > z"` | `WORD:'echo'` / `SPACES` / `WORD:'"x \| y > z"'` *(un seul WORD)* |
 | **tokenize(NULL)** | — | Retourne `NULL` sans crash |
+
+**Note $$ (lexer)**
+- Le lexer garde `$$` dans un seul token : `WORD:'$$'`.
+- L'expansion PID n'est pas demandee par le sujet ; dans ce projet, `$$` finit par afficher `$` (phase 4).
 
 ========================================================================================
 
