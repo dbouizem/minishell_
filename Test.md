@@ -39,12 +39,12 @@ Cette phase consiste à mettre en place l'ossature minimale d'un shell fonctionn
 - Aucun crash, comportement stable
 - Pas de **memory leaks** (hors readline)
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Mettre en place un shell minimal capable de s'ouvrir, afficher un prompt, lire des commandes et se fermer proprement.
 → Structure de base : `read → process → execute → cleanup`
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Test | Commande / Action | Résultat attendu |
 |------|-------------------|------------------|
@@ -71,7 +71,7 @@ Cette phase consiste à mettre en place l'ossature minimale d'un shell fonctionn
 
 Ce test montre que le comportement de minishell face à un **SIGSEGV volontaire** pendant un heredoc est **identique à celui de bash** et n'est **pas un bug**.
 
-### 🎯 Objectif
+### ✔ Objectifs
 Comparer minishell et bash lorsqu'ils sont **tués volontairement par SIGSEGV** pendant un heredoc.
 
 ### 🔹 Test 1 — minishell
@@ -123,7 +123,7 @@ segmentation fault (core dumped) bash
 
 **Conclusion** : Comportement **identique** entre minishell et bash sur ce cas.
 
-### 🧠 Pourquoi ce n'est PAS un bug
+###  Pourquoi ce n'est PAS un bug
 - Le crash est **forcé volontairement**
 - Le sujet **ne demande pas** de gérer SIGSEGV
 - Même bash ne peut pas nettoyer dans ce cas
@@ -154,13 +154,13 @@ Cette phase transforme la ligne d'entrée en une liste de **tokens** exploitable
 - Préserver le contenu **avec les quotes** (suppression ultérieure)
 - Aucun crash quelle que soit l'entrée
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Le lexer lit caractère par caractère et identifie les éléments syntaxiques.
 → Les quotes changent le mode de lecture (`in_single` / `in_double`).
 → C'est une analyse lexicale pure, rien n'est encore exécuté.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Catégorie | Commande | Tokens attendus |
 |-----------|----------|-----------------|
@@ -207,13 +207,13 @@ Cette phase transforme les tokens en structure de commandes exploitable.
   - Pipe en début : `| ls` → erreur
 - Préparer une structure exploitable pour l'exécution
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Le parser transforme les tokens en arbre de commandes.
 → Chaque commande est un nœud avec ses arguments et redirections.
 → Les pipes séparent les commandes en maillons de pipeline.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Catégorie | Commande | Résultat attendu |
 |-----------|----------|------------------|
@@ -252,14 +252,14 @@ Cette phase remplace les variables par leurs valeurs et retire les quotes.
 - **Ne PAS** expanser le délimiteur du heredoc
 - Gérer les variables inexistantes → chaîne vide
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Parcourir caractère par caractère avec état `in_single` / `in_double`.
 → Si `$` hors single quotes → lire le nom de variable → remplacer.
 → Les quotes sont retirées **après** l'expansion.
 → **Ordre crucial** : expand → remove quotes.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Catégorie | Input (USER=john) | Résultat attendu |
 |-----------|-------------------|------------------|
@@ -281,6 +281,10 @@ Cette phase remplace les variables par leurs valeurs et retire les quotes.
 | **Argument vide** | `EMPTY="" ; echo "$EMPTY"` | `""` (argument vide) |
 | **Séquence complexe** | `echo "$USER"'$HOME'$PATH` | `john$HOME/usr/bin...` |
 
+**Note ${VAR}**
+- `${USER}` est expanse comme `$USER` (meme logique).
+- `${?}` fonctionne aussi.
+
 ========================================================================================
 
 # 🟦 **PHASE 5 — Exécution**
@@ -298,14 +302,14 @@ Cette phase transforme les commandes en **processus réels** via `fork`, `execve
 - Restaurer stdin/stdout après exécution
 - Chercher les commandes dans le `PATH`
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Chaque commande du pipeline = 1 processus enfant.
 → Le shell crée N pipes pour N commandes.
 → Le parent attend tous les enfants (`waitpid`) et met à jour `$?`.
 → Les redirections modifient stdin/stdout **avant** `execve`.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Catégorie | Commande | Résultat attendu |
 |-----------|----------|------------------|
@@ -344,13 +348,13 @@ Les builtins sont des commandes internes au shell, exécutées **sans `execve`**
   - `env` (sans options ni arguments)
   - `exit` (sans options)
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Les builtins qui modifient l'environnement (`cd`, `export`, `unset`) **doivent** être exécutés dans le parent.
 → Dans un pipeline, leur effet est local au processus enfant (comme bash).
 → Détection : vérifier si `cmd->args[0]` correspond à un builtin.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Builtin | Commande | Résultat attendu |
 |---------|----------|------------------|
@@ -398,13 +402,13 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
   - `<< "EOF"` ou `<< 'EOF'` → pas d'expansion
 - Gérer `Ctrl+C` → heredoc interrompu proprement
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Une variable globale `volatile sig_atomic_t g_signal_received` stocke le signal.
 → Les handlers modifient cette variable, le shell réagit ensuite.
 → Heredoc = partie la plus technique : fichier temporaire + `readline` + signaux.
 
-## 🧪 Tableau de tests
+##  Tableau de tests
 
 | Catégorie | Action | Résultat attendu |
 |-----------|--------|------------------|
@@ -441,14 +445,14 @@ d'évaluation, **sans créer de sous-shells**.
 - Assurer la **stabilité** : pas de segfault, pas de leaks mémoire supplémentaires.
 - Le comportement doit **coller à celui de Bash** pour les mêmes commandes.
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Étendre l'arbre de syntaxe abstraite (AST) pour y ajouter des **nœuds de type `AND_OR`** et `PAREN`.
 → Le `parser` doit gérer ces nouveaux opérateurs et structures.
 → L'`exécuteur` doit évaluer les branches gauche/droite en fonction du résultat (`0` pour vrai, autre pour faux) de la branche précédente.
 → Les parenthèses sont traitées comme un regroupement qui force l'évaluation de leur contenu en priorité, mais sans `fork()` dédié.
 
-## 🧪 Tableau de tests (Comportement vs Bash)
+##  Tableau de tests (Comportement vs Bash)
 
 | Test | Commande / Action | Résultat attendu (identique à Bash) | Vérification clé |
 |------|-------------------|--------------------------------------|------------------|
@@ -509,7 +513,7 @@ répertoire courant), avec un comportement identique à Bash. Les fichiers cach�
 - **Pas de crash** sur les cas limites (dossier vide, permissions)
 - **Pas de memory leaks** supplémentaires
 
-## 🧠 Idée globale
+##  Idée globale
 
 → Ajouter une étape d'**expansion de wildcards** après le parsing et avant l'exécution.
 → Pour chaque **argument non-quoté**, vérifier s'il contient `*`.
@@ -518,7 +522,7 @@ répertoire courant), avec un comportement identique à Bash. Les fichiers cach�
 → Gérer le cas spécial `.*` qui inclut les fichiers cachés.
 → Attention à **l'ordre** : variable expansion → field splitting → wildcard expansion.
 
-## 🧪 Préparation de l'environnement de test
+##  Préparation de l'environnement de test
 
 ```bash
 # Créer un dossier de test propre
@@ -530,7 +534,7 @@ touch .hidden .hidden2
 mkdir dir1 dir2
 ```
 
-## 🧪 Tableau de tests (Comportement vs Bash)
+##  Tableau de tests (Comportement vs Bash)
 
 | Test | Commande / Action | Résultat attendu (identique à Bash) | Vérification clé |
 |------|-------------------|--------------------------------------|------------------|

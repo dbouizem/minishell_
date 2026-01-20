@@ -25,8 +25,8 @@ char	*handle_curly_brace_syntax(char *str, int *i, t_shell *shell)
 {
 	int		start;
 	char	*var_name;
-	char	*var_value;
 
+	(void)shell;
 	(*i)++;
 	start = *i;
 	while (str[*i] && str[*i] != '}')
@@ -37,14 +37,7 @@ char	*handle_curly_brace_syntax(char *str, int *i, t_shell *shell)
 		if (!var_name)
 			return (NULL);
 		(*i)++;
-		if (ft_strcmp(var_name, "?") == 0)
-		{
-			free(var_name);
-			return (ft_itoa(shell->exit_status));
-		}
-		var_value = get_var_value(var_name, shell);
-		free(var_name);
-		return (var_value);
+		return (var_name);
 	}
 	*i = start - 1;
 	return (ft_strdup("${"));
