@@ -2,7 +2,7 @@ NAME		= minishell
 
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
-INCLUDES	= -I./includes -I./libft
+INCLUDES	= -I./includes -I./libft/includes
 
 UNAME_S := $(shell uname -s)
 
@@ -14,7 +14,15 @@ ifeq ($(UNAME_S),Darwin)
 	endif
 	LDFLAGS += -lreadline
 else
-	LDFLAGS += -lreadline
+	READLINE_LIBS := $(shell pkg-config --libs readline 2>/dev/null)
+	ifneq ($(READLINE_LIBS),)
+		LDFLAGS += $(READLINE_LIBS)
+	else
+		LDFLAGS += -lreadline -lncurses
+		ifneq ($(wildcard /usr/lib*/libtinfo.so* /lib*/libtinfo.so*),)
+			LDFLAGS += -ltinfo
+		endif
+	endif
 endif
 
 SRC_DIR		= srcs
@@ -126,9 +134,11 @@ OBJ			= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJ_BONUS	= $(SRC_BONUS_BASE:$(SRC_DIR)/%.c=$(OBJ_DIR_BONUS)/%.o) \
 		$(SRC_BONUS_ONLY:$(SRC_BONUS_DIR)/%.c=$(OBJ_DIR_BONUS)/bonus/%.o)
 
-HEADERS		= $(wildcard $(INC_DIR)/*.h)
+LIBFT_HEADERS	= $(wildcard $(LIBFT_DIR)/*.h)
+HEADERS		= $(wildcard $(INC_DIR)/*.h) $(LIBFT_HEADERS)
 LIBFT_LIB	= $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
+BONUS_STAMP	= $(OBJ_DIR_BONUS)/.bonus
 
 BOLD   = \033[1m
 CYAN   = \033[0;36m
@@ -148,9 +158,12 @@ $(NAME): $(OBJ) $(LIBFT_LIB)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
 	@echo "$(BOLD)$(GREEN)✅ Minishell ready!$(RESET)\n"
 
-bonus: $(LIBFT_LIB) $(OBJ_BONUS)
+bonus: $(BONUS_STAMP)
+
+$(BONUS_STAMP): $(LIBFT_LIB) $(OBJ_BONUS)
 	@echo "$(BOLD)$(CYAN)🔗 Linking minishell (bonus)...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT_FLAGS) $(LDFLAGS) -o $(NAME)
+	@touch $(BONUS_STAMP)
 	@echo "$(BOLD)$(GREEN)✅ Minishell bonus ready!$(RESET)\n"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
@@ -187,5 +200,6 @@ fclean: clean
 	fi
 
 re: fclean all
+re_bonus: fclean bonus
 
-.PHONY: all bonus clean fclean re
+.PHONY: all bonus clean fclean re re_bonus

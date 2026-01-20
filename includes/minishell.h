@@ -28,7 +28,7 @@
 # include <fcntl.h>
 # include <limits.h>
 
-# include "../libft/libft.h"
+# include "libft.h"
 # include "colors.h"
 # include "signals.h"
 # include "token.h"
