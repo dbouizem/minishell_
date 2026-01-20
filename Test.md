@@ -58,6 +58,11 @@ Cette phase consiste à mettre en place l'ossature minimale d'un shell fonctionn
 | **stdin non-terminal** | `echo "ls" \| ./minishell` | Exécute `ls` puis quitte |
 | **Valgrind** | `valgrind ./minishell` | Pas de leaks (hors readline) |
 
+**Note env -i (comparaison Bash)**
+- `env -i bash` charge encore `/etc/profile` et peut recréer `PATH`, `LESSOPEN`, etc.
+- Pour une comparaison pure : `env -i bash --noprofile --norc`
+- Minishell peut n'initialiser que `PWD`, `SHLVL=1` et `_` : suffisant pour le sujet.
+
 ========================================================================================
 
 # 🟩 **PHASE 2 — Lexer (Tokenisation)**

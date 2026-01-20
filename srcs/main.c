@@ -64,8 +64,9 @@ int	main(int argc, char **argv, char **envp)
 	t_shell	shell;
 
 	(void)argc;
-	(void)argv;
 	init_shell(&shell, envp);
+	if (!envp || !*envp)
+		init_minimal_env(&shell, argv[0]);
 	setup_signals();
 	while (shell_cycle(&shell))
 		;

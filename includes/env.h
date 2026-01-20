@@ -18,6 +18,7 @@ char	*get_env_value(char *key, t_shell *shell);
 void	update_env_var(char *key, char *value, t_shell *shell);
 int		set_env_value(char *key, char *value, t_shell *shell);
 int		unset_env_value(char *key, t_shell *shell);
+void	init_minimal_env(t_shell *shell, char *argv0);
 
 int		is_valid_env_key(char *key);
 void	env_error(char *key, char *message);

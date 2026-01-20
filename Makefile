@@ -103,7 +103,8 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/env/env_array.c \
 		$(SRC_DIR)/env/env_list.c \
 		$(SRC_DIR)/env/env_utils.c \
-		$(SRC_DIR)/env/env_errors.c
+		$(SRC_DIR)/env/env_errors.c \
+		$(SRC_DIR)/env/env_minimal.c
 
 SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/core/processor.c \
