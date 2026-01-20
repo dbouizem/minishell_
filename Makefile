@@ -17,7 +17,7 @@ else
 	LDFLAGS += -lreadline
 endif
 
-SRC_DIR		= src
+SRC_DIR		= srcs
 SRC_BONUS_DIR	= srcs_bonus
 OBJ_DIR		= obj
 OBJ_DIR_BONUS	= obj_bonus
