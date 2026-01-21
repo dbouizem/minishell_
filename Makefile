@@ -66,29 +66,29 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/process_normal.c \
 		$(SRC_DIR)/expander/remove_quotes_final.c \
 		\
-		$(SRC_DIR)/executor/executor.c \
-		$(SRC_DIR)/executor/pipeline_exec.c \
-		$(SRC_DIR)/executor/pipeline_create.c \
-		$(SRC_DIR)/executor/pipeline_fork.c \
-		$(SRC_DIR)/executor/pipeline_wait.c \
-		$(SRC_DIR)/executor/pipeline_heredoc.c \
-		$(SRC_DIR)/executor/external_exec.c \
-		$(SRC_DIR)/executor/external_path_search.c \
-		$(SRC_DIR)/executor/exec_utils.c \
-		$(SRC_DIR)/executor/exec_wait.c \
-		$(SRC_DIR)/executor/exec_wait_status.c \
-		$(SRC_DIR)/executor/redirections_core.c \
-		$(SRC_DIR)/executor/redirections_state.c \
-		$(SRC_DIR)/executor/redirections_utils.c \
-		$(SRC_DIR)/executor/exec_errors.c \
-		$(SRC_DIR)/executor/heredoc_core.c \
-		$(SRC_DIR)/executor/heredoc_fd.c \
-		$(SRC_DIR)/executor/heredoc_tmp.c \
-		$(SRC_DIR)/executor/heredoc_expand.c \
-		$(SRC_DIR)/executor/heredoc_content.c \
-		$(SRC_DIR)/executor/heredoc_read.c \
-		$(SRC_DIR)/executor/heredoc_utils.c \
-		$(SRC_DIR)/executor/child_executor.c \
+		$(SRC_DIR)/executor/core/executor.c \
+		$(SRC_DIR)/executor/core/command_exec.c \
+		$(SRC_DIR)/executor/core/child_executor.c \
+		$(SRC_DIR)/executor/pipeline/pipeline_exec.c \
+		$(SRC_DIR)/executor/pipeline/pipeline_create.c \
+		$(SRC_DIR)/executor/pipeline/pipeline_fork.c \
+		$(SRC_DIR)/executor/pipeline/pipeline_wait.c \
+		$(SRC_DIR)/executor/pipeline/pipeline_heredoc.c \
+		$(SRC_DIR)/executor/external/external_exec.c \
+		$(SRC_DIR)/executor/external/path_search.c \
+		$(SRC_DIR)/executor/utils/exec_utils.c \
+		$(SRC_DIR)/executor/utils/exec_wait.c \
+		$(SRC_DIR)/executor/utils/exec_errors.c \
+		$(SRC_DIR)/executor/redirections/redirections_core.c \
+		$(SRC_DIR)/executor/redirections/redirections_state.c \
+		$(SRC_DIR)/executor/redirections/redirections_utils.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_core.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_fd.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_tmp.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_expand.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_content.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_read.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_utils.c \
 		\
 		$(SRC_DIR)/builtin/builtin.c \
 		$(SRC_DIR)/builtin/builtin_echo.c \
@@ -110,7 +110,8 @@ SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/core/processor.c \
 		$(SRC_DIR)/lexer/lexer_redir.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
-		$(SRC_DIR)/executor/executor.c, \
+		$(SRC_DIR)/executor/core/executor.c \
+		$(SRC_DIR)/executor/core/command_exec.c, \
 		$(SRC_BASE))
 
 SRC_BONUS_ONLY =\

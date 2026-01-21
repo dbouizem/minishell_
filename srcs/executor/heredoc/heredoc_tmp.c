@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 static int	build_heredoc_path(char *path, size_t size, int counter)
 {

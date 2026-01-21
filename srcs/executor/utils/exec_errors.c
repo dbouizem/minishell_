@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 void	handle_exec_error(char *cmd, t_shell *shell)
 {

@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 void	cleanup_child_pipes(int **pipes, int num_pipes, int cmd_index)
 {

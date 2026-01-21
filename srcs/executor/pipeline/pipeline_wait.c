@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 static int	wait_child_process(pid_t pid, int *status)
 {

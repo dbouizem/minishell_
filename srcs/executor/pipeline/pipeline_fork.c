@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 static void	setup_child_pipes(int **pipes, int cmd_index, int num_pipes,
 		t_shell *shell)

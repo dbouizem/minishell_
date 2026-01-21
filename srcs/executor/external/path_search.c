@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 static char	*build_full_path(t_path_search *search, size_t start,
 		size_t len)

@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 static void	close_cmd_heredocs(t_cmd *cmd)
 {
