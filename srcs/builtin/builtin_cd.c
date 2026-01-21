@@ -35,6 +35,11 @@ static int	handle_no_args(t_shell *shell, char *old_pwd)
 		free(old_pwd);
 		return (1);
 	}
+	if (home[0] == '\0')
+	{
+		free(old_pwd);
+		return (0);
+	}
 	if (chdir(home) == -1)
 	{
 		perror("minishell: cd");

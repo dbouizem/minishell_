@@ -1,28 +1,5 @@
 #include "../../includes/minishell.h"
 
-static void	print_exported_vars(t_shell *shell)
-{
-	int		i;
-	char	*equal_pos;
-
-	i = 0;
-	while (shell->env[i])
-	{
-		equal_pos = ft_strchr(shell->env[i], '=');
-		ft_putstr_fd("declare -x ", STDOUT_FILENO);
-		if (equal_pos)
-		{
-			write(STDOUT_FILENO, shell->env[i], equal_pos - shell->env[i]);
-			ft_putstr_fd("=\"", STDOUT_FILENO);
-			ft_putstr_fd(equal_pos + 1, STDOUT_FILENO);
-			ft_putendl_fd("\"", STDOUT_FILENO);
-		}
-		else
-			ft_putendl_fd(shell->env[i], STDOUT_FILENO);
-		i++;
-	}
-}
-
 static int	is_invalid_identifier(char *str, char stop_char)
 {
 	int	i;

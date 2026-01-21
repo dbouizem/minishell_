@@ -13,6 +13,7 @@ libft/libft.a
 libft/*.o
 
 # === Debug and logs ===
+*.pdf
 *.log
 *.gch
 *.swp
@@ -37,4 +38,4 @@ vgcore.*
 tests/output/
 tests/tmp/
 
-D2.c
+

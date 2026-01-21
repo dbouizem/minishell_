@@ -36,7 +36,7 @@ static void	print_sigquit_message(int status, int echoctl)
 #endif
 
 void	report_signal_status(int sig, int status, t_shell *shell,
-		int *printed)
+			int *printed)
 {
 	int	echoctl;
 

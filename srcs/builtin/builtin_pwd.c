@@ -9,23 +9,18 @@ static char	*getcwd_dynamic(void)
 	if (buf)
 		return (buf);
 	size = 128;
-	buf = malloc(size);
-	if (!buf)
-		return (NULL);
-	while (!getcwd(buf, size))
+	while (1)
 	{
-		if (errno != ERANGE)
-		{
-			free(buf);
-			return (NULL);
-		}
-		free(buf);
-		size *= 2;
 		buf = malloc(size);
 		if (!buf)
 			return (NULL);
+		if (getcwd(buf, size))
+			return (buf);
+		free(buf);
+		if (errno != ERANGE)
+			return (NULL);
+		size *= 2;
 	}
-	return (buf);
 }
 
 int	builtin_pwd(void)

@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:44:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 18:44:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/21 04:33:19 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,10 @@ int	builtin_exit(char **args, t_shell *shell)
 	print_exit_prompt(shell);
 	if (!args[1])
 	{
-		status = 0;
 		if (shell)
 			status = shell->exit_status;
+		else
+			status = 0;
 		return (set_exit_status(shell, status, 1));
 	}
 	if (!is_numeric_arg(args[1]))

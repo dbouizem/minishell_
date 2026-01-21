@@ -329,6 +329,14 @@ Cette phase transforme les commandes en **processus réels** via `fork`, `execve
 | **Restaurer stdout** | `echo hello ; ls` | `ls` s'affiche normalement |
 | **Redir multiple** | `echo a > f1 > f2` | Seul `f2` contient `a` |
 
+# 🆚 **Tests comparatifs Bash / Minishell**
+
+### 1. **Commande trouvee dans PATH mais c'est un dossier**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 6.1 | `mkdir -p /tmp/ms_pathdir/dircmd`<br>`export PATH=/tmp/ms_pathdir:$PATH`<br>`dircmd`<br>`echo $?` | Message: `is a directory`<br>Code retour: `126` | Doit afficher l'erreur et `$?=126` |
+| 6.2 | `rm -rf /tmp/ms_pathdir` | Nettoyage | Nettoyage |
+
 ========================================================================================
 
 # 🟩 **PHASE 6 — Builtins**
@@ -376,6 +384,44 @@ Les builtins sont des commandes internes au shell, exécutées **sans `execve`**
 | **exit erreur** | `exit abc` | `numeric argument required` + `exit 2` |
 | **exit multi args** | `exit 1 2` | `too many arguments` + **NE QUITTE PAS** + `$?=1` |
 | **builtin en pipeline** | `export A=5 \| cat` | `A` n'existe pas dans le shell parent |
+
+# 🆚 **Tests comparatifs Bash / Minishell**
+
+Cette section présente des tests spécifiques pour comparer le comportement de **minishell** avec **bash** sur des cas particuliers.
+
+##  **Tableau de comparaison**
+
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+
+### 1. **Tri de `export`**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 1.1 | `export Z=1 A=2 M=3` puis `export` | Variables triées alphabétiquement : `A=2`, `M=3`, `Z=1` | Même ordre alphabétique |
+
+### 2. **`env` avec arguments**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 2.1 | `env FOO=bar echo $?` | Affiche environnement + `FOO=bar`, puis `echo $?` affiche `0` | 1. Affiche env avec `FOO=bar`<br>2. `$?` = `0` |
+| 2.2 | `env FOO=bar BAR=baz ls` | Exécute `ls` avec variables temporaires | `ls` exécuté avec `FOO` et `BAR` |
+
+### 3. **`env` + commande avec sous-shell**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 3.1 | `env FOO=bar sh -c 'echo $FOO'` | Affiche `bar` | Doit afficher `bar` |
+| 3.2 | `env FOO=bar ./script.sh` (script: `echo $FOO`) | Affiche `bar` | Doit afficher `bar` |
+
+### 4. **`cd` avec `HOME` vide**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 4.1 | `export HOME=` puis `cd` | Erreur: `HOME not set`<br>Code retour: `1` | Erreur similaire + code `1` |
+| 4.2 | `unset HOME` puis `cd` | Même erreur | Même comportement |
+
+### 5. **`export` avec identifiant invalide**
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| 5.1 | `export 1A=2` | Erreur: `not a valid identifier`<br>Code retour: `1` | Rejet avec erreur + code `1` |
+| 5.2 | `export A=2 B=3 1C=4 D=5` | Erreur à `1C=4`, `D=5` non exécuté | S'arrête à première erreur |
 
 ========================================================================================
 

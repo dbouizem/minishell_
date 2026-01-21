@@ -78,6 +78,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/external/path_search.c \
 		$(SRC_DIR)/executor/utils/exec_utils.c \
 		$(SRC_DIR)/executor/utils/exec_wait.c \
+		$(SRC_DIR)/executor/utils/exec_signal_status.c \
 		$(SRC_DIR)/executor/utils/exec_errors.c \
 		$(SRC_DIR)/executor/redirections/redirections_core.c \
 		$(SRC_DIR)/executor/redirections/redirections_state.c \
@@ -96,7 +97,10 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/builtin/builtin_pwd.c \
 		$(SRC_DIR)/builtin/builtin_cd.c \
 		$(SRC_DIR)/builtin/builtin_env.c \
+		$(SRC_DIR)/builtin/builtin_env_assign.c \
+		$(SRC_DIR)/builtin/builtin_env_dup.c \
 		$(SRC_DIR)/builtin/builtin_export.c \
+		$(SRC_DIR)/builtin/builtin_export_print.c \
 		$(SRC_DIR)/builtin/builtin_unset.c \
 		$(SRC_DIR)/builtin/errors_builtin.c \
 		\
