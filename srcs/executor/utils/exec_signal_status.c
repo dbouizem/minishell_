@@ -1,17 +1,24 @@
 #include "../../../includes/minishell.h"
 
+#ifdef ECHOCTL
+
+static int	is_echoctl_enabled(void)
+{
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == -1)
+		return (0);
+	return ((term.c_lflag & ECHO) && (term.c_lflag & ECHOCTL));
+}
+
+#else
+
 static int	is_echoctl_enabled(void)
 {
 	return (0);
 }
 
-static void	print_sigint_message(int echoctl)
-{
-	if (echoctl)
-		ft_putstr_fd("\n", STDERR_FILENO);
-	else
-		ft_putstr_fd("^C\n", STDERR_FILENO);
-}
+#endif
 
 #ifdef WCOREDUMP
 
@@ -24,6 +31,7 @@ static void	print_sigquit_message(int status, int echoctl)
 	else
 		ft_putstr_fd("Quit\n", STDERR_FILENO);
 }
+
 #else
 
 static void	print_sigquit_message(int status, int echoctl)
@@ -33,6 +41,7 @@ static void	print_sigquit_message(int status, int echoctl)
 		ft_putstr_fd("^\\", STDERR_FILENO);
 	ft_putstr_fd("Quit\n", STDERR_FILENO);
 }
+
 #endif
 
 void	report_signal_status(int sig, int status, t_shell *shell,
@@ -45,7 +54,10 @@ void	report_signal_status(int sig, int status, t_shell *shell,
 	echoctl = is_echoctl_enabled();
 	if (sig == SIGINT && (!printed || !printed[0]))
 	{
-		print_sigint_message(echoctl);
+		if (echoctl)
+			ft_putstr_fd("\n", STDERR_FILENO);
+		else
+			ft_putstr_fd("^C\n", STDERR_FILENO);
 		if (printed)
 			printed[0] = 1;
 	}

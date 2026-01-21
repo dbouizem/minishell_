@@ -30,13 +30,14 @@
 
 # include "libft.h"
 # include "colors.h"
-# include "signals.h"
 # include "token.h"
 # include "parser.h"
 # include "expander.h"
 # include "executor.h"
 # include "builtin.h"
 # include "env.h"
+
+extern volatile sig_atomic_t	g_signal;
 
 typedef struct s_ast		t_ast;
 

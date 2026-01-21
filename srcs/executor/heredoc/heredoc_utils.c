@@ -1,19 +1,24 @@
 #include "../../../includes/minishell.h"
 
-static int	should_copy_char(char c, char *quote)
+#ifdef ECHOCTL
+
+static int	read_echoctl_flag(void)
 {
-	if (c == '\'' || c == '\"')
-	{
-		if (*quote == 0)
-			*quote = c;
-		else if (*quote == c)
-			*quote = 0;
-		else
-			return (1);
-		return (0);
-	}
-	return (1);
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == 0)
+		return ((term.c_lflag & ECHO) && (term.c_lflag & ECHOCTL));
+	return (0);
 }
+#else
+
+static int	read_echoctl_flag(void)
+{
+	return (0);
+}
+#endif
+
+static int	g_heredoc_echoctl;
 
 void	restore_signals(struct sigaction *old_int,
 		struct sigaction *old_quit)
@@ -26,7 +31,13 @@ void	heredoc_sigint_handler(int signo)
 {
 	(void)signo;
 	g_signal = SIGINT;
-	write(STDOUT_FILENO, "^C\n", 3);
+	if (isatty(STDIN_FILENO))
+	{
+		if (!g_heredoc_echoctl)
+			write(STDOUT_FILENO, "^C\n", 3);
+		else
+			write(STDOUT_FILENO, "\n", 1);
+	}
 }
 
 void	setup_heredoc_signals(struct sigaction *old_int,
@@ -34,6 +45,7 @@ void	setup_heredoc_signals(struct sigaction *old_int,
 {
 	struct sigaction	sa;
 
+	g_heredoc_echoctl = read_echoctl_flag();
 	sa.sa_handler = heredoc_sigint_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -42,29 +54,4 @@ void	setup_heredoc_signals(struct sigaction *old_int,
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGQUIT, &sa, old_quit);
-}
-
-char	*remove_quote(char *str)
-{
-	int		i;
-	int		j;
-	char	quote;
-	char	*res;
-
-	if (!str)
-		return (NULL);
-	res = malloc(sizeof(char) * (ft_strlen(str) + 1));
-	if (!res)
-		return (NULL);
-	i = 0;
-	j = 0;
-	quote = 0;
-	while (str[i])
-	{
-		if (should_copy_char(str[i], &quote))
-			res[j++] = str[i];
-		i++;
-	}
-	res[j] = '\0';
-	return (res);
 }

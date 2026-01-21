@@ -1,9 +1,34 @@
 #include "../../includes/minishell.h"
 
+#ifdef ECHOCTL
+
+static int	is_echoctl_enabled(void)
+{
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == -1)
+		return (0);
+	return ((term.c_lflag & ECHO) && (term.c_lflag & ECHOCTL));
+}
+#else
+
+static int	is_echoctl_enabled(void)
+{
+	return (0);
+}
+
+#endif
+
 void	handle_sigint(int signo)
 {
 	g_signal = signo;
-	write(STDOUT_FILENO, "^C\n", 3);
+	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
+		return ;
+	rl_done = 1;
+	if (!is_echoctl_enabled())
+		write(STDOUT_FILENO, "^C\n", 3);
+	else
+		write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();

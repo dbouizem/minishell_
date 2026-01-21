@@ -20,7 +20,6 @@ int		builtin_unset(char **args, t_shell *shell);
 void	print_cd_error(char *arg, char *msg);
 void	print_export_error(char *arg);
 void	print_unset_error(char *arg);
-void	print_env_error(char *arg);
 void	print_exit_error(char *arg, char *error_type);
 
 void	print_env(t_shell *shell);

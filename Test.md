@@ -473,6 +473,11 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 | **Redir + heredoc** | `cat << EOF > out` | `out` contient le texte |
 | **Multi heredoc** | `cat << A << B` | Seul le dernier est utilisé |
 
+**Note Signaux & Heredoc (validation)**
+- `Ctrl+C` au prompt / texte / cmd / pipe / heredoc → retour prompt + `$?=130`
+- `^C` s’affiche **une seule fois** : si `ECHO`+`ECHOCTL` actifs, c’est le terminal qui l’affiche; sinon minishell l’imprime
+- En mode non‑interactif, le handler SIGINT **n’appelle pas** `readline` (pas d’UB)
+
 ========================================================================================
 
 # 🟪 **PHASE 8 — Opérateurs logiques et parenthèses (Bonus)**

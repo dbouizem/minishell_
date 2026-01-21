@@ -89,6 +89,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_expand.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_content.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_read.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_quote.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_utils.c \
 		\
 		$(SRC_DIR)/builtin/builtin.c \
@@ -106,7 +107,9 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/env/env_array.c \
 		$(SRC_DIR)/env/env_list.c \
+		$(SRC_DIR)/env/env_get.c \
 		$(SRC_DIR)/env/env_utils.c \
+		$(SRC_DIR)/env/env_unset.c \
 		$(SRC_DIR)/env/env_errors.c \
 		$(SRC_DIR)/env/env_minimal.c
 

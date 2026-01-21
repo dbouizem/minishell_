@@ -25,13 +25,6 @@ void	print_unset_error(char *arg)
 	ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 }
 
-void	print_env_error(char *arg)
-{
-	ft_putstr_fd("minishell: env: ", STDERR_FILENO);
-	ft_putstr_fd(arg, STDERR_FILENO);
-	ft_putendl_fd(": does not take arguments", STDERR_FILENO);
-}
-
 void	print_exit_error(char *arg, char *error_type)
 {
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
