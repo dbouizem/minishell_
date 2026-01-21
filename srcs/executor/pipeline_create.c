@@ -64,8 +64,16 @@ void	close_all_pipes(int **pipes, int num_pipes)
 	i = 0;
 	while (i < num_pipes)
 	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
+		if (pipes[i][0] >= 0)
+		{
+			close(pipes[i][0]);
+			pipes[i][0] = -1;
+		}
+		if (pipes[i][1] >= 0)
+		{
+			close(pipes[i][1]);
+			pipes[i][1] = -1;
+		}
 		i++;
 	}
 }
@@ -79,8 +87,10 @@ void	cleanup_pipeline_resources(t_pipeline_data *data)
 		i = 0;
 		while (i < data->num_pipes)
 		{
-			close(data->pipes[i][0]);
-			close(data->pipes[i][1]);
+			if (data->pipes[i][0] >= 0)
+				close(data->pipes[i][0]);
+			if (data->pipes[i][1] >= 0)
+				close(data->pipes[i][1]);
 			free(data->pipes[i]);
 			i++;
 		}
