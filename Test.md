@@ -561,7 +561,7 @@ d'évaluation, **sans créer de sous-shells**.
 ## 📝 Notes pour l'implémentation et la soutenance
 
 *   **Priorité** : Dans `A && B || C`, l'évaluation est `(A && B) || C`. Les parenthèses permettent de forcer `A && (B || C)`.
-*   **Pas de sous-shell** : C'est le point délicat du bonus. Il ne faut pas `fork()` pour les parenthèses, mais simplement évaluer récursivement leur contenu dans le contexte d'exécution courant.
+*   **Pas de sous-shell** : C'est le point délicat du bonus. Il ne faut pas `fork()` pour les parenthèses, mais simplement évaluer récursivement leur contenu dans le contexte d'exécution courant. Les cas `cmd | (cmd2 && cmd3)` ou `(cmd1) | cmd2` ne sont pas supportés (erreur de syntaxe).
 *   **Gestion d'erreur** : En cas d'erreur de syntaxe, afficher un message sur `stderr` (ex: `minishell: syntax error near unexpected token '&&'`), ne pas exécuter la ligne, et mettre `$?` à `2` (comme Bash).
 *   **Tests** : Durant la soutenance, exécuter ces tests en **parallèle avec Bash** pour prouver l'identité des comportements.
 
