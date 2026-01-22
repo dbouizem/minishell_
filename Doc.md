@@ -560,3 +560,240 @@ expand_commands()
     │
     └─→ Retourne les commandes expandées
 ```
+
+---
+========================================================================================
+# Logique de l'exécution (Executor)
+
+## Flux global (commande simple ou pipeline)
+
+```
+input utilisateur
+    ↓
+tokens → parse → t_cmd
+    ↓
+execute()
+    ├─→ expand_commands()
+    ├─→ remove_quotes_from_command()
+    └─→ execute_sequence()
+          ├─→ pipeline ? execute_pipeline()
+          └─→ sinon execute_command()
+```
+
+---
+
+## Étape 1 : Expansion + suppression des quotes
+
+- `expand_commands()` remplace les variables dans args + redirections
+- `remove_quotes_from_command()` enlève les quotes restantes
+
+---
+
+## Étape 2 : Commande simple (sans pipe)
+
+```
+execute_command()
+    ├─ save_redirections()
+    ├─ setup_redirections()
+    ├─ builtin ? execute_builtin()
+    └─ sinon execute_external()
+       → restore_redirections()
+```
+
+**Important** : les builtins sont exécutés **dans le parent** quand ils ne
+sont pas dans un pipeline (ex: `cd`, `export`).
+
+---
+
+## Étape 3 : Commande externe
+
+1. Si la commande contient `/` → chemin direct
+2. Sinon → recherche dans `$PATH`
+3. `fork()` + `execve()`
+4. `waitpid()` met à jour `$?`
+
+**Codes d'erreur classiques :**
+
+| Cas | Code |
+|-----|------|
+| Commande introuvable | 127 |
+| Permission refusée / dossier | 126 |
+
+---
+========================================================================================
+# Redirections
+
+## Types gérés
+
+| Opérateur | Effet |
+|----------|-------|
+| `<`  | redirige STDIN depuis un fichier |
+| `>`  | écrase / crée un fichier |
+| `>>` | append dans un fichier |
+| `<<` | heredoc (lecture interactive) |
+
+---
+
+## Ordre d'application
+
+1. Préparer tous les heredocs
+2. Appliquer les redirections dans l'ordre
+
+Si une redirection échoue → erreur + annulation propre.
+
+---
+========================================================================================
+# Heredoc (<<)
+
+## Flux interne
+
+```
+<< DELIM
+    ↓
+open /tmp/.minishell_heredoc_*
+    ↓
+lecture ligne par ligne
+    ↓
+si ligne == DELIM → stop
+sinon → écrit dans le fichier temporaire
+```
+
+---
+
+## Expansion dans heredoc
+
+- Si le délimiteur est **quoté** → aucune expansion
+- Sinon → `$VAR` est remplacé
+
+---
+
+## Ctrl-C (SIGINT)
+
+Pendant un heredoc :
+
+- arrêt immédiat
+- code retour `130`
+- fichier temporaire supprimé
+
+---
+========================================================================================
+# Pipes (|)
+
+## Logique générale
+
+```
+cmd1 | cmd2 | cmd3
+    ↓
+création de N-1 pipes
+    ↓
+fork de chaque commande
+    ↓
+dup2() des extrémités
+    ↓
+wait de tous les enfants
+```
+
+**$?** = status de la dernière commande du pipeline.
+
+---
+========================================================================================
+# Signaux (SIGINT / SIGQUIT)
+
+## En mode interactif (prompt)
+
+- `Ctrl-C` : nouvelle ligne + prompt propre
+- `Ctrl-\` : ignoré
+
+---
+
+## Pendant une commande
+
+- Enfants → signaux par défaut
+- Parent → ignore pendant le wait, puis affiche `^C` / `^\\` si nécessaire
+
+---
+
+## Pendant un heredoc
+
+- Handler spécial → `g_signal = SIGINT`
+- Interruption immédiate du heredoc
+
+---
+========================================================================================
+# Bonus : AST + opérateurs logiques (&& / ||)
+
+## Parsing (priorité)
+
+```
+parse_logical()
+    ├─ parse_primary()
+    │    └─ parse_pipeline()
+    └─ join AND / OR
+```
+
+✅ Le pipeline est traité avant `&&` / `||`  
+✅ Associativité gauche (comme bash)
+
+---
+
+## Exécution (short-circuit)
+
+- `A && B` → exécute B seulement si A == 0
+- `A || B` → exécute B seulement si A != 0
+
+---
+
+⚠️ **Limite actuelle**
+
+Les parenthèses servent à la priorité, mais **pas** à créer un subshell.
+`cmd | (cmd2 && cmd3)` est donc une erreur de syntaxe.
+
+---
+========================================================================================
+# Bonus : Wildcards (*)
+
+## Règles appliquées
+
+- Expansion uniquement dans les **arguments**
+- `*` ignoré à l'intérieur des quotes
+- Si aucun match → on garde le pattern tel quel
+- Résultats triés par ordre alphabétique
+- Les fichiers cachés (`.xxx`) ne sont matchés que si le pattern commence par `.`
+
+---
+
+## Exemple
+
+```
+echo *.c
+```
+
+→ devient `echo file1.c file2.c ...`
+
+---
+========================================================================================
+# Tests rapides (exécution + bonus)
+
+```
+echo "'$USER'"
+echo '"$USER"'
+```
+
+Attendu :
+
+```
+'John'
+"$USER"
+```
+
+```
+echo hello | grep h && echo OK
+cat file | grep a || echo FAIL
+```
+
+```
+sleep 10 && echo OK
+# Ctrl-C → ne doit PAS afficher OK
+```
+
+---
