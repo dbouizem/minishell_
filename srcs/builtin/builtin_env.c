@@ -64,7 +64,8 @@ static int	env_basic(t_shell *shell, char **args)
 {
 	if (!ENV_BONUS_ENABLED && args[1])
 	{
-		ft_putendl_fd("minishell: env: too many arguments", STDERR_FILENO);
+		ft_putendl_fd("minishell: env: does not take arguments",
+			STDERR_FILENO);
 		return (1);
 	}
 	return (print_env_list(shell->env_list));
