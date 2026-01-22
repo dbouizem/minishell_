@@ -441,8 +441,8 @@ Cette section présente des tests spécifiques pour comparer le comportement de 
 | B2 | `env FOO=bar ; echo $?` | Affiche env avec `FOO=bar`, retourne `0` | Affiche env avec `FOO=bar`, `$?=0` |
 | B3 | `env FOO=bar sh -c 'echo $FOO' ; echo $?` | Affiche `bar`, retourne `0` | Affiche `bar`, `$?=0` |
 | B4 | `env -i FOO=bar sh -c 'echo \"$FOO|$HOME\"' ; echo $?` | Affiche `bar|`, retourne `0` | Affiche `bar|`, `$?=0` |
-| B5 | `env -i sh -c 'echo ok' ; echo $?` | Affiche `ok`, retourne `0` (fallback `PATH`) | Affiche `ok`, `$?=0` |
-| B6 | `env PATH= sh -c 'echo ok' ; echo $?` | Erreur : `command not found`, `$?=127` | Erreur similaire, `$?=127` |
+| B5 | `env -i PATH=/usr/bin:/bin sh -c 'echo ok' ; echo $?` | Affiche `ok`, retourne `0` | Affiche `ok`, `$?=0` |
+| B6 | `env -i sh -c 'echo ok' ; echo $?` | Erreur : `command not found`, `$?=127` | Erreur similaire, `$?=127` |
 
 ========================================================================================
 
@@ -455,7 +455,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 ### Signaux interactifs
 - `Ctrl+C` → affiche nouveau prompt sur nouvelle ligne (ne quitte pas)
 - `Ctrl+D` → quitte le shell
-- `Ctrl+\` → ne fait rien (pas de core dump)
+- `Ctrl+\` → rien au prompt vide ; **quitte** si un texte est en cours (fiche d'éval)
 
 ### Signaux en exécution
 - **Enfant** → comportement par défaut (SIGINT tue le processus)
@@ -471,7 +471,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 
 ##  Idée globale
 
-→ Une variable globale `volatile sig_atomic_t g_signal_received` stocke le signal.
+→ Une variable globale `volatile sig_atomic_t g_signal` stocke le signal.
 → Les handlers modifient cette variable, le shell réagit ensuite.
 → Heredoc = partie la plus technique : fichier temporaire + `readline` + signaux.
 
@@ -484,6 +484,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 | **Ctrl+\ prompt vide** | `Ctrl+\` | Rien |
 | **Ctrl+C avec texte** | Taper `abc` puis `Ctrl+C` | Efface la ligne, nouveau prompt |
 | **Ctrl+D avec texte** | Taper `abc` puis `Ctrl+D` | Rien (ne quitte pas) |
+| **Ctrl+\\ avec texte** | Taper `abc` puis `Ctrl+\\` | Quitte minishell (RELAUNCH) |
 | **Ctrl+C cmd bloquante** | `cat` puis `Ctrl+C` | Tue `cat`, revient au prompt |
 | **Ctrl+\ cmd bloquante** | `cat` puis `Ctrl+\` | Tue `cat` avec `Quit (core dumped)` + `$?=131` |
 | **Heredoc simple** | `cat << EOF` | Lit jusqu'à `EOF` |
@@ -498,6 +499,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 - `Ctrl+C` au prompt / texte / cmd / pipe / heredoc → retour prompt + `$?=130`
 - `^C` s’affiche **une seule fois** : si `ECHO`+`ECHOCTL` actifs, c’est le terminal qui l’affiche; sinon minishell l’imprime
 - En mode non‑interactif, le handler SIGINT **n’appelle pas** `readline` (pas d’UB)
+ - `Ctrl+\\` avec texte quitte minishell (comportement demandé par la fiche d'éval)
 
 
 
@@ -564,6 +566,12 @@ d'évaluation, **sans créer de sous-shells**.
 *   **Pas de sous-shell** : C'est le point délicat du bonus. Il ne faut pas `fork()` pour les parenthèses, mais simplement évaluer récursivement leur contenu dans le contexte d'exécution courant. Les cas `cmd | (cmd2 && cmd3)` ou `(cmd1) | cmd2` ne sont pas supportés (erreur de syntaxe).
 *   **Gestion d'erreur** : En cas d'erreur de syntaxe, afficher un message sur `stderr` (ex: `minishell: syntax error near unexpected token '&&'`), ne pas exécuter la ligne, et mettre `$?` à `2` (comme Bash).
 *   **Tests** : Durant la soutenance, exécuter ces tests en **parallèle avec Bash** pour prouver l'identité des comportements.
+*   **PATH absent (fiche d'éval)** : Si `PATH` est unset, la recherche de commande ne se fait pas (`command not found`). Pour tester un `env -i` qui exécute une commande, il faut soit fixer `PATH`, soit utiliser un chemin absolu.
+
+    **Exemples (fix PATH manuel)** :
+    - `export PATH=/usr/bin:/bin`
+    - `env -i PATH=/usr/bin:/bin sh -c 'echo ok'`
+    - `env -i /bin/sh -c 'echo ok'`
 
 ========================================================================================
 
@@ -869,7 +877,7 @@ echo $USER          # john
 echo "$USER"        # john
 echo '$USER'        # $USER
 echo $USER$HOME     # john/home/john
-echo ABC${USER}DEF  # ABC${USER}DEF (${} non supporté)
+echo ABC${USER}DEF  # ABC<USER>DEF (${ } supporté)
 ```
 
 ## Tests de heredoc
@@ -900,14 +908,14 @@ printf '|\n' | ./minishell > /tmp/ms_out 2> /tmp/ms_err
 cat /tmp/ms_err
 # Attendu: minishell: syntax error near unexpected token |
 
-# 2) Dossier dans PATH -> command not found
+# 2) Dossier dans PATH -> Is a directory
 rm -rf /tmp/msdir
 mkdir -p /tmp/msdir/hello
 PATH=/tmp/msdir ./minishell
 # Dans minishell:
 # hello
 # echo $?
-# Attendu: minishell: hello: command not found + 127
+# Attendu: minishell: hello: Is a directory + 126
 
 # 3) PATH non-exec puis exec
 mkdir -p /tmp/ms_test
