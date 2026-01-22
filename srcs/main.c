@@ -14,13 +14,6 @@
 
 volatile sig_atomic_t	g_signal = 0;
 
-static char	*get_input(t_shell *shell)
-{
-	if (shell->interactive)
-		return (read_input());
-	return (read_input_non_interactive());
-}
-
 static int	handle_sigint(t_shell *shell, char *input)
 {
 	shell->exit_status = 130;
@@ -28,6 +21,16 @@ static int	handle_sigint(t_shell *shell, char *input)
 	shell->current_input = NULL;
 	g_signal = 0;
 	return (1);
+}
+
+static int	handle_sigquit(t_shell *shell, char *input)
+{
+	shell->exit_status = 131;
+	shell->should_exit = 1;
+	free(input);
+	shell->current_input = NULL;
+	g_signal = 0;
+	return (0);
 }
 
 static int	finish_cycle(t_shell *shell, char *input)
@@ -52,10 +55,15 @@ static int	shell_cycle(t_shell *shell)
 	char	*input;
 
 	g_signal = 0;
-	input = get_input(shell);
+	if (shell->interactive)
+		input = read_input();
+	else
+		input = read_input_non_interactive();
 	shell->current_input = input;
 	if (g_signal == SIGINT)
 		return (handle_sigint(shell, input));
+	if (g_signal == SIGQUIT)
+		return (handle_sigquit(shell, input));
 	return (finish_cycle(shell, input));
 }
 
