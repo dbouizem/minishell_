@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 20:40:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2026/01/21 20:40:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/22 02:47:27 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,13 @@ int	build_pattern_mask_bonus(const char *arg, char **pattern,
 	build.pattern[build.j] = '\0';
 	build.mask[build.j] = '\0';
 	*has_wc = build.has_wc;
+	if (!build.has_wc)
+	{
+		free(*pattern);
+		*pattern = ft_strdup(arg);
+		if (!*pattern)
+			return (free(*mask), 0);
+	}
 	return (1);
 }
 

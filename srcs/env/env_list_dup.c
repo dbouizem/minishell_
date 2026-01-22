@@ -70,13 +70,19 @@ t_env	*dup_env_list(t_env *env_list)
 int	print_env_list(t_env *env_list)
 {
 	t_shell	tmp_shell;
+	int		i;
 
 	tmp_shell.env_list = env_list;
 	tmp_shell.env = NULL;
 	env_list_to_array(&tmp_shell);
 	if (env_list && !tmp_shell.env)
 		return (1);
-	print_env(&tmp_shell);
+	i = 0;
+	while (tmp_shell.env && tmp_shell.env[i])
+	{
+		ft_putendl_fd(tmp_shell.env[i], STDOUT_FILENO);
+		i++;
+	}
 	free_string_array(tmp_shell.env);
 	return (0);
 }

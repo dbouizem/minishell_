@@ -39,7 +39,7 @@
 
 extern volatile sig_atomic_t	g_signal;
 
-typedef struct s_ast		t_ast;
+typedef struct s_ast	t_ast;
 
 typedef struct s_shell
 {

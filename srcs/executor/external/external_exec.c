@@ -8,8 +8,6 @@ static char	*get_cmd_path(char *cmd, t_shell *shell, int *path_error)
 	if (ft_strchr(cmd, '/'))
 		return (handle_absolute_path(cmd));
 	path = get_env_value("PATH", shell);
-	if (!path)
-		return (NULL);
 	return (search_in_paths(path, cmd, path_error));
 }
 

@@ -1,19 +1,5 @@
 #include "../../includes/minishell.h"
 
-static t_env	*find_env_node(t_env *env_list, char *key)
-{
-	t_env	*env;
-
-	env = env_list;
-	while (env)
-	{
-		if (ft_strcmp(env->key, key) == 0)
-			return (env);
-		env = env->next;
-	}
-	return (NULL);
-}
-
 static int	update_existing_env(t_env *env, t_shell *shell, char *value)
 {
 	free(env->value);
@@ -64,4 +50,20 @@ int	set_env_value(char *key, char *value, t_shell *shell)
 	if (!key || !shell)
 		return (0);
 	return (update_env_var(key, value, shell));
+}
+
+char	*get_env_value(char *key, t_shell *shell)
+{
+	t_env	*env;
+
+	if (!key || !shell)
+		return (NULL);
+	env = shell->env_list;
+	while (env)
+	{
+		if (env->key && ft_strcmp(env->key, key) == 0)
+			return (env->value);
+		env = env->next;
+	}
+	return (NULL);
 }

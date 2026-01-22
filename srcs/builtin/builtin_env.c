@@ -1,18 +1,10 @@
 #include "../../includes/minishell.h"
 
-void	print_env(t_shell *shell)
-{
-	int	i;
-
-	if (!shell || !shell->env)
-		return ;
-	i = 0;
-	while (shell->env[i])
-	{
-		ft_putendl_fd(shell->env[i], STDOUT_FILENO);
-		i++;
-	}
-}
+#ifdef BONUS
+# define ENV_BONUS_ENABLED 1
+#else
+# define ENV_BONUS_ENABLED 0
+#endif
 
 static int	init_env_context(t_shell *shell, char **args,
 				int *i, t_env **tmp_env)
@@ -68,29 +60,33 @@ static int	env_execute(t_shell *shell, t_env *tmp_env, char **args, int i)
 	return (status);
 }
 
+static int	env_basic(t_shell *shell, char **args)
+{
+	if (!ENV_BONUS_ENABLED && args[1])
+	{
+		ft_putendl_fd("minishell: env: too many arguments", STDERR_FILENO);
+		return (1);
+	}
+	return (print_env_list(shell->env_list));
+}
+
 int	builtin_env(char **args, t_shell *shell)
 {
 	t_env	*tmp_env;
 	int		i;
-	int		status;
 
 	if (!shell)
 		return (1);
-	if (!args[1])
-	{
-		print_env(shell);
-		return (0);
-	}
+	if (!ENV_BONUS_ENABLED || !args[1])
+		return (env_basic(shell, args));
 	if (init_env_context(shell, args, &i, &tmp_env) != 0)
 		return (1);
 	if (apply_env_assignments(&tmp_env, args, &i) != 0)
 	{
 		free_env_list(tmp_env);
-		shell->exit_status = 1;
 		return (1);
 	}
-	status = env_execute(shell, tmp_env, args, i);
+	i = env_execute(shell, tmp_env, args, i);
 	free_env_list(tmp_env);
-	shell->exit_status = status;
-	return (status);
+	return (i);
 }

@@ -1,16 +1,5 @@
 #include "../../includes/minishell.h"
 
-static t_env	*find_env_node(t_env *env_list, char *key)
-{
-	while (env_list)
-	{
-		if (env_list->key && ft_strcmp(env_list->key, key) == 0)
-			return (env_list);
-		env_list = env_list->next;
-	}
-	return (NULL);
-}
-
 static void	append_env_node(t_env **env_list, t_env *node)
 {
 	t_env	*tail;

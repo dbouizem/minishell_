@@ -13,6 +13,9 @@ typedef struct s_env
 t_env	*env_array_to_list(char **envp);
 void	env_list_to_array(t_shell *shell);
 void	free_env_list(t_env *env);
+t_env	*find_env_node(t_env *env_list, char *key);
+t_env	*dup_env_list(t_env *env_list);
+int		print_env_list(t_env *env_list);
 
 char	*get_env_value(char *key, t_shell *shell);
 int		update_env_var(char *key, char *value, t_shell *shell);

@@ -423,6 +423,27 @@ Cette section présente des tests spécifiques pour comparer le comportement de 
 | 5.1 | `export 1A=2` | Erreur: `not a valid identifier`<br>Code retour: `1` | Rejet avec erreur + code `1` |
 | 5.2 | `export A=2 B=3 1C=4 D=5` | Erreur à `1C=4`, `D=5` non exécuté | S'arrête à première erreur |
 
+### 6. **Tests comparatifs ENV — Mandatory vs Bonus**
+
+**🔹 Mandatory (make)**
+
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| M1 | `env ; echo $?` | Affiche environnement, retourne `0` | Affiche env, `$?=0` |
+| M2 | `env -i ; echo $?` | Erreur : `too many arguments`, retourne `1` | Erreur similaire, `$?=1` |
+| M3 | `env FOO=bar ; echo $?` | Erreur : arguments invalides, retourne `1` | Erreur similaire, `$?=1` |
+
+**🔹 Bonus (make bonus)**
+
+| Test | Commande | Comportement Bash attendu | Vérification Minishell |
+|------|----------|---------------------------|-------------------------|
+| B1 | `env -i ; echo $?` | Affiche env vide, retourne `0` | Affiche env vide, `$?=0` |
+| B2 | `env FOO=bar ; echo $?` | Affiche env avec `FOO=bar`, retourne `0` | Affiche env avec `FOO=bar`, `$?=0` |
+| B3 | `env FOO=bar sh -c 'echo $FOO' ; echo $?` | Affiche `bar`, retourne `0` | Affiche `bar`, `$?=0` |
+| B4 | `env -i FOO=bar sh -c 'echo \"$FOO|$HOME\"' ; echo $?` | Affiche `bar|`, retourne `0` | Affiche `bar|`, `$?=0` |
+| B5 | `env -i sh -c 'echo ok' ; echo $?` | Affiche `ok`, retourne `0` (fallback `PATH`) | Affiche `ok`, `$?=0` |
+| B6 | `env PATH= sh -c 'echo ok' ; echo $?` | Erreur : `command not found`, `$?=127` | Erreur similaire, `$?=127` |
+
 ========================================================================================
 
 # 🟥 **PHASE 7 — Signaux & Heredoc**
@@ -477,6 +498,8 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 - `Ctrl+C` au prompt / texte / cmd / pipe / heredoc → retour prompt + `$?=130`
 - `^C` s’affiche **une seule fois** : si `ECHO`+`ECHOCTL` actifs, c’est le terminal qui l’affiche; sinon minishell l’imprime
 - En mode non‑interactif, le handler SIGINT **n’appelle pas** `readline` (pas d’UB)
+
+
 
 ========================================================================================
 
@@ -613,6 +636,14 @@ mkdir dir1 dir2
 | **22. Environnement vide** | `env -i ./minishell` puis `echo *` | Liste des fichiers (sans env) | Fonctionne sans variables d'env |
 | **23. Mode non-interactif** | `echo "echo *.txt" \| ./minishell` | `a.txt b.txt c.txt` | Fonctionne en pipe |
 | **24. Valgrind** | `valgrind ./minishell` puis tests wildcards | Pas de nouveaux leaks | Stabilité mémoire |
+
+## 🔧 **Correction du bug Wildcards + Quotes (Bonus)**
+
+### 🐛 Problème rencontré
+```bash
+echo 'a"b"'    # Avant : affichait ab au lieu de a"b"
+echo "a'b'"    # Avant : affichait ab au lieu de a'b'
+```
 
 ## 🚫 **Tests INTERDITS (selon le sujet)**
 
