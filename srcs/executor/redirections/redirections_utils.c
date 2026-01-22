@@ -11,7 +11,7 @@ int	handle_file_error(char *filename)
 
 int	handle_dup2_error(int fd)
 {
-	perror("dup2");
+	perror("minishell: dup2");
 	if (fd != -1)
 		close(fd);
 	return (1);

@@ -38,38 +38,42 @@ char	*expand_heredoc_line(char *line, t_shell *shell)
 	return (result);
 }
 
-char	*heredoc_append_char(char *line, size_t *len, size_t *cap, char c)
+static int	should_copy_char(char c, char *quote)
 {
-	size_t	new_cap;
-	char	*new_line;
-
-	if (*len + 2 > *cap)
+	if (c == '\'' || c == '\"')
 	{
-		new_cap = *cap * 2;
-		if (new_cap < 64)
-			new_cap = 64;
-		while (new_cap < *len + 2)
-			new_cap *= 2;
-		new_line = malloc(new_cap);
-		if (!new_line)
-			return (free(line), NULL);
-		if (line)
-			ft_memcpy(new_line, line, *len);
-		free(line);
-		line = new_line;
-		*cap = new_cap;
+		if (*quote == 0)
+			*quote = c;
+		else if (*quote == c)
+			*quote = 0;
+		else
+			return (1);
+		return (0);
 	}
-	line[*len] = c;
-	(*len)++;
-	return (line);
+	return (1);
 }
 
-char	*heredoc_finalize_line(char *line, size_t len, ssize_t n)
+char	*remove_quote(char *str)
 {
-	if (n == 0 && len == 0)
-		return (free(line), NULL);
-	if (!line)
-		return (ft_strdup(""));
-	line[len] = '\0';
-	return (line);
+	int		i;
+	int		j;
+	char	quote;
+	char	*res;
+
+	if (!str)
+		return (NULL);
+	res = malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (!res)
+		return (NULL);
+	i = 0;
+	j = 0;
+	quote = 0;
+	while (str[i])
+	{
+		if (should_copy_char(str[i], &quote))
+			res[j++] = str[i];
+		i++;
+	}
+	res[j] = '\0';
+	return (res);
 }

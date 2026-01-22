@@ -85,12 +85,10 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/redirections/redirections_state.c \
 		$(SRC_DIR)/executor/redirections/redirections_utils.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_core.c \
-		$(SRC_DIR)/executor/heredoc/heredoc_fd.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_tmp.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_expand.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_content.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_read.c \
-		$(SRC_DIR)/executor/heredoc/heredoc_quote.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_utils.c \
 		\
 		$(SRC_DIR)/builtin/builtin.c \

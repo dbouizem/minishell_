@@ -36,18 +36,7 @@ typedef struct s_heredoc_params
 	char	*delimiter;
 	int		expand;
 	t_shell	*shell;
-	int		manual_echo;
 }	t_heredoc_params;
-
-typedef struct s_heredoc_state
-{
-	int		interactive;
-	int		manual_echo;
-	size_t	len;
-	size_t	cap;
-	char	*line;
-	ssize_t	last_read;
-}	t_heredoc_state;
 
 typedef struct s_heredoc_ctx
 {
@@ -55,10 +44,8 @@ typedef struct s_heredoc_ctx
 	int					fd;
 	int					status;
 	int					expand;
-	int					term_changed;
 	struct sigaction	old_int;
 	struct sigaction	old_quit;
-	struct termios		saved_term;
 	t_heredoc_params	params;
 }	t_heredoc_ctx;
 
@@ -89,13 +76,9 @@ void	reset_heredoc_fd(t_redir *redir);
 int		abort_heredoc(int fd, char *tmp_filename, int status);
 int		finalize_heredoc_fd(int fd, char *tmp_filename, t_redir *redir);
 int		open_heredoc_tmp(char *path, size_t size);
-int		setup_heredoc_term(t_shell *shell, struct termios *saved);
-void	restore_heredoc_term(t_shell *shell, struct termios *saved);
-char	*read_heredoc_line(t_shell *shell, int manual_echo);
+char	*read_heredoc_line(t_shell *shell);
 char	*expand_heredoc_line(char *line, t_shell *shell);
 int		write_heredoc_content(t_heredoc_params *params);
-char	*heredoc_append_char(char *line, size_t *len, size_t *cap, char c);
-char	*heredoc_finalize_line(char *line, size_t len, ssize_t n);
 
 void	setup_heredoc_signals(struct sigaction *old_int,
 			struct sigaction *old_quit);

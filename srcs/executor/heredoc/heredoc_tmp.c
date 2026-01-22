@@ -38,27 +38,40 @@ int	open_heredoc_tmp(char *path, size_t size)
 	return (-1);
 }
 
-int	setup_heredoc_term(t_shell *shell, struct termios *saved)
+void	reset_heredoc_fd(t_redir *redir)
 {
-	struct termios	term;
-
-	if (!shell || !shell->interactive)
-		return (0);
-	if (tcgetattr(STDIN_FILENO, saved) == -1)
-		return (0);
-	term = *saved;
-	term.c_lflag |= ISIG;
-	term.c_lflag &= ~(ICANON | ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-	if (tcsetattr(STDIN_FILENO, TCSANOW, &term) == -1)
-		return (0);
-	return (1);
+	if (redir->fd != -1)
+	{
+		close(redir->fd);
+		redir->fd = -1;
+	}
 }
 
-void	restore_heredoc_term(t_shell *shell, struct termios *saved)
+int	abort_heredoc(int fd, char *tmp_filename, int status)
 {
-	if (!shell || !shell->interactive)
-		return ;
-	tcsetattr(STDIN_FILENO, TCSANOW, saved);
+	close(fd);
+	unlink(tmp_filename);
+	return (status);
+}
+
+int	finalize_heredoc_fd(int fd, char *tmp_filename, t_redir *redir)
+{
+	int	read_fd;
+
+	if (close(fd) == -1)
+	{
+		perror("minishell: heredoc");
+		unlink(tmp_filename);
+		return (1);
+	}
+	read_fd = open(tmp_filename, O_RDONLY);
+	if (read_fd == -1)
+	{
+		handle_file_error(tmp_filename);
+		unlink(tmp_filename);
+		return (1);
+	}
+	unlink(tmp_filename);
+	redir->fd = read_fd;
+	return (0);
 }

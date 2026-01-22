@@ -16,12 +16,11 @@ static char	*read_heredoc_basic(int show_prompt)
 	return (line);
 }
 
-char	*read_heredoc_line(t_shell *shell, int manual_echo)
+char	*read_heredoc_line(t_shell *shell)
 {
 	char			*line;
 	size_t			len;
 
-	(void)manual_echo;
 	if (!shell || !shell->interactive)
 		return (read_heredoc_basic(0));
 	line = read_heredoc_basic(1);

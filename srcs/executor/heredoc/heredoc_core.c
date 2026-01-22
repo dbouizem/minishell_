@@ -25,12 +25,10 @@ static int	init_heredoc_ctx(t_heredoc_ctx *ctx, t_redir *redir,
 	reset_heredoc_fd(redir);
 	g_signal = 0;
 	ctx->expand = !is_heredoc_quoted(redir->file);
-	ctx->term_changed = 0;
 	ctx->params.fd = ctx->fd;
 	ctx->params.delimiter = redir->file;
 	ctx->params.expand = ctx->expand;
 	ctx->params.shell = shell;
-	ctx->params.manual_echo = 0;
 	setup_heredoc_signals(&ctx->old_int, &ctx->old_quit);
 	return (0);
 }
@@ -38,8 +36,6 @@ static int	init_heredoc_ctx(t_heredoc_ctx *ctx, t_redir *redir,
 static int	finish_heredoc(t_heredoc_ctx *ctx, t_redir *redir)
 {
 	restore_signals(&ctx->old_int, &ctx->old_quit);
-	if (ctx->term_changed)
-		restore_heredoc_term(ctx->params.shell, &ctx->saved_term);
 	if (ctx->status != 0)
 		return (abort_heredoc(ctx->fd, ctx->tmp_filename, ctx->status));
 	return (finalize_heredoc_fd(ctx->fd, ctx->tmp_filename, redir));

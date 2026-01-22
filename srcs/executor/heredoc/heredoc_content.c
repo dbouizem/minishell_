@@ -48,7 +48,7 @@ static int	read_heredoc_status(t_heredoc_params *params, char *delim_cpy)
 	char	*line;
 	int		status;
 
-	line = read_heredoc_line(params->shell, params->manual_echo);
+	line = read_heredoc_line(params->shell);
 	if (g_signal == SIGINT)
 	{
 		free(line);
