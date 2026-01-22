@@ -1,11 +1,5 @@
 #include "../../../includes/minishell.h"
 
-#ifdef BONUS
-# define DEFAULT_PATH "/usr/bin:/bin"
-#else
-# define DEFAULT_PATH 0
-#endif
-
 static char	*build_full_path(t_path_search *search, size_t start,
 		size_t len)
 {
@@ -77,8 +71,6 @@ char	*search_in_paths(const char *path, char *cmd, int *path_error)
 {
 	t_path_search	search;
 
-	if (!path)
-		path = DEFAULT_PATH;
 	if (!path)
 		return (NULL);
 	search.path = path;

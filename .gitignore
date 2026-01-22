@@ -11,8 +11,10 @@ a.out
 # === Libft ===
 libft/libft.a
 libft/*.o
+/obj/
+/obj_bonus/
 
-# === Debug and logs ===
+ # === Debug and logs ===
 *.pdf
 *.log
 *.gch
