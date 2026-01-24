@@ -25,21 +25,11 @@ static int	handle_sigint(t_shell *shell, char *input)
 
 static int	handle_sigquit(t_shell *shell, char *input)
 {
-	if (!input || !*input)
-	{
-		free(input);
-		shell->current_input = NULL;
-		g_signal = 0;
-		return (1);
-	}
-	if (shell->interactive)
-		write(STDOUT_FILENO, "\n", 1);
-	shell->exit_status = 131;
-	shell->should_exit = 1;
 	free(input);
 	shell->current_input = NULL;
 	g_signal = 0;
-	return (0);
+	(void)shell;
+	return (1);
 }
 
 static int	finish_cycle(t_shell *shell, char *input)

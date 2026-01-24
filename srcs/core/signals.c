@@ -27,12 +27,6 @@ static int	readline_getc(FILE *stream)
 			return (EOF);
 		if (errno != EINTR)
 			return (EOF);
-		if (g_signal == SIGQUIT
-			&& (!rl_line_buffer || !rl_line_buffer[0]))
-		{
-			g_signal = 0;
-			continue ;
-		}
 		if (g_signal == SIGINT || g_signal == SIGQUIT)
 			return ('\n');
 	}
@@ -42,7 +36,7 @@ static void	handle_prompt_signal(int signo)
 {
 	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 		return ;
-	if (signo == SIGQUIT && (!rl_line_buffer || !rl_line_buffer[0]))
+	if (signo == SIGQUIT)
 		return ;
 	g_signal = signo;
 	if (signo == SIGINT)
