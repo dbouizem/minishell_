@@ -12,19 +12,17 @@
 
 #include "../../includes/minishell.h"
 
+#ifndef ECHOCTL
+# define ECHOCTL 0
+#endif
+
 static int	is_echoctl_enabled(void)
 {
-#ifdef ECHOCTL
-
 	struct termios	term;
 
 	if (tcgetattr(STDIN_FILENO, &term) == -1)
 		return (0);
 	return ((term.c_lflag & ECHO) && (term.c_lflag & ECHOCTL));
-	
-#else
-	return (0);
-#endif
 }
 
 static int	readline_getc(FILE *stream)
