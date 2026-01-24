@@ -23,6 +23,9 @@ void	heredoc_sigint_handler(int signo)
 {
 	(void)signo;
 	g_signal = SIGINT;
+#ifdef ECHOCTL
+	write(STDOUT_FILENO, "^C", 2);
+#endif
 	write(STDOUT_FILENO, "\n", 1);
 }
 
