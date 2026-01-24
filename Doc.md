@@ -702,7 +702,7 @@ wait de tous les enfants
 ## En mode interactif (prompt)
 
 - `Ctrl-C` : nouvelle ligne + prompt propre
-- `Ctrl-\` : ignoré
+- `Ctrl-\` : ignoré (même avec texte en cours)
 
 ---
 

@@ -455,7 +455,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 ### Signaux interactifs
 - `Ctrl+C` → affiche nouveau prompt sur nouvelle ligne (ne quitte pas)
 - `Ctrl+D` → quitte le shell
-- `Ctrl+\` → rien au prompt vide ; **quitte** si un texte est en cours (fiche d'éval)
+- `Ctrl+\` → rien, même avec texte en cours (comportement bash)
 
 ### Signaux en exécution
 - **Enfant** → comportement par défaut (SIGINT tue le processus)
@@ -484,7 +484,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 | **Ctrl+\ prompt vide** | `Ctrl+\` | Rien |
 | **Ctrl+C avec texte** | Taper `abc` puis `Ctrl+C` | Efface la ligne, nouveau prompt |
 | **Ctrl+D avec texte** | Taper `abc` puis `Ctrl+D` | Rien (ne quitte pas) |
-| **Ctrl+\\ avec texte** | Taper `abc` puis `Ctrl+\\` | Quitte minishell (RELAUNCH) |
+| **Ctrl+\\ avec texte** | Taper `abc` puis `Ctrl+\\` | Rien (ne quitte pas) |
 | **Ctrl+C cmd bloquante** | `cat` puis `Ctrl+C` | Tue `cat`, revient au prompt |
 | **Ctrl+\ cmd bloquante** | `cat` puis `Ctrl+\` | Tue `cat` avec `Quit (core dumped)` + `$?=131` |
 | **Heredoc simple** | `cat << EOF` | Lit jusqu'à `EOF` |
@@ -499,7 +499,7 @@ Cette phase rend le shell **vraiment interactif**, conforme à bash.
 - `Ctrl+C` au prompt / texte / cmd / pipe / heredoc → retour prompt + `$?=130`
 - `^C` s’affiche **une seule fois** : si `ECHO`+`ECHOCTL` actifs, c’est le terminal qui l’affiche; sinon minishell l’imprime
 - En mode non‑interactif, le handler SIGINT **n’appelle pas** `readline` (pas d’UB)
- - `Ctrl+\\` avec texte quitte minishell (comportement demandé par la fiche d'éval)
+- `Ctrl+\\` avec texte ne fait rien (aligné bash)
 
 
 
