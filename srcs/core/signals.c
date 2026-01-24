@@ -40,9 +40,14 @@ static int	readline_getc(FILE *stream)
 
 static void	handle_prompt_signal(int signo)
 {
+	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
+		return ;
+	if (signo == SIGQUIT && (!rl_line_buffer || !rl_line_buffer[0]))
+		return ;
 	g_signal = signo;
 	if (signo == SIGINT)
 		write(STDOUT_FILENO, "^C", 2);
+	rl_done = 1;
 }
 
 void	setup_child_signals(void)
