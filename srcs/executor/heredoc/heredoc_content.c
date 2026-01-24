@@ -3,9 +3,9 @@
 static int	heredoc_warn_eof(char *delimiter)
 {
 	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
-		write(STDOUT_FILENO, "\n", 1);
-	ft_putstr_fd("minishell: warning: heredoc delimited by ", 2);
-	ft_putstr_fd("EOF (wanted `", 2);
+		write(STDERR_FILENO, "\n", 1);
+	ft_putstr_fd("minishell: warning: here-document delimited by ", 2);
+	ft_putstr_fd("end-of-file (wanted `", 2);
 	ft_putstr_fd(delimiter, 2);
 	ft_putstr_fd("')\n", 2);
 	return (0);

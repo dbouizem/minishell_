@@ -6,11 +6,26 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:40:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 18:40:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/24 08:26:26 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static int	is_echoctl_enabled(void)
+{
+#ifdef ECHOCTL
+
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == -1)
+		return (0);
+	return ((term.c_lflag & ECHO) && (term.c_lflag & ECHOCTL));
+	
+#else
+	return (0);
+#endif
+}
 
 static int	readline_getc(FILE *stream)
 {
@@ -40,7 +55,10 @@ static void	handle_prompt_signal(int signo)
 		return ;
 	g_signal = signo;
 	if (signo == SIGINT)
-		write(STDOUT_FILENO, "^C", 2);
+	{
+		if (!is_echoctl_enabled())
+			write(STDOUT_FILENO, "^C", 2);
+	}
 	rl_done = 1;
 }
 
