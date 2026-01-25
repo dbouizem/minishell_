@@ -35,10 +35,7 @@ char	*read_input(void)
 	char	*input;
 
 	if (!can_use_readline())
-	{
-		perror("minishell: readline");
-		return (read_input_fallback());
-	}
+		return (perror("minishell: readline"), read_input_fallback());
 	errno = 0;
 	input = readline(PROMPT_COLOR "minishell$ " RESET_COLOR);
 	if (!input)
