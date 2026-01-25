@@ -43,6 +43,8 @@ char	*read_input(void)
 	input = readline(PROMPT_COLOR "minishell$ " RESET_COLOR);
 	if (!input)
 	{
+		if (errno == EINTR)
+			return (NULL);
 		if (errno == EMFILE || errno == ENFILE)
 		{
 			perror("minishell: readline");
