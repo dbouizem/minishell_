@@ -1,17 +1,6 @@
-# 🐚 **Minishell – Documentation Complète**
+# 🐚 **Minishell**
 
 Un shell Unix minimaliste créé dans le cadre du projet **42 School**, implémentant les fonctionnalités essentielles d'un shell interactif.
-
----
-
-## **Sommaire**
-
-1. [À propos](#-à-propos)
-2. [Fonctionnalités](#-fonctionnalités)
-3. [Utilisation](#-utilisation)
-4. [Architecture du projet](#-architecture-du-projet)
-5. [Tests](#-tests)
-6. [Auteurs](#-auteurs)
 
 ---
 
