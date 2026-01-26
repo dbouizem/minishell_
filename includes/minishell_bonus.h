@@ -23,6 +23,8 @@ typedef enum e_ast_type
 	AST_OR
 }	t_ast_type;
 
+typedef struct s_ast	t_ast;
+
 struct s_ast
 {
 	t_ast_type		type;
