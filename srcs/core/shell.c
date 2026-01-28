@@ -34,6 +34,8 @@ void	init_shell(t_shell *shell, char **envp)
 	if (!shell->env_list && envp && *envp)
 		shell_error(shell, "Failed to initialize environment list", 1);
 	env_list_to_array(shell);
+	if (envp && *envp)
+		update_shell_level(shell);
 }
 
 void	cleanup_shell(t_shell *shell)

@@ -11,7 +11,7 @@ static int	check_sep_syntax(t_cmd *cmds, t_shell *shell)
 	current = cmds;
 	while (current)
 	{
-		if (!current->args || !current->args[0])
+		if ((!current->args || !current->args[0]) && !current->redirs)
 			return (pipe_syntax_error(shell), 0);
 		current = current->next;
 	}

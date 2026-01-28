@@ -37,6 +37,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		\
 		$(SRC_DIR)/core/input.c \
 		$(SRC_DIR)/core/shell.c \
+		$(SRC_DIR)/core/shell_level.c \
 		$(SRC_DIR)/core/processor.c \
 		$(SRC_DIR)/core/shell_errors.c \
 		$(SRC_DIR)/core/signals.c \

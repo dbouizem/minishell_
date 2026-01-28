@@ -30,6 +30,7 @@ vgcore.*
 .idea/
 .vscode/
 *.code-workspace
+*.supp
 
 # === Backup or temp files ===
 *~

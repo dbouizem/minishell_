@@ -60,6 +60,7 @@ typedef struct s_shell
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 void	cleanup_shell_child(t_shell *shell);
+void	update_shell_level(t_shell *shell);
 
 void	setup_signals(void);
 void	setup_child_signals(void);
