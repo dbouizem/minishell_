@@ -29,31 +29,39 @@ static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
 	return (exit_status);
 }
 
-int	execute_command(t_cmd *cmd, t_shell *shell)
+static int	handle_redir_status(t_cmd *cmd, t_shell *shell,
+				int saved[2], int status)
 {
-	int	saved_stdin;
-	int	saved_stdout;
-	int	status;
-
-	if (cmd->redirs != NULL && save_redirections(&saved_stdin, &saved_stdout) != 0)
-	{
-		shell->exit_status = 1;
-		return (1);
-	}
-	status = setup_redirections(cmd, shell);
 	if (status == 130)
 	{
 		shell->exit_status = 130;
 		if (cmd->redirs)
-			restore_redirections(saved_stdin, saved_stdout);
+			restore_redirections(saved[0], saved[1]);
 		return (130);
 	}
 	if (status != 0)
 	{
 		shell->exit_status = 1;
 		if (cmd->redirs)
-		restore_redirections(saved_stdin, saved_stdout);
+			restore_redirections(saved[0], saved[1]);
 		return (1);
 	}
-	return (handle_command_execution(cmd, shell, saved_stdin, saved_stdout));
+	return (0);
+}
+
+int	execute_command(t_cmd *cmd, t_shell *shell)
+{
+	int	saved[2];
+	int	status;
+
+	if (cmd->redirs != NULL
+		&& save_redirections(&saved[0], &saved[1]) != 0)
+	{
+		shell->exit_status = 1;
+		return (1);
+	}
+	status = setup_redirections(cmd, shell);
+	if (handle_redir_status(cmd, shell, saved, status) != 0)
+		return (shell->exit_status);
+	return (handle_command_execution(cmd, shell, saved[0], saved[1]));
 }

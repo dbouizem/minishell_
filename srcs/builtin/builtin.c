@@ -12,11 +12,18 @@
 
 #include "../../includes/minishell.h"
 
+static int	builtin_colon(char **args)
+{
+	(void)args;
+	return (0);
+}
+
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
 	return (ft_strcmp(cmd, "echo") == 0
+		|| ft_strcmp(cmd, ":") == 0
 		|| ft_strcmp(cmd, "cd") == 0
 		|| ft_strcmp(cmd, "pwd") == 0
 		|| ft_strcmp(cmd, "export") == 0
@@ -31,6 +38,8 @@ int	execute_builtin(t_cmd *cmd, t_shell *shell)
 		return (1);
 	if (ft_strcmp(cmd->args[0], "echo") == 0)
 		return (builtin_echo(cmd->args));
+	else if (ft_strcmp(cmd->args[0], ":") == 0)
+		return (builtin_colon(cmd->args));
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		return (builtin_pwd());
 	else if (ft_strcmp(cmd->args[0], "cd") == 0)

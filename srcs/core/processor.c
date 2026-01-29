@@ -30,15 +30,29 @@ static int	is_only_whitespace(char *str)
 
 static int	prepare_tokens(char *input, t_shell *shell, t_token **tokens)
 {
+	int	i;
+	int	only_exclamation;
+
 	if (!input || input[0] == '\0' || is_only_whitespace(input))
 		return (0);
 	*tokens = tokenize(input);
-	if (!*tokens)
+	if (*tokens)
+		return (1);
+	i = 0;
+	while (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
+		i++;
+	only_exclamation = (input[i] == '!');
+	if (only_exclamation)
 	{
-		shell->exit_status = 2;
-		return (0);
+		i++;
+		while (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')
+			i++;
+		only_exclamation = (input[i] == '\0');
 	}
-	return (1);
+	shell->exit_status = 2;
+	if (only_exclamation)
+		shell->exit_status = 1;
+	return (0);
 }
 
 static void	cleanup_parsed(t_cmd *cmds, t_token *tokens, t_shell *shell)

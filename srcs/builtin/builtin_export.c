@@ -32,7 +32,7 @@ static int	is_invalid_identifier(char *str, char stop_char)
 
 static int	export_without_equal(char *arg, t_shell *shell)
 {
-	int invalid;
+	int	invalid;
 
 	invalid = is_invalid_identifier(arg, '\0');
 	if (invalid == 2)

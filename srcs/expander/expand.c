@@ -12,6 +12,18 @@
 
 #include "../../includes/minishell.h"
 
+static void	remove_arg(char **args, int index)
+{
+	int	i;
+
+	i = index;
+	while (args[i])
+	{
+		args[i] = args[i + 1];
+		i++;
+	}
+}
+
 void	expand_args(t_cmd *cmd, t_shell *shell)
 {
 	int		i;
@@ -25,6 +37,12 @@ void	expand_args(t_cmd *cmd, t_shell *shell)
 		{
 			free(cmd->args[i]);
 			cmd->args[i] = expanded;
+			if (cmd->args[i][0] == '\0')
+			{
+				free(cmd->args[i]);
+				remove_arg(cmd->args, i);
+				continue ;
+			}
 		}
 		i++;
 	}
