@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:18 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/29 01:49:06 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 16:20:22 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ static int	is_invalid_identifier(char *str, char stop_char)
 {
 	int	i;
 
-	if (!str || !*str)
+	if (!str)
 		return (2);
+	if (!*str)
+		return (1);
 	if (!ft_isalpha(str[0]) && str[0] != '_')
 		return (1);
 	i = 1;
