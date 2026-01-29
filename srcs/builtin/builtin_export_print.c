@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:15 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:54:16 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 01:52:41 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,13 @@ static void	sort_env_array(char **env)
 	}
 }
 
+//"export" ou "declare -x " selon MAC(zsh)/Linux(Bash)
 static void	print_export_line(char *entry)
 {
 	char	*equal_pos;
 
 	equal_pos = ft_strchr(entry, '=');
-	ft_putstr_fd("declare -x ", STDOUT_FILENO);
+	ft_putstr_fd("export ", STDOUT_FILENO);
 	if (equal_pos)
 	{
 		write(STDOUT_FILENO, entry, equal_pos - entry);

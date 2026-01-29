@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:57:14 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:57:15 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 02:52:58 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,40 @@ static void	report_forbidden_char(char c)
 		lexer_syntax_error(NULL);
 }
 
+static int	has_isolated_exclamation(t_token *head)
+{
+	t_token	*current;
+	t_token	*last_word;
+
+	current = head;
+	last_word = NULL;
+	while (current)
+	{
+		if (current->type == WORD)
+			last_word = current;
+		current = current->next;
+	}
+	if (last_word && ft_strcmp(last_word->value, "!") == 0)
+	{
+		current = last_word->next;
+		while (current)
+		{
+			if (current->type != SPACES)
+				return (0);
+			current = current->next;
+		}
+		return (1);
+	}
+	return (0);
+}
+
 static int	has_invalid_token(t_token *tokens)
 {
+	if (has_isolated_exclamation(tokens))
+	{
+		ft_putendl_fd("minishell: syntax error near unexpected token `newline'", STDERR_FILENO);
+		return (1);
+	}
 	while (tokens)
 	{
 		if (tokens->type == INVALID)

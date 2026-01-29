@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:18 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:54:19 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 01:49:06 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	is_invalid_identifier(char *str, char stop_char)
 	int	i;
 
 	if (!str || !*str)
-		return (1);
+		return (2);
 	if (!ft_isalpha(str[0]) && str[0] != '_')
 		return (1);
 	i = 1;
@@ -32,15 +32,17 @@ static int	is_invalid_identifier(char *str, char stop_char)
 
 static int	export_without_equal(char *arg, t_shell *shell)
 {
-	if (is_invalid_identifier(arg, '\0'))
+	int invalid;
+
+	invalid = is_invalid_identifier(arg, '\0');
+	if (invalid == 2)
+	{
+		print_exported_vars(shell);
+		return (0);
+	}
+	if (invalid == 1)
 	{
 		print_export_error(arg);
-		return (1);
-	}
-	if (get_env_value(arg, shell) == NULL)
-	{
-		if (set_env_value(arg, "", shell) == 1)
-			return (0);
 		return (1);
 	}
 	return (0);

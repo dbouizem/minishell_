@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:55:15 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:55:16 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 01:09:01 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ static int	handle_command_execution(t_cmd *cmd, t_shell *shell,
 	else
 		exit_status = execute_external(cmd, shell);
 	shell->exit_status = exit_status;
-	restore_redirections(saved_in, saved_out);
+	if (cmd->redirs)
+		restore_redirections(saved_in, saved_out);
 	return (exit_status);
 }
 
@@ -34,7 +35,7 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	int	saved_stdout;
 	int	status;
 
-	if (save_redirections(&saved_stdin, &saved_stdout) != 0)
+	if (cmd->redirs != NULL && save_redirections(&saved_stdin, &saved_stdout) != 0)
 	{
 		shell->exit_status = 1;
 		return (1);
@@ -43,12 +44,14 @@ int	execute_command(t_cmd *cmd, t_shell *shell)
 	if (status == 130)
 	{
 		shell->exit_status = 130;
-		restore_redirections(saved_stdin, saved_stdout);
+		if (cmd->redirs)
+			restore_redirections(saved_stdin, saved_stdout);
 		return (130);
 	}
 	if (status != 0)
 	{
 		shell->exit_status = 1;
+		if (cmd->redirs)
 		restore_redirections(saved_stdin, saved_stdout);
 		return (1);
 	}
