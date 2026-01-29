@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:44:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2026/01/21 04:33:19 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/29 03:40:44 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,15 @@ static int	set_exit_status(t_shell *shell, int status, int do_exit)
 	return (status);
 }
 
-static int	handle_numeric_error(char *arg, t_shell *shell)
+static int	handle_numeric_error(char *arg, t_shell *shell, int flag)
 {
+	int status;
+
+	status = 2;
+	if (flag)
+		status = 255;
 	print_exit_error(arg, "numeric");
-	return (set_exit_status(shell, 2, 1));
+	return (set_exit_status(shell, status, 1));
 }
 
 int	builtin_exit(char **args, t_shell *shell)
@@ -72,7 +77,7 @@ int	builtin_exit(char **args, t_shell *shell)
 		return (set_exit_status(shell, status, 1));
 	}
 	if (!is_numeric_arg(args[1]))
-		return (handle_numeric_error(args[1], shell));
+		return (handle_numeric_error(args[1], shell, 1));
 	if (args[2])
 	{
 		print_exit_error(NULL, "too_many");
@@ -80,7 +85,7 @@ int	builtin_exit(char **args, t_shell *shell)
 	}
 	exit_code = ft_atoll(args[1], &overflow);
 	if (overflow)
-		return (handle_numeric_error(args[1], shell));
+		return (handle_numeric_error(args[1], shell, 0));
 	status = (unsigned char)(exit_code % 256);
 	return (set_exit_status(shell, status, 1));
 }
