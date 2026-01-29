@@ -3,14 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:23 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:54:24 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/29 18:54:21 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static int is_valid_identifier(char c)
+{
+	return (c == '_' || c == '+' || c == '=' || c == '-');
+}
 
 static int	is_invalid_identifier(char *str)
 {
@@ -18,12 +23,12 @@ static int	is_invalid_identifier(char *str)
 
 	if (!str || !*str)
 		return (1);
-	if (!ft_isalpha(str[0]) && str[0] != '_')
+	if (!ft_isalnum(str[0]) && !is_valid_identifier(str[0]))
 		return (1);
 	i = 1;
 	while (str[i])
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+		if (!ft_isalnum(str[i]) && str[i + 1] == '-')
 			return (1);
 		i++;
 	}
