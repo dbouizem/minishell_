@@ -49,3 +49,62 @@ void	create_operator_token(t_token_type type, t_token **head,
 	add_token(head, current, token);
 	*i += len ;
 }
+
+static int	find_arith_end(char *input, int start)
+{
+	int	j;
+
+	j = start;
+	while (input[j] && !(input[j] == ')' && input[j + 1] == ')'))
+		j++;
+	if (!input[j])
+		return (-1);
+	return (j);
+}
+
+static int	add_arith_tokens(t_token **head, t_token **current, char *trim)
+{
+	t_token	*first;
+	t_token	*second;
+
+	first = create_token(WORD, ft_strdup("__arith__"));
+	second = create_token(WORD, trim);
+	if (!first || !second)
+	{
+		if (first)
+		{
+			free(first->value);
+			free(first);
+		}
+		free(trim);
+		return (0);
+	}
+	add_token(head, current, first);
+	add_token(head, current, second);
+	return (1);
+}
+
+int	create_arith_tokens(char *input, int *i, t_token **head,
+			t_token **current)
+{
+	char	*expr;
+	char	*trim;
+	int		start;
+	int		j;
+
+	start = *i + 2;
+	j = find_arith_end(input, start);
+	if (j == -1)
+		return (0);
+	expr = extract_substring(input, start, j);
+	if (!expr)
+		return (0);
+	trim = ft_strtrim(expr, " \t\n");
+	free(expr);
+	if (!trim)
+		return (0);
+	if (!add_arith_tokens(head, current, trim))
+		return (0);
+	*i = j + 2;
+	return (1);
+}

@@ -74,7 +74,9 @@ static int	export_with_append(char *arg, t_shell *shell)
 	ret = set_env_value(name, new_value, shell);
 	free(name);
 	free(new_value);
-	return (ret == 1 ? 0 : 1);
+	if (ret == 1)
+		return (0);
+	return (1);
 }
 
 static int	export_with_equal(char *arg, t_shell *shell)

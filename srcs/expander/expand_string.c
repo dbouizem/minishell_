@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_string.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:56:25 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/30 13:17:45 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 14:13:14 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
 {
 	if (str[*i] == '$' && !state->in_single)
 	{
-		if ((str[*i + 1] == '"' && str[*i + 2] == '"') 
+		if ((str[*i + 1] == '"' && str[*i + 2] == '"')
 			|| (str[*i + 1] == '\'' && str[*i + 2] == '\''))
 		{
 			*i += 3;

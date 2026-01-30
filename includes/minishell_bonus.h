@@ -45,6 +45,8 @@ typedef struct s_wild_build
 
 void	create_operator_token(t_token_type type, t_token **head,
 			t_token **current, int *i);
+int		create_arith_tokens(char *input, int *i, t_token **head,
+			t_token **current);
 t_ast	*parse_ast_bonus(t_token *tokens, t_shell *shell);
 t_ast	*parse_logical_bonus(t_token **tokens, t_shell *shell);
 t_ast	*parse_primary_bonus(t_token **tokens, t_shell *shell);

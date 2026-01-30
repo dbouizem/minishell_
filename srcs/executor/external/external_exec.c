@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   external_exec.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:55:21 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/30 12:49:56 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 14:17:24 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,13 @@ static void	exec_child(char *cmd_path, t_cmd *cmd, t_shell *shell)
 int	execute_external(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
-	int		status;
 	int		path_error;
 	char	*cmd_path;
 
-	if (!cmd->args[0] || cmd->args[0][0] == '\0')
+	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
 	{
 		ft_putendl_fd("minishell: : command not found", STDERR_FILENO);
-		shell->exit_status = 127;
-		return (127);
+		return (shell->exit_status = 127);
 	}
 	cmd_path = get_cmd_path(cmd->args[0], shell, &path_error);
 	if (!cmd_path)
@@ -67,14 +65,10 @@ int	execute_external(t_cmd *cmd, t_shell *shell)
 	pid = fork_process();
 	if (pid == 0)
 		exec_child(cmd_path, cmd, shell);
-	if (pid == -1)
-	{
-		free(cmd_path);
-		shell->exit_status = 1;
-		return (1);
-	}
 	free(cmd_path);
-	wait_for_child(pid, &status, shell);
+	if (pid == -1)
+		return (shell->exit_status = 1);
+	wait_for_child(pid, &path_error, shell);
 	return (shell->exit_status);
 }
 
