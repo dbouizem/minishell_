@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:56:25 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:56:26 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 13:17:45 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,17 @@
 static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
 			t_shell *shell)
 {
-	if (str[*i] == '\'' && !state->in_double)
+	if (str[*i] == '$' && !state->in_single)
+	{
+		if ((str[*i + 1] == '"' && str[*i + 2] == '"') 
+			|| (str[*i + 1] == '\'' && str[*i + 2] == '\''))
+		{
+			*i += 3;
+			return (ft_strdup(""));
+		}
+		return (process_dollar(str, i, shell));
+	}
+	else if (str[*i] == '\'' && !state->in_double)
 	{
 		state->in_single = !state->in_single;
 		return (char_to_str(str[(*i)++]));
@@ -25,8 +35,6 @@ static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
 		state->in_double = !state->in_double;
 		return (char_to_str(str[(*i)++]));
 	}
-	else if (str[*i] == '$' && !state->in_single)
-		return (process_dollar(str, i, shell));
 	else if (state->in_single)
 		return (extract_single_quoted_content(str, i));
 	else
