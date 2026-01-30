@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:23 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/29 18:54:21 by fadzejli         ###   ########.fr       */
+/*   Updated: 2026/01/30 11:37:39 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static int is_valid_identifier(char c)
+static int	is_valid_identifier(char c)
 {
 	return (c == '_' || c == '+' || c == '=' || c == '-');
 }

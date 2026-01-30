@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:44:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2026/01/29 03:40:44 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 11:53:40 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,6 @@ static int	is_numeric_arg(char *str)
 	return (1);
 }
 
-static void	print_exit_prompt(t_shell *shell)
-{
-	if (shell && shell->interactive
-		&& isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
-		write(STDERR_FILENO, "exit\n", 5);
-}
-
 static int	set_exit_status(t_shell *shell, int status, int do_exit)
 {
 	if (shell)
@@ -50,42 +43,50 @@ static int	set_exit_status(t_shell *shell, int status, int do_exit)
 	return (status);
 }
 
-static int	handle_numeric_error(char *arg, t_shell *shell, int flag)
+static int	handle_numeric_error(char *arg, t_shell *shell)
 {
-	int status;
-
-	status = 2;
-	if (flag)
-		status = 255;
 	print_exit_error(arg, "numeric");
-	return (set_exit_status(shell, status, 1));
+	return (set_exit_status(shell, 2, 1));
 }
 
-int	builtin_exit(char **args, t_shell *shell)
+static int	exit_with_args(char **args, t_shell *shell)
 {
 	long long	exit_code;
 	int			overflow;
 	int			status;
 
-	print_exit_prompt(shell);
-	if (!args[1])
-	{
-		if (shell)
-			status = shell->exit_status;
-		else
-			status = 0;
-		return (set_exit_status(shell, status, 1));
-	}
 	if (!is_numeric_arg(args[1]))
-		return (handle_numeric_error(args[1], shell, 1));
+		return (handle_numeric_error(args[1], shell));
 	if (args[2])
 	{
 		print_exit_error(NULL, "too_many");
 		return (1);
 	}
 	exit_code = ft_atoll(args[1], &overflow);
+	if (overflow && ft_strcmp(args[1], "-9223372036854775808") == 0)
+	{
+		overflow = 0;
+		exit_code = LLONG_MIN;
+	}
 	if (overflow)
-		return (handle_numeric_error(args[1], shell, 0));
+		return (handle_numeric_error(args[1], shell));
 	status = (unsigned char)(exit_code % 256);
 	return (set_exit_status(shell, status, 1));
+}
+
+int	builtin_exit(char **args, t_shell *shell)
+{
+	int	status;
+
+	if (shell && shell->interactive
+		&& isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+		write(STDERR_FILENO, "exit\n", 5);
+	if (!args[1])
+	{
+		status = 0;
+		if (shell)
+			status = shell->exit_status;
+		return (set_exit_status(shell, status, 1));
+	}
+	return (exit_with_args(args, shell));
 }
