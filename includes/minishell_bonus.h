@@ -70,5 +70,6 @@ int		append_literal_bonus(char ***dst, int *count,
 			char *pattern, char *mask);
 void	sort_strings_bonus(char **arr, int count);
 void	expand_wildcards(t_cmd *cmd);
+int		builtin_dot(char **args, t_shell *shell);
 
 #endif

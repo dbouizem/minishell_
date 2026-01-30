@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_env.c                                      :+:      :+:    :+:   */
+/*   builtin_env_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 16:54:10 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/30 19:38:20 by dbouizem         ###   ########.fr       */
+/*   Created: 2026/01/30 19:35:00 by dbouizem          #+#    #+#             */
+/*   Updated: 2026/01/30 19:39:03 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-#define ENV_BONUS_ENABLED 0
+#define ENV_BONUS_ENABLED 1
 
 static int	init_env_context(t_shell *shell, char **args,
 				int *i, t_env **tmp_env)

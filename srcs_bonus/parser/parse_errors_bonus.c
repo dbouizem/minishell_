@@ -43,7 +43,7 @@ static void	print_syntax_token(t_token *tok)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `",
 			STDERR_FILENO);
-		ft_putchar_fd(tok->value[0], STDERR_FILENO);
+		ft_putstr_fd(tok->value, STDERR_FILENO);
 		ft_putendl_fd("'", STDERR_FILENO);
 	}
 	else if (tok)
