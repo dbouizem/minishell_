@@ -6,7 +6,7 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:40:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 18:40:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/31 00:39:55 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,12 @@ void	heredoc_sigint_handler(int signo)
 	g_signal = SIGINT;
 	if (!is_echoctl_enabled())
 		write(STDOUT_FILENO, "^C", 2);
-	write(STDOUT_FILENO, "\n", 1);
+	if (isatty(STDIN_FILENO))
+	{
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_done = 1;
+	}
 }
 
 void	setup_heredoc_signals(struct sigaction *old_int,
