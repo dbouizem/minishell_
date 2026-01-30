@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:55:21 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:55:22 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 12:49:56 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,12 @@ int	execute_external(t_cmd *cmd, t_shell *shell)
 	int		path_error;
 	char	*cmd_path;
 
+	if (!cmd->args[0] || cmd->args[0][0] == '\0')
+	{
+		ft_putendl_fd("minishell: : command not found", STDERR_FILENO);
+		shell->exit_status = 127;
+		return (127);
+	}
 	cmd_path = get_cmd_path(cmd->args[0], shell, &path_error);
 	if (!cmd_path)
 		return (handle_missing_cmd(cmd->args[0], path_error, shell));
@@ -79,6 +85,11 @@ void	execute_external_no_fork(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		exit_child(1, shell);
+	if (cmd->args[0][0] == '\0')
+	{
+		ft_putendl_fd("minishell: : command not found", STDERR_FILENO);
+		exit_child(127, shell);
+	}
 	cmd_path = get_cmd_path(cmd->args[0], shell, &path_error);
 	if (!cmd_path)
 		exit_child(handle_missing_cmd(cmd->args[0], path_error, shell), shell);

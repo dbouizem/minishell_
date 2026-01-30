@@ -36,7 +36,8 @@ SRCS_STRING =	src/string/ft_strlen.c \
 				src/string/ft_strtrim.c \
 				src/string/ft_split.c \
 				src/string/ft_substr.c \
-				src/string/ft_strncpy.c
+				src/string/ft_strncpy.c \
+				src/string/ft_strstr.c
 
 SRCS_STDLIB =	src/stdlib/ft_memset.c \
 				src/stdlib/ft_bzero.c \

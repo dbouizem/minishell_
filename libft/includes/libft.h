@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 00:50:26 by dbouizem          #+#    #+#             */
-/*   Updated: 2026/01/20 15:12:08 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/30 12:37:33 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void				*ft_calloc(size_t num, size_t size);
 
 char				*ft_strchr(const char *s, int c);
 char				*ft_strrchr(const char *s, int c);
+char				*ft_strstr(char *str, char *to_find);
 char				*ft_strnstr(const char *h, const char *n, size_t len);
 char				*ft_strdup(const char *src);
 

@@ -6,7 +6,7 @@
 /*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:56:33 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:56:34 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 12:18:45 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,12 @@ char	*handle_special_dollar_cases(char *str, int *i, t_shell *shell)
 	{
 		(*i) += 2;
 		return (ft_itoa(shell->exit_status));
+	}
+	if (!ft_isalpha(str[*i + 1]) && str[*i + 1] != '_'
+		&& str[*i + 1] != '{' && str[*i + 1] != '?')
+	{
+		(*i)++;
+		return (ft_strdup("$"));
 	}
 	return (NULL);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:18 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/29 16:20:22 by fadzejli         ###   ########.fr       */
+/*   Updated: 2026/01/30 12:38:05 by fadwa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,41 @@ static int	export_without_equal(char *arg, t_shell *shell)
 	return (0);
 }
 
+static int	export_with_append(char *arg, t_shell *shell)
+{
+	char	*plus_pos;
+	char	*name;
+	char	*old_value;
+	char	*new_value;
+	int		ret;
+
+	plus_pos = ft_strchr(arg, '+');
+	if (is_invalid_identifier(arg, '+'))
+		return (print_export_error(arg), 1);
+	name = ft_substr(arg, 0, plus_pos - arg);
+	if (!name)
+		return (1);
+	old_value = get_env_value(name, shell);
+	if (old_value)
+		new_value = ft_strjoin(old_value, plus_pos + 2);
+	else
+		new_value = ft_strdup(plus_pos + 2);
+	if (!new_value)
+		return (free(name), 1);
+	ret = set_env_value(name, new_value, shell);
+	free(name);
+	free(new_value);
+	return (ret == 1 ? 0 : 1);
+}
+
 static int	export_with_equal(char *arg, t_shell *shell)
 {
 	char	*equal_pos;
 	char	*name;
 	int		ret;
 
+	if (ft_strstr(arg, "+="))
+		return (export_with_append(arg, shell));
 	equal_pos = ft_strchr(arg, '=');
 	if (is_invalid_identifier(arg, '='))
 	{
