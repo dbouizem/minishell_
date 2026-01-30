@@ -129,7 +129,8 @@ SRC_BONUS_BASE =	$(filter-out \
 		$(SRC_DIR)/lexer/lexer_redir.c \
 		$(SRC_DIR)/lexer/lexer_checks.c \
 		$(SRC_DIR)/executor/core/executor.c \
-		$(SRC_DIR)/executor/core/command_exec.c, \
+		$(SRC_DIR)/executor/core/command_exec.c \
+		$(SRC_DIR)/parser/parse_errors.c, \
 		$(SRC_BASE))
 
 SRC_BONUS_ONLY =\
@@ -138,6 +139,8 @@ SRC_BONUS_ONLY =\
 	$(SRC_BONUS_DIR)/lexer/lexer_op_bonus.c \
 	$(SRC_BONUS_DIR)/core/processor_bonus.c \
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus.c \
+	$(SRC_BONUS_DIR)/parser/parse_errors_bonus.c \
+	$(SRC_BONUS_DIR)/parser/parse_errors_bonus_utils.c \
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus_pipeline.c \
 	$(SRC_BONUS_DIR)/parser/parse_ast_bonus_logical.c \
 	$(SRC_BONUS_DIR)/expander/wildcard_pattern_bonus.c \

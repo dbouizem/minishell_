@@ -29,6 +29,7 @@ t_ast	*create_ast_node_bonus(t_ast_type type, t_cmd *pipeline,
 		return (parse_memory_error("ast_node"), NULL);
 	node->type = type;
 	node->pipeline = pipeline;
+	node->redirs = NULL;
 	node->left = left;
 	node->right = right;
 	return (node);

@@ -20,15 +20,18 @@ typedef enum e_ast_type
 {
 	AST_PIPELINE = 1,
 	AST_AND,
-	AST_OR
+	AST_OR,
+	AST_SUBSHELL
 }	t_ast_type;
 
 typedef struct s_ast	t_ast;
+typedef struct s_redir	t_redir;
 
 struct s_ast
 {
 	t_ast_type		type;
 	t_cmd			*pipeline;
+	t_redir			*redirs;
 	struct s_ast	*left;
 	struct s_ast	*right;
 };

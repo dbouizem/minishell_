@@ -6,29 +6,59 @@
 /*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 17:10:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 17:10:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/30 15:36:53 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 #include "../../includes/minishell_bonus.h"
 
+static t_redir	*parse_subshell_redirs(t_token **tokens, t_shell *shell,
+		int *ok)
+{
+	t_redir	*head;
+	t_redir	*redir;
+
+	head = NULL;
+	*ok = 1;
+	skip_spaces_bonus(tokens);
+	while (*tokens && is_redir((*tokens)->type))
+	{
+		redir = parse_redirection(tokens, shell);
+		if (!redir)
+		{
+			*ok = 0;
+			return (free_redirs(head), NULL);
+		}
+		add_redir(&head, redir);
+		skip_spaces_bonus(tokens);
+	}
+	return (head);
+}
+
 static t_ast	*parse_parenthesis_bonus(t_token **tokens, t_shell *shell)
 {
+	t_ast	*inner;
 	t_ast	*node;
+	t_redir	*redirs;
+	int		ok;
 
 	*tokens = (*tokens)->next;
-	node = parse_logical_bonus(tokens, shell);
-	if (!node)
+	inner = parse_logical_bonus(tokens, shell);
+	if (!inner)
 		return (NULL);
 	skip_spaces_bonus(tokens);
 	if (!*tokens || (*tokens)->type != PAREN_CLOSE)
-	{
-		free_ast_bonus(node);
-		parse_syntax_error(tokens, shell);
-		return (NULL);
-	}
+		return (free_ast_bonus(inner),
+			parse_syntax_error(tokens, shell), NULL);
 	*tokens = (*tokens)->next;
+	redirs = parse_subshell_redirs(tokens, shell, &ok);
+	if (!ok)
+		return (free_ast_bonus(inner), NULL);
+	node = create_ast_node_bonus(AST_SUBSHELL, NULL, inner, NULL);
+	if (!node)
+		return (free_ast_bonus(inner), free_redirs(redirs), NULL);
+	node->redirs = redirs;
 	return (node);
 }
 

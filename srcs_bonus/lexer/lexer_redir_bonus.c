@@ -75,26 +75,26 @@ static void	create_pipe_token(t_token **head, t_token **current, int *i)
 static void	create_paren_token(char *input, int *i,
 		t_token **head, t_token **current)
 {
-	char	*value;
 	t_token	*token;
 
 	if (input[*i] == '(' && input[*i + 1] == '(')
 	{
 		if (!create_arith_tokens(input, i, head, current))
-			create_operator_token(INVALID, head, current, i);
+		{
+			token = create_token(PAREN_OPEN, ft_strdup("("));
+			if (!token)
+				return ;
+			add_token(head, current, token);
+			(*i)++;
+		}
 		return ;
 	}
-	value = malloc(2);
-	if (!value)
-		return ;
-	value[0] = input[*i];
-	value[1] = '\0';
 	if (input[*i] == '(')
-		token = create_token(PAREN_OPEN, value);
+		token = create_token(PAREN_OPEN, ft_strdup("("));
 	else
-		token = create_token(PAREN_CLOSE, value);
+		token = create_token(PAREN_CLOSE, ft_strdup(")"));
 	if (!token)
-		return (free(value));
+		return ;
 	add_token(head, current, token);
 	(*i)++;
 }
