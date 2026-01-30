@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_wait.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fadwa <fadwa@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:55:48 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/28 16:55:49 by fadwa            ###   ########.fr       */
+/*   Updated: 2026/01/30 13:02:06 by dbouizem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,15 @@ static int	wait_child_process(pid_t pid, int *status)
 	return (ret);
 }
 
-static int	update_wait_status(int status, t_shell *shell, int *printed)
+static int	update_wait_status(int status, t_shell *shell, int *printed,
+				int *sigint_seen)
 {
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	if (WIFSIGNALED(status))
 	{
+		if (sigint_seen && WTERMSIG(status) == SIGINT)
+			*sigint_seen = 1;
 		report_signal_status(WTERMSIG(status), status, shell, printed);
 		return (128 + WTERMSIG(status));
 	}
@@ -40,10 +43,12 @@ static int	wait_children_loop(pid_t *pids, int num_commands, t_shell *shell)
 	int	status;
 	int	last_status;
 	int	printed[2];
+	int	sigint_seen;
 
-	i = 0;
 	last_status = 0;
+	sigint_seen = 0;
 	ft_bzero(printed, sizeof(printed));
+	i = 0;
 	while (i < num_commands)
 	{
 		if (pids[i] > 0)
@@ -51,10 +56,13 @@ static int	wait_children_loop(pid_t *pids, int num_commands, t_shell *shell)
 			if (wait_child_process(pids[i], &status) == -1)
 				last_status = 1;
 			else
-				last_status = update_wait_status(status, shell, printed);
+				last_status = update_wait_status(status, shell,
+						printed, &sigint_seen);
 		}
 		i++;
 	}
+	if (sigint_seen)
+		return (130);
 	return (last_status);
 }
 
