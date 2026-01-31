@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:23 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/30 11:37:39 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/31 14:00:00 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static int	is_valid_identifier(char c)
 {
+	if (c == '\0')
+		return (1);
 	return (c == '_' || c == '+' || c == '=' || c == '-');
 }
 
@@ -21,11 +23,13 @@ static int	is_invalid_identifier(char *str)
 {
 	int	i;
 
-	if (!str || !*str)
+	if (!str)
 		return (1);
 	if (!ft_isalnum(str[0]) && !is_valid_identifier(str[0]))
 		return (1);
 	i = 1;
+	if (str[0] == '-' && ft_isalnum(str[i]))
+		return (1);
 	while (str[i])
 	{
 		if (!ft_isalnum(str[i]) && str[i + 1] == '-')
