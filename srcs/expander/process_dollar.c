@@ -65,22 +65,16 @@ char	*get_var_value(char *var_name, t_shell *shell)
 
 char	*handle_special_dollar_cases(char *str, int *i, t_shell *shell)
 {
-	if (!str[*i + 1] || ft_strchr(" \'\"\0", str[*i + 1]))
-	{
-		(*i)++;
-		return (ft_strdup("$"));
-	}
+	char	*result;
+
+	result = handle_dollar_basic_cases(str, i);
+	if (result)
+		return (result);
 	if (str[*i + 1] == '?')
-	{
-		(*i) += 2;
-		return (ft_itoa(shell->exit_status));
-	}
+		return ((*i) += 2, ft_itoa(shell->exit_status));
 	if (!ft_isalpha(str[*i + 1]) && str[*i + 1] != '_'
 		&& str[*i + 1] != '{' && str[*i + 1] != '?')
-	{
-		(*i)++;
-		return (ft_strdup("$"));
-	}
+		return ((*i)++, ft_strdup("$"));
 	return (NULL);
 }
 

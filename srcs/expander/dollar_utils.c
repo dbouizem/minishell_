@@ -71,3 +71,14 @@ char	*handle_normal_var(char *str, int *i)
 	ft_strlcpy(var_name, &str[start], *i - start + 1);
 	return (var_name);
 }
+
+char	*handle_dollar_basic_cases(char *str, int *i)
+{
+	if (!str[*i + 1])
+		return ((*i)++, ft_strdup("$"));
+	if (str[*i + 1] == '"' || str[*i + 1] == '\'')
+		return ((*i)++, ft_strdup(""));
+	if (str[*i + 1] == ' ')
+		return ((*i)++, ft_strdup("$"));
+	return (NULL);
+}

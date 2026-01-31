@@ -30,6 +30,7 @@ char	*extract_var_name(char *str, int *i, t_shell *shell);
 
 char	*process_dollar(char *str, int *i, t_shell *shell);
 char	*handle_special_chars(char *str, int *i, t_shell *shell);
+char	*handle_dollar_basic_cases(char *str, int *i);
 char	*handle_curly_brace_syntax(char *str, int *i, t_shell *shell);
 char	*handle_normal_var(char *str, int *i);
 char	*extract_curly_var_name(char *str, int *i, int start);
