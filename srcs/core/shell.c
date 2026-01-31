@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:40:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2025/12/08 18:40:00 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/31 16:14:45 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->exit_status = 0;
 	shell->env = NULL;
 	shell->env_list = NULL;
-	shell->interactive = isatty(STDIN_FILENO)
-		&& isatty(STDOUT_FILENO);
+	shell->interactive = (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO));
 	if (shell->interactive)
 	{
 		rl_catch_signals = 0;

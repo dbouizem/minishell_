@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbouizem <djihane.bouizem@gmail.com>       +#+  +:+       +#+        */
+/*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 18:40:00 by dbouizem          #+#    #+#             */
-/*   Updated: 2026/01/21 05:06:13 by dbouizem         ###   ########.fr       */
+/*   Updated: 2026/01/31 16:10:53 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 
 extern volatile sig_atomic_t	g_signal;
 
-typedef struct s_ast	t_ast;
+typedef struct s_ast			t_ast;
 
 typedef struct s_shell
 {
