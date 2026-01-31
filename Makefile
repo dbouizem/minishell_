@@ -76,6 +76,8 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/expander/expand_string.c \
 		$(SRC_DIR)/expander/process_dollar.c \
 		$(SRC_DIR)/expander/dollar_utils.c \
+		$(SRC_DIR)/expander/field_split.c \
+		$(SRC_DIR)/expander/field_split_args.c \
 		$(SRC_DIR)/expander/process_normal.c \
 		$(SRC_DIR)/expander/remove_quotes_final.c \
 		\

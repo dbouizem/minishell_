@@ -73,6 +73,8 @@ void	expand_commands(t_cmd *cmd, t_shell *shell)
 	{
 		if (cmd->args)
 			expand_args(cmd, shell);
+		if (cmd->args)
+			split_command_args(cmd);
 		if (cmd->redirs)
 			expand_redirs(cmd->redirs, shell);
 		cmd = cmd->next;

@@ -34,6 +34,9 @@ char	*handle_dollar_basic_cases(char *str, int *i);
 char	*handle_curly_brace_syntax(char *str, int *i, t_shell *shell);
 char	*handle_normal_var(char *str, int *i);
 char	*extract_curly_var_name(char *str, int *i, int start);
+int		count_fields(char *str);
+char	**split_fields(char *str);
+void	split_command_args(t_cmd *cmd);
 
 char	*remove_quotes(char *str);
 void	remove_quotes_from_command(t_cmd *cmd);
