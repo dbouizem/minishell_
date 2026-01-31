@@ -13,6 +13,9 @@
 #ifndef EXPANDER_H
 # define EXPANDER_H
 
+# define EXP_QUOTE_SQ 0x1F
+# define EXP_QUOTE_DQ 0x1E
+
 typedef struct s_cmd	t_cmd;
 typedef struct s_shell	t_shell;
 

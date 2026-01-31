@@ -12,19 +12,45 @@
 
 #include "../../includes/minishell.h"
 
+static char	*process_dollar_masked(char *str, int *i, t_shell *shell)
+{
+	char	*value;
+	int		k;
+
+	value = process_dollar(str, i, shell);
+	if (!value)
+		return (NULL);
+	k = 0;
+	while (value[k])
+	{
+		if (value[k] == '\'')
+			value[k] = EXP_QUOTE_SQ;
+		else if (value[k] == '\"')
+			value[k] = EXP_QUOTE_DQ;
+		k++;
+	}
+	return (value);
+}
+
+static char	*handle_dollar_expansion(char *str, int *i, t_state *state,
+			t_shell *shell)
+{
+	if (state->in_double && (str[*i + 1] == '"' || str[*i + 1] == '\''))
+		return (char_to_str(str[(*i)++]));
+	if ((str[*i + 1] == '"' && str[*i + 2] == '"')
+		|| (str[*i + 1] == '\'' && str[*i + 2] == '\''))
+	{
+		*i += 3;
+		return (ft_strdup(""));
+	}
+	return (process_dollar_masked(str, i, shell));
+}
+
 static char	*handle_quotes_dollar(char *str, int *i, t_state *state,
 			t_shell *shell)
 {
 	if (str[*i] == '$' && !state->in_single)
-	{
-		if ((str[*i + 1] == '"' && str[*i + 2] == '"')
-			|| (str[*i + 1] == '\'' && str[*i + 2] == '\''))
-		{
-			*i += 3;
-			return (ft_strdup(""));
-		}
-		return (process_dollar(str, i, shell));
-	}
+		return (handle_dollar_expansion(str, i, state, shell));
 	else if (str[*i] == '\'' && !state->in_double)
 	{
 		state->in_single = !state->in_single;

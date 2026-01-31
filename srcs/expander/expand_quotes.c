@@ -27,6 +27,29 @@ int	handle_quotes_flags(char c, t_state *state)
 	return (0);
 }
 
+static int	copy_masked_quote(char c, char *result, int *j)
+{
+	if (c == EXP_QUOTE_SQ)
+	{
+		result[(*j)++] = '\'';
+		return (1);
+	}
+	if (c == EXP_QUOTE_DQ)
+	{
+		result[(*j)++] = '\"';
+		return (1);
+	}
+	return (0);
+}
+
+static void	init_remove_state(int *i, int *j, t_state *state)
+{
+	*i = 0;
+	*j = 0;
+	state->in_single = 0;
+	state->in_double = 0;
+}
+
 char	*remove_quotes(char *str)
 {
 	char		*result;
@@ -39,18 +62,15 @@ char	*remove_quotes(char *str)
 	result = malloc(ft_strlen(str) + 1);
 	if (!result)
 		return (NULL);
-	i = 0;
-	j = 0;
-	state.in_single = 0;
-	state.in_double = 0;
+	init_remove_state(&i, &j, &state);
 	while (str[i])
 	{
-		if (handle_quotes_flags(str[i], &state))
-		{
+		if (copy_masked_quote(str[i], result, &j))
 			i++;
-			continue ;
-		}
-		result[j++] = str[i++];
+		else if (handle_quotes_flags(str[i], &state))
+			i++;
+		else
+			result[j++] = str[i++];
 	}
 	result[j] = '\0';
 	return (result);

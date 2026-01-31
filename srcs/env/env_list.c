@@ -58,24 +58,26 @@ static void	cleanup_node(t_env *node)
 t_env	*env_array_to_list(char **envp)
 {
 	t_env	*head;
+	t_env	*tail;
 	t_env	*node;
 	int		i;
 
 	head = NULL;
-	i = 0;
-	while (envp && envp[i])
+	tail = NULL;
+	i = -1;
+	while (envp && envp[++i])
 	{
 		node = create_node(envp[i]);
 		if (!node)
 			return (free_env_list(head), NULL);
 		if (!validate_node(node, envp[i]))
-		{
-			cleanup_node(node);
-			return (free_env_list(head), NULL);
-		}
-		node->next = head;
-		head = node;
-		i++;
+			return (cleanup_node(node), free_env_list(head), NULL);
+		node->next = NULL;
+		if (!head)
+			head = node;
+		else
+			tail->next = node;
+		tail = node;
 	}
 	return (head);
 }

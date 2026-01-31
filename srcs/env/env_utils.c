@@ -51,8 +51,16 @@ int	update_env_var(char *key, char *value, t_shell *shell)
 		return (update_existing_env(env, shell, value));
 	if (!init_new_env_node(&new_node, key, value))
 		return (0);
-	new_node->next = shell->env_list;
-	shell->env_list = new_node;
+	new_node->next = NULL;
+	if (!shell->env_list)
+		shell->env_list = new_node;
+	else
+	{
+		env = shell->env_list;
+		while (env->next)
+			env = env->next;
+		env->next = new_node;
+	}
 	env_list_to_array(shell);
 	return (1);
 }
