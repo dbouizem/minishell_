@@ -6,7 +6,7 @@
 /*   By: fadzejli <fadzejli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 16:54:23 by fadwa             #+#    #+#             */
-/*   Updated: 2026/01/31 14:00:00 by fadzejli         ###   ########.fr       */
+/*   Updated: 2026/01/31 14:12:57 by fadzejli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	is_valid_identifier(char c)
 {
 	if (c == '\0')
 		return (1);
-	return (c == '_' || c == '+' || c == '=' || c == '-');
+	return (c == '_' || c == '+' || c == '=');
 }
 
 static int	is_invalid_identifier(char *str)
@@ -25,10 +25,10 @@ static int	is_invalid_identifier(char *str)
 
 	if (!str)
 		return (1);
-	if (!ft_isalnum(str[0]) && !is_valid_identifier(str[0]))
+	if (!ft_isalnum(str[0]) && !is_valid_identifier(str[0]) && str[0] != '-')
 		return (1);
 	i = 1;
-	if (str[0] == '-' && ft_isalnum(str[i]))
+	if (str[0] == '-' && (ft_isalnum(str[i]) || is_valid_identifier(str[i])))
 		return (1);
 	while (str[i])
 	{
