@@ -101,6 +101,7 @@ SRC_BASE =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_expand.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_content.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_read.c \
+		$(SRC_DIR)/executor/heredoc/heredoc_delim.c \
 		$(SRC_DIR)/executor/heredoc/heredoc_utils.c \
 		\
 		$(SRC_DIR)/builtin/builtin.c \

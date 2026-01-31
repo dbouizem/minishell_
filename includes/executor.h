@@ -78,6 +78,7 @@ void	cleanup_pipeline_resources(t_pipeline_data *data);
 int		execute_external(t_cmd *cmd, t_shell *shell);
 void	execute_external_no_fork(t_cmd *cmd, t_shell *shell);
 char	*search_in_paths(const char *path, char *cmd, int *path_error);
+char	*remove_heredoc_delimiter(char *str);
 char	*handle_absolute_path(char *cmd);
 
 int		setup_redirections(t_cmd *cmd, t_shell *shell);

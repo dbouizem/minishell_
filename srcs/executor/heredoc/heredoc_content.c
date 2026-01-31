@@ -78,7 +78,7 @@ int	write_heredoc_content(t_heredoc_params *params)
 	char	*delim_cpy;
 	int		status;
 
-	delim_cpy = remove_quote(params->delimiter);
+	delim_cpy = remove_heredoc_delimiter(params->delimiter);
 	if (!delim_cpy)
 		return (1);
 	status = 2;
